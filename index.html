@@ -6,14 +6,15 @@
 <title>Shyam Bhajan Sangrah — Community Bhajan Library</title>
 <meta name="description" content="A community library of bhajans from live satsangs — scales, singers, lyrics, and one-tap YouTube timestamps." />
 <meta name="theme-color" content="#0d0a1a" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🪕</text></svg>" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mukta:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
 <style>
 :root{
   --bg:#0d0a1a;
-  --bg2:#131024;
   --surface:#1a1530;
   --surface2:#241d42;
   --surface3:#2d2452;
@@ -30,20 +31,40 @@
   --red:#e26565;
   --radius:14px;
   --shadow:0 8px 28px rgba(0,0,0,.35);
+  --glow-a:rgba(240,168,56,.13);
   --font-display:"Marcellus","Tiro Devanagari Hindi",serif;
   --font-body:"Mukta",system-ui,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f6f1e3;
+  --surface:#ffffff;
+  --surface2:#f4eedd;
+  --surface3:#ece1c6;
+  --line:#d6caa8;
+  --line-soft:#e6dcc2;
+  --text:#2b2145;
+  --dim:#6b5f8a;
+  --dim2:#948aae;
+  --gold:#b57712;
+  --gold-2:#8f5c08;
+  --gold-dark:#f6e6c4;
+  --teal:#0e8a76;
+  --teal-dim:rgba(14,138,118,.1);
+  --red:#c04747;
+  --shadow:0 8px 24px rgba(70,50,15,.12);
+  --glow-a:rgba(181,119,18,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
   background:
-    radial-gradient(1000px 500px at 50% -120px, rgba(240,168,56,.13), transparent 65%),
-    radial-gradient(700px 500px at 100% 20%, rgba(56,191,167,.05), transparent 60%),
+    radial-gradient(1000px 500px at 50% -120px, var(--glow-a), transparent 65%),
     var(--bg);
   color:var(--text);
   font-family:var(--font-body);
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
+  transition:background .3s, color .3s;
 }
 a{color:inherit}
 button{font-family:var(--font-body)}
@@ -54,25 +75,42 @@ input,select,textarea{
   border:1px solid var(--line);border-radius:10px;outline:none;
   transition:border-color .15s, box-shadow .15s;
 }
-input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,168,56,.12)}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--glow-a)}
 input::placeholder,textarea::placeholder{color:var(--dim2)}
 label{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600;margin-bottom:7px}
 
-/* ---------- keys strip ---------- */
 .keys{display:flex;height:8px}
 .keys div{flex:1}
 .keys .w{background:#efe8d3}.keys .b{background:#070510}
+
+/* ---------- topbar ---------- */
+.topbar{
+  position:fixed;top:16px;right:16px;z-index:40;display:flex;gap:8px;
+}
+.iconbtn{
+  width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:17px;
+  border:1px solid var(--line);background:var(--surface);color:var(--text);
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);
+  transition:transform .12s, border-color .12s;
+}
+.iconbtn:hover{transform:translateY(-1px);border-color:var(--gold)}
+.iconbtn.lang{font-size:13px;font-weight:700;letter-spacing:.02em}
 
 /* ---------- header ---------- */
 .wrap{max-width:900px;margin:0 auto;padding:0 18px 110px}
 header{text-align:center;padding:44px 0 10px;position:relative}
 header::before{
   content:"";position:absolute;top:-30px;left:50%;transform:translateX(-50%);
-  width:min(560px,90vw);height:230px;pointer-events:none;
-  background:radial-gradient(closest-side, rgba(240,168,56,.16), transparent 75%);
+  width:min(560px,90vw);height:240px;pointer-events:none;
+  background:radial-gradient(closest-side, var(--glow-a), transparent 75%);
   animation:breathe 5s ease-in-out infinite;
 }
 @keyframes breathe{0%,100%{opacity:.7}50%{opacity:1}}
+.banner{
+  width:min(280px,70vw);border-radius:16px;margin:0 auto 18px;display:block;
+  border:1px solid var(--line);box-shadow:var(--shadow);position:relative;
+}
+.ornament{width:74px;height:74px;margin:0 auto 6px;display:block;position:relative;filter:drop-shadow(0 0 14px var(--glow-a))}
 .mantra{font-family:var(--font-display);color:var(--gold);letter-spacing:.45em;font-size:15px;text-indent:.45em;position:relative}
 h1{
   font-family:var(--font-display);font-weight:400;font-size:clamp(36px,6.5vw,54px);
@@ -80,13 +118,11 @@ h1{
   background:linear-gradient(180deg,#fdf6e3 15%,var(--gold-2) 85%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
+[data-theme="light"] h1{background:linear-gradient(180deg,#6a4404,#b57712);-webkit-background-clip:text;background-clip:text}
 .tagline{color:var(--dim);font-size:15px;max-width:520px;margin:6px auto 0;line-height:1.65;font-weight:300;position:relative}
 .diya{width:190px;height:1px;margin:24px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);position:relative}
-.diya::after{content:"❉";position:absolute;top:-12px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:15px;text-shadow:0 0 14px rgba(240,168,56,.8)}
-.diya::before,
-.diya .side{content:""}
+.diya::after{content:"❉";position:absolute;top:-12px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:15px;text-shadow:0 0 14px var(--glow-a)}
 
-/* ---------- identity bar ---------- */
 .idbar{display:flex;justify-content:center;align-items:center;gap:10px;margin:20px 0 4px;font-size:13px;color:var(--dim);flex-wrap:wrap}
 .idbar b{color:var(--teal);font-weight:600}
 .linkbtn{background:none;border:none;color:var(--gold);cursor:pointer;font-size:13px;text-decoration:underline;text-underline-offset:3px}
@@ -94,27 +130,44 @@ h1{
 /* ---------- tabs ---------- */
 .tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0 26px;position:sticky;top:10px;z-index:20}
 .tab{
-  padding:10px 22px;border-radius:999px;font-size:14.5px;font-weight:600;cursor:pointer;
-  border:1px solid var(--line);background:rgba(19,16,36,.85);backdrop-filter:blur(10px);color:var(--dim);
-  transition:all .18s;
+  padding:10px 20px;border-radius:999px;font-size:14.5px;font-weight:600;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);opacity:.96;backdrop-filter:blur(10px);color:var(--dim);
+  transition:all .18s;box-shadow:var(--shadow);
 }
 .tab:hover{color:var(--text);border-color:var(--dim2)}
 .tab.active{
   color:var(--gold-2);border-color:var(--gold);
-  background:linear-gradient(180deg,var(--gold-dark),rgba(58,44,18,.5));
-  box-shadow:0 0 22px rgba(240,168,56,.22);
+  background:linear-gradient(180deg,var(--gold-dark),var(--surface));
+  box-shadow:0 0 22px var(--glow-a);
 }
+[data-theme="light"] .tab.active{color:var(--gold-2)}
+
+/* ---------- trending ---------- */
+.trending{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:-6px 0 20px;font-size:13px;color:var(--dim2)}
+.tchip{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;cursor:pointer;
+  font-size:13px;font-weight:600;color:var(--teal);border:1px solid var(--line);background:var(--surface);
+  transition:border-color .15s, transform .12s;
+}
+.tchip:hover{border-color:var(--teal);transform:translateY(-1px)}
+.tchip b{color:var(--gold-2);font-weight:700}
 
 /* ---------- toolbar ---------- */
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .toolbar input{flex:2;min-width:180px}
 .toolbar select{flex:1;min-width:140px}
+.favfilter{
+  display:inline-flex;align-items:center;gap:7px;margin-bottom:16px;padding:8px 16px;border-radius:999px;
+  cursor:pointer;font-size:13.5px;font-weight:600;border:1px solid var(--line);
+  background:var(--surface);color:var(--dim);transition:all .15s;
+}
+.favfilter.on{border-color:var(--gold);color:var(--gold-2);background:linear-gradient(180deg,var(--gold-dark),var(--surface))}
 
 /* ---------- stats ---------- */
 .stats{display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
 .stat{
   background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;
-  padding:10px 22px;text-align:center;min-width:110px;
+  padding:10px 22px;text-align:center;min-width:110px;box-shadow:var(--shadow);
 }
 .stat b{display:block;font-family:var(--font-display);font-size:24px;color:var(--gold-2);font-weight:400}
 .stat span{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim2)}
@@ -122,7 +175,7 @@ h1{
 /* ---------- cards ---------- */
 .list{display:flex;flex-direction:column;gap:13px}
 .card{
-  background:linear-gradient(155deg,var(--surface),#171232);
+  background:var(--surface);
   border:1px solid var(--line-soft);border-left:3px solid var(--gold);
   border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
   transition:transform .18s, border-color .18s, box-shadow .18s;
@@ -130,18 +183,25 @@ h1{
 }
 .card::after{
   content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .2s;
-  background:radial-gradient(420px 140px at 0% 0%, rgba(240,168,56,.09), transparent 70%);
+  background:radial-gradient(420px 140px at 0% 0%, var(--glow-a), transparent 70%);
 }
-.card:hover{transform:translateY(-3px);border-color:var(--line);box-shadow:0 12px 34px rgba(0,0,0,.45), 0 0 0 1px rgba(240,168,56,.12)}
+.card:hover{transform:translateY(-3px);border-color:var(--line);box-shadow:0 12px 34px rgba(0,0,0,.25), 0 0 0 1px var(--glow-a)}
 .card:hover::after{opacity:1}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .card-top{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
-.card h3{font-family:var(--font-display);font-weight:400;font-size:20px;margin-bottom:9px;line-height:1.3}
+.card h3{font-family:var(--font-display);font-weight:400;font-size:20px;margin-bottom:9px;line-height:1.3;display:flex;align-items:baseline;gap:8px}
 .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .meta .src{font-size:12.5px;color:var(--dim)}
 .notes{font-size:13.5px;color:var(--dim);margin-top:10px;font-style:italic;font-weight:300}
 .by{font-size:11px;color:var(--dim2);margin-top:10px}
 .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.star{
+  background:none;border:none;cursor:pointer;font-size:19px;line-height:1;padding:2px;
+  filter:grayscale(1);opacity:.45;transition:all .15s;flex-shrink:0;
+}
+.star:hover{opacity:.8;transform:scale(1.15)}
+.star.on{filter:none;opacity:1;text-shadow:0 0 12px var(--glow-a)}
 
 /* ---------- chips ---------- */
 .chip-scale{
@@ -156,7 +216,7 @@ h1{
 .chip-singer{
   display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:999px;
   font-size:11.5px;font-weight:600;color:var(--teal);white-space:nowrap;
-  border:1px solid rgba(56,191,167,.45);background:var(--teal-dim);
+  border:1px solid var(--teal);background:var(--teal-dim);
 }
 
 /* ---------- buttons ---------- */
@@ -166,9 +226,10 @@ h1{
   border:none;text-decoration:none;white-space:nowrap;transition:transform .12s, box-shadow .12s;
 }
 .btn:active{transform:scale(.97)}
-.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#231604;box-shadow:0 3px 14px rgba(240,168,56,.35)}
-.btn-gold:hover{box-shadow:0 5px 20px rgba(240,168,56,.5)}
-.btn-teal{background:var(--teal-dim);border:1px solid rgba(56,191,167,.5);color:var(--teal)}
+.btn-gold{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:#231604;box-shadow:0 3px 14px var(--glow-a)}
+[data-theme="light"] .btn-gold{background:linear-gradient(180deg,#d99a24,#b57712);color:#fff}
+.btn-gold:hover{box-shadow:0 5px 20px var(--glow-a)}
+.btn-teal{background:var(--teal-dim);border:1px solid var(--teal);color:var(--teal)}
 .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--dim);padding:9px 12px}
 .btn-ghost:hover{color:var(--text)}
 .btn-ghost.danger{color:var(--red)}
@@ -192,6 +253,7 @@ a.thumb-link::after{
 a.thumb-link:hover::after{opacity:1}
 a.thumb-link:hover .thumb{transform:scale(1.03)}
 @media (max-width:560px){.thumb{width:100%}a.thumb-link{width:100%}}
+
 .setlist{margin-top:14px;border-top:1px solid var(--line-soft);padding-top:12px;display:flex;flex-direction:column;gap:7px}
 .setrow{
   display:flex;justify-content:space-between;align-items:center;gap:12px;
@@ -206,17 +268,16 @@ a.thumb-link:hover .thumb{transform:scale(1.03)}
 
 /* ---------- forms ---------- */
 .panel{
-  background:linear-gradient(155deg,var(--surface),#171232);
+  background:var(--surface);
   border:1px solid var(--line-soft);border-radius:var(--radius);
   padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:var(--shadow);
 }
 .row{display:flex;gap:14px;flex-wrap:wrap}
 .row>div{flex:1;min-width:180px}
 .subpanel{padding:16px;border:1px dashed var(--line);border-radius:12px;display:flex;flex-direction:column;gap:14px}
-.lyrics-box{padding:16px;border:1px solid var(--line-soft);border-radius:12px;background:rgba(56,191,167,.04);display:flex;flex-direction:column;gap:14px}
+.lyrics-box{padding:16px;border:1px solid var(--line-soft);border-radius:12px;background:var(--teal-dim);display:flex;flex-direction:column;gap:14px}
 .lyrics-box .lbl{font-size:13px;font-weight:700;color:var(--teal);letter-spacing:.06em}
 .hint{font-size:12.5px;color:var(--dim2);margin-top:6px;font-weight:300}
-.err{color:var(--red);font-size:13.5px}
 textarea{min-height:120px;resize:vertical;line-height:1.8}
 textarea.mono{font-family:ui-monospace,monospace;font-size:13.5px}
 
@@ -270,7 +331,6 @@ textarea.mono{font-family:ui-monospace,monospace;font-size:13.5px}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.error{border-color:var(--red);color:var(--red)}
 
-/* ---------- setup screen ---------- */
 .setup{max-width:640px;margin:40px auto;line-height:1.8;font-weight:300}
 .setup h2{font-family:var(--font-display);font-weight:400;color:var(--gold-2);margin-bottom:14px}
 .setup ol{padding-left:22px;display:flex;flex-direction:column;gap:10px}
@@ -289,6 +349,7 @@ footer .m{font-family:var(--font-display);color:var(--gold);letter-spacing:.3em;
   .actions{width:100%}
   .actions .btn-gold{flex:1}
   .stats{gap:8px}.stat{min-width:90px;padding:8px 14px}
+  .topbar{top:12px;right:12px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -299,15 +360,21 @@ footer .m{font-family:var(--font-display);color:var(--gold);letter-spacing:.3em;
 
 <div class="keys" aria-hidden="true" id="keystrip"></div>
 
+<div class="topbar">
+  <button class="iconbtn" id="themebtn" onclick="toggleTheme()" title="Light / dark">🌗</button>
+  <button class="iconbtn lang" id="langbtn" onclick="toggleLang()" title="भाषा / Language">अ/A</button>
+</div>
+
 <div class="wrap">
   <header>
+    <div id="banner-slot"></div>
     <div class="mantra">॥ जय श्री श्याम ॥</div>
     <h1>Shyam Bhajan Sangrah</h1>
-    <p class="tagline">A living community library of bhajans from live satsangs — scale, singer, lyrics, and one tap to the exact moment on YouTube.</p>
+    <p class="tagline" data-i18n="tagline"></p>
     <div class="diya"></div>
     <div class="idbar" id="idbar" style="display:none">
-      You are contributing as <b id="whoami"></b>
-      <button class="linkbtn" onclick="setName()">change name</button>
+      <span data-i18n="contribAs"></span> <b id="whoami"></b>
+      <button class="linkbtn" onclick="setName()" data-i18n="changeName"></button>
     </div>
   </header>
 
@@ -315,17 +382,20 @@ footer .m{font-family:var(--font-display);color:var(--gold);letter-spacing:.3em;
 
   <footer>
     <div class="m">॥ हारे का सहारा, खाटू श्याम हमारा ॥</div>
-    Made with 🧡 by the satsang community
+    <span data-i18n="madeBy"></span>
   </footer>
 </div>
 
 <div id="toast"></div>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     FIREBASE CONFIG — paste your own config from the Firebase console
-     (Project settings → Your apps → Web app → SDK setup and config)
+     BANNER IMAGE (optional): paste a direct image link between the
+     quotes below (e.g. a Khatu Shyam Ji image you have rights to use,
+     uploaded to your own GitHub repo). Leave "" for the diya ornament.
      ═══════════════════════════════════════════════════════════════ -->
 <script>
+window.BANNER_URL = "";
+
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyDc1U4bQChgOAey9Yvk5JH2LzAJ-hzWEJs",
   authDomain: "shyam-baba-bhajan-d5ab4.firebaseapp.com",
@@ -337,6 +407,116 @@ window.FIREBASE_CONFIG = {
 </script>
 
 <script type="module">
+/* ================= i18n ================= */
+const I18N = {
+  en: {
+    tagline: "A living community library of bhajans from live satsangs — scale, singer, lyrics, and one tap to the exact moment on YouTube.",
+    contribAs: "You are contributing as", changeName: "change name", anon: "Anonymous bhakt",
+    madeBy: "Made with 🧡 by the satsang community",
+    tabBhajans: "🪕 Bhajans", tabLives: "📺 Lives", tabAdd: "+ Add bhajan", tabEdit: "✎ Edit bhajan", tabBulk: "⚡ Bulk add",
+    stBhajans: "Bhajans", stLives: "Lives", stSingers: "Singers",
+    trending: "Most sung:", search: "🔍  Search bhajan, singer, live…",
+    allSingers: "All singers", allScales: "All scales", myFavs: "⭐ My favourites",
+    play: "▶ Play on YouTube", lyrics: "📜 Lyrics", openLive: "Open live", close: "✕ Close",
+    emptyAll: "The sangrah is empty — be the first to add a bhajan! Tap “+ Add bhajan” or “⚡ Bulk add”.",
+    emptyFilter: "Nothing matches your search or filters.",
+    emptyFavs: "No favourites yet — tap the ⭐ on any bhajan you perform often.",
+    emptyLives: "No lives yet. Add a bhajan and choose “+ New live” with the YouTube link.",
+    bhajanName: "Bhajan name *", singer: "Singer", scale: "Scale (singing pitch)", notSet: "Not set",
+    whichLive: "Which live?", noLive: "No live linked", newLive: "+ New live (paste YouTube link)",
+    ytLink: "YouTube link of the live", liveTitle: "Live title", date: "Date",
+    timestamp: "Timestamp in the live", tsHint: "One tap opens YouTube exactly at this moment.",
+    lyricsHead: "📜 LYRICS — link, text, or both", lyricsLink: "Lyrics link",
+    lyricsLinkPh: "https://… (any lyrics site, or a Google Drive PDF link)",
+    lyricsPaste: "Or paste lyrics here", lyricsPastePh: "Paste the full lyrics…",
+    notes: "Notes (optional)", notesPh: "e.g. slow start, taal keherwa, second antara high…",
+    save: "Save changes", add: "Add bhajan", cancel: "Cancel",
+    bulkIntro: "<b style='color:var(--gold-2)'>⚡ Add a whole live in one go.</b> Copy the timestamp list from the live's description or pinned comment and paste it below. Lines like <code style='color:var(--text)'>14:20 Bhajan name</code> or <code style='color:var(--text)'>Bhajan name | 1:05:10</code> all work.",
+    bulkSinger: "Singer (applied to all)", bulkScale: "Scale (applied to all, optional)", scaleLater: "Not set — fill per bhajan later",
+    pasteList: "Paste the bhajan list", parse: "🔍 Parse list",
+    previewHead: "Preview —", found: "bhajans found", previewHint: "check names & times, edit if needed",
+    addAll: "⚡ Add all", addAllSuffix: "bhajans",
+    noLyrics: "No lyrics added yet — tap ✎ on the bhajan to add.", openLyricsLink: "🔗 Open lyrics link",
+    addedBy: "added by", at: "at", noted: "noted",
+    namePrompt: "Your name (shown with bhajans you add):",
+    tNameReq: "Bhajan name is required.", tBadYt: "Paste a valid YouTube link for the live.",
+    tUpdated: "Bhajan updated ✓", tAdded: "Bhajan added for everyone 🎉",
+    tSaveFail: "Could not save. Check your internet.", tDeleted: "Deleted.", tDelFail: "Could not delete.",
+    tLiveDeleted: "Live deleted.", tParseFail: "No bhajan lines found — check the pasted text.",
+    tParseFirst: "Parse the list first.", tBulkAdded: "bhajans added for everyone 🎉",
+    tLoadFail: "Could not load bhajans — check Firestore rules.",
+    confirmDel: "Delete this bhajan for everyone?", confirmDelLive: "Delete this live and all its bhajans, for everyone?",
+    loading: "🪕 Loading the sangrah…",
+  },
+  hi: {
+    tagline: "लाइव सत्संगों के भजनों का सामुदायिक संग्रह — स्केल, गायक, लिरिक्स, और एक टैप में YouTube पर उसी पल पर।",
+    contribAs: "आप योगदान दे रहे हैं:", changeName: "नाम बदलें", anon: "अनाम भक्त",
+    madeBy: "सत्संग परिवार द्वारा 🧡 से बनाया गया",
+    tabBhajans: "🪕 भजन", tabLives: "📺 लाइव", tabAdd: "+ भजन जोड़ें", tabEdit: "✎ भजन बदलें", tabBulk: "⚡ एक साथ जोड़ें",
+    stBhajans: "भजन", stLives: "लाइव", stSingers: "गायक",
+    trending: "सबसे ज़्यादा गाए:", search: "🔍  भजन, गायक, लाइव खोजें…",
+    allSingers: "सभी गायक", allScales: "सभी स्केल", myFavs: "⭐ मेरे पसंदीदा",
+    play: "▶ YouTube पर सुनें", lyrics: "📜 लिरिक्स", openLive: "लाइव खोलें", close: "✕ बंद करें",
+    emptyAll: "संग्रह खाली है — पहला भजन आप जोड़ें! “+ भजन जोड़ें” या “⚡ एक साथ जोड़ें” दबाएँ।",
+    emptyFilter: "आपकी खोज से कुछ नहीं मिला।",
+    emptyFavs: "अभी कोई पसंदीदा नहीं — जो भजन आप अक्सर गाते हैं उन पर ⭐ दबाएँ।",
+    emptyLives: "अभी कोई लाइव नहीं। भजन जोड़ते समय “+ नया लाइव” चुनें और YouTube लिंक डालें।",
+    bhajanName: "भजन का नाम *", singer: "गायक", scale: "स्केल (गाने की पिच)", notSet: "सेट नहीं",
+    whichLive: "कौन-सा लाइव?", noLive: "कोई लाइव नहीं जुड़ा", newLive: "+ नया लाइव (YouTube लिंक डालें)",
+    ytLink: "लाइव का YouTube लिंक", liveTitle: "लाइव का नाम", date: "तारीख़",
+    timestamp: "लाइव में समय (टाइमस्टैम्प)", tsHint: "एक टैप पर YouTube ठीक इसी पल पर खुलेगा।",
+    lyricsHead: "📜 लिरिक्स — लिंक, टेक्स्ट, या दोनों", lyricsLink: "लिरिक्स लिंक",
+    lyricsLinkPh: "https://… (कोई भी लिरिक्स साइट, या Google Drive PDF लिंक)",
+    lyricsPaste: "या यहाँ लिरिक्स पेस्ट करें", lyricsPastePh: "पूरे लिरिक्स पेस्ट करें…",
+    notes: "नोट्स (वैकल्पिक)", notesPh: "जैसे: धीमी शुरुआत, ताल कहरवा, दूसरा अंतरा ऊँचा…",
+    save: "बदलाव सहेजें", add: "भजन जोड़ें", cancel: "रद्द करें",
+    bulkIntro: "<b style='color:var(--gold-2)'>⚡ पूरा लाइव एक बार में जोड़ें।</b> लाइव के डिस्क्रिप्शन या पिन किए कमेंट से टाइमस्टैम्प लिस्ट कॉपी करके नीचे पेस्ट करें। <code style='color:var(--text)'>14:20 भजन का नाम</code> जैसी लाइनें चलेंगी।",
+    bulkSinger: "गायक (सभी पर लागू)", bulkScale: "स्केल (सभी पर लागू, वैकल्पिक)", scaleLater: "सेट नहीं — बाद में भरें",
+    pasteList: "भजन लिस्ट पेस्ट करें", parse: "🔍 लिस्ट पढ़ें",
+    previewHead: "झलक —", found: "भजन मिले", previewHint: "नाम और समय जाँच लें, ज़रूरत हो तो बदलें",
+    addAll: "⚡ सभी", addAllSuffix: "भजन जोड़ें",
+    noLyrics: "अभी लिरिक्स नहीं जोड़े गए — भजन पर ✎ दबाकर जोड़ें।", openLyricsLink: "🔗 लिरिक्स लिंक खोलें",
+    addedBy: "जोड़ा:", at: "समय", noted: "दर्ज",
+    namePrompt: "आपका नाम (आपके जोड़े भजनों के साथ दिखेगा):",
+    tNameReq: "भजन का नाम ज़रूरी है।", tBadYt: "लाइव का सही YouTube लिंक डालें।",
+    tUpdated: "भजन अपडेट हुआ ✓", tAdded: "भजन सबके लिए जुड़ गया 🎉",
+    tSaveFail: "सहेज नहीं पाए। इंटरनेट जाँचें।", tDeleted: "हटा दिया।", tDelFail: "हटा नहीं पाए।",
+    tLiveDeleted: "लाइव हटा दिया।", tParseFail: "कोई भजन लाइन नहीं मिली — पेस्ट किया टेक्स्ट जाँचें।",
+    tParseFirst: "पहले लिस्ट पढ़ें।", tBulkAdded: "भजन सबके लिए जुड़ गए 🎉",
+    tLoadFail: "भजन लोड नहीं हुए — Firestore rules जाँचें।",
+    confirmDel: "यह भजन सबके लिए हटाएँ?", confirmDelLive: "यह लाइव और इसके सभी भजन सबके लिए हटाएँ?",
+    loading: "🪕 संग्रह लोड हो रहा है…",
+  }
+};
+let lang = localStorage.getItem("bhajan-lang") || "hi";
+const t = (k) => (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k;
+
+/* ================= theme ================= */
+let theme = localStorage.getItem("bhajan-theme") || "dark";
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  document.querySelector('meta[name="theme-color"]').content = theme==="light" ? "#f6f1e3" : "#0d0a1a";
+}
+window.toggleTheme = ()=>{ theme = theme==="dark" ? "light" : "dark"; localStorage.setItem("bhajan-theme", theme); applyTheme(); };
+applyTheme();
+
+window.toggleLang = ()=>{ lang = lang==="hi" ? "en" : "hi"; localStorage.setItem("bhajan-lang", lang); applyStatics(); render(); };
+function applyStatics(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  $("langbtn").textContent = lang==="hi" ? "EN" : "हिं";
+  renderId();
+}
+
+/* ================= favourites (per device) ================= */
+let favs = new Set(JSON.parse(localStorage.getItem("bhajan-favs") || "[]"));
+let favOnly = false;
+window.toggleFav = (id)=>{
+  favs.has(id) ? favs.delete(id) : favs.add(id);
+  localStorage.setItem("bhajan-favs", JSON.stringify([...favs]));
+  renderListOnly();
+};
+window.toggleFavOnly = ()=>{ favOnly = !favOnly; render(); };
+
 /* ================= data & helpers ================= */
 const SCALES = [
   ["C","Safed 1",0],["C#","Kali 1",1],["D","Safed 2",0],["D#","Kali 2",1],
@@ -346,8 +526,21 @@ const SCALES = [
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-// harmonium strip
 $("keystrip").innerHTML = Array.from({length:36},(_,i)=>`<div class="${[1,3,6,8,10].includes(i%12)?"b":"w"}"></div>`).join("");
+
+/* banner: custom image or default diya ornament */
+$("banner-slot").innerHTML = window.BANNER_URL
+  ? `<img class="banner" src="${esc(window.BANNER_URL)}" alt="">`
+  : `<svg class="ornament" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="g1" cx="50%" cy="40%"><stop offset="0%" stop-color="#ffc768"/><stop offset="100%" stop-color="#f0a838"/></radialGradient>
+      </defs>
+      <path d="M50 14 C58 30 62 36 62 44 C62 53 56 58 50 58 C44 58 38 53 38 44 C38 36 42 30 50 14 Z" fill="url(#g1)"/>
+      <path d="M50 24 C54 33 56 37 56 43 C56 49 53 52 50 52 C47 52 44 49 44 43 C44 37 46 33 50 24 Z" fill="#fdf6e3"/>
+      <path d="M22 62 Q50 54 78 62 Q74 80 50 80 Q26 80 22 62 Z" fill="url(#g1)"/>
+      <ellipse cx="50" cy="62" rx="28" ry="6" fill="#ffc768"/>
+      <path d="M14 88 Q50 80 86 88" stroke="#f0a838" stroke-width="1.6" fill="none" opacity=".7"/>
+    </svg>`;
 
 function getVideoId(url){
   if(!url) return null;
@@ -385,7 +578,7 @@ function parseBulk(text){
   }).filter(Boolean);
 }
 
-function scaleChip(w,small){
+function scaleChip(w){
   const info = SCALES.find(s=>s[0]===w);
   if(!info) return "";
   return `<span class="chip-scale ${info[2]?"black":"white"}" title="${info[1]}"><span class="key"></span>${info[0]} · ${info[1]}</span>`;
@@ -393,26 +586,22 @@ function scaleChip(w,small){
 const singerChip = (n)=> n ? `<span class="chip-singer">🎤 ${esc(n)}</span>` : "";
 
 function toast(msg, isErr){
-  const t = $("toast");
-  t.textContent = msg;
-  t.className = "show" + (isErr ? " error" : "");
-  clearTimeout(t._h);
-  t._h = setTimeout(()=>t.className="", 3200);
+  const el = $("toast");
+  el.textContent = msg;
+  el.className = "show" + (isErr ? " error" : "");
+  clearTimeout(el._h);
+  el._h = setTimeout(()=>el.className="", 3200);
 }
 
 /* ================= contributor name ================= */
 function myName(){ return localStorage.getItem("bhajan-name") || ""; }
 window.setName = function(){
-  const n = prompt("Your name (shown with bhajans you add):", myName());
-  if(n !== null){
-    localStorage.setItem("bhajan-name", n.trim());
-    renderId();
-  }
+  const n = prompt(t("namePrompt"), myName());
+  if(n !== null){ localStorage.setItem("bhajan-name", n.trim()); renderId(); }
 };
 function renderId(){
-  const n = myName();
   $("idbar").style.display = "flex";
-  $("whoami").textContent = n || "Anonymous bhakt";
+  $("whoami").textContent = myName() || t("anon");
 }
 
 /* ================= firebase ================= */
@@ -423,14 +612,11 @@ if(!configured){
   $("app").innerHTML = `
   <div class="setup panel">
     <h2>⚙️ One-time setup (≈10 minutes)</h2>
-    <p>This app needs its own free database so everyone shares the same bhajan library. Do this once:</p>
     <ol>
-      <li>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noreferrer">console.firebase.google.com</a> → <b>Add project</b> (any name, e.g. <code>shyam-bhajan</code>). Google Analytics: off.</li>
-      <li>In the project: <b>Build → Firestore Database → Create database</b> → Start in <b>test mode</b> → choose a location → Enable.</li>
-      <li>Go to <b>Rules</b> tab and set:<br><code>allow read, write: if true;</code> inside <code>match /{document=**}</code>, then Publish. <i>(Open community — anyone can add.)</i></li>
-      <li>Click the <b>⚙️ Project settings → Your apps → Web (&lt;/&gt;)</b> → register app → copy the <code>firebaseConfig</code> values.</li>
-      <li>Open this <code>index.html</code> file, find <code>FIREBASE_CONFIG</code> near the bottom, and paste your values.</li>
-      <li>Upload to GitHub Pages / Netlify — done. Share the link with everyone! 🎉</li>
+      <li><a href="https://console.firebase.google.com" target="_blank" rel="noreferrer">console.firebase.google.com</a> → Add project (Analytics off).</li>
+      <li>Build → Firestore Database → Create (test mode) → Rules tab → <code>allow read, write: if true;</code> → Publish.</li>
+      <li>⚙️ Project settings → Your apps → Web (&lt;/&gt;) → copy <code>firebaseConfig</code>.</li>
+      <li>Paste values into <code>FIREBASE_CONFIG</code> near the bottom of this file. Upload to GitHub Pages. Done 🎉</li>
     </ol>
   </div>`;
   throw new Error("Firebase not configured");
@@ -438,47 +624,60 @@ if(!configured){
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, doc, updateDoc, deleteDoc,
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, addDoc, doc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp(cfg);
-const db = getFirestore(app);
+let db;
+try{
+  db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+}catch(e){
+  const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+  db = getFirestore(app);
+}
 const bhajansCol = collection(db, "bhajans");
 const sessionsCol = collection(db, "sessions");
+
+/* register service worker for offline + installable app */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
 
 /* ================= state ================= */
 let bhajans = [], sessions = [], ready = {b:false, s:false};
 let tab = "bhajans", search = "", scaleF = "", singerF = "", editingId = null;
 let bulkRows = [];
 
-$("app").innerHTML = `<div class="loading pulse">🪕 Loading the sangrah…</div>`;
-renderId();
+$("app").innerHTML = `<div class="loading pulse">${t("loading")}</div>`;
+applyStatics();
 
 onSnapshot(query(bhajansCol, orderBy("name")), snap => {
   bhajans = snap.docs.map(d => ({id:d.id, ...d.data()}));
   ready.b = true; render();
-}, err => { console.error(err); toast("Could not load bhajans — check Firestore rules.", true); });
+}, err => { console.error(err); toast(t("tLoadFail"), true); });
 
 onSnapshot(query(sessionsCol, orderBy("date","desc")), snap => {
   sessions = snap.docs.map(d => ({id:d.id, ...d.data()}));
   ready.s = true; render();
 }, err => console.error(err));
 
-/* ================= actions (global for onclick) ================= */
-window.go = (t)=>{ tab=t; if(t!=="add") editingId=null; render(); };
+/* ================= actions ================= */
+window.go = (tb)=>{ tab=tb; if(tb!=="add") editingId=null; render(); };
 window.onSearch = (v)=>{ search=v; renderListOnly(); };
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
+window.pickSinger = (s)=>{ singerF=s; render(); };
 
 window.saveBhajan = async ()=>{
   const name = $("f-name").value.trim();
-  if(!name) return toast("Bhajan name is required.", true);
+  if(!name) return toast(t("tNameReq"), true);
   let sessionId = $("f-session").value;
   try{
     if(sessionId === "__new__"){
       const vid = getVideoId($("f-url").value);
-      if(!vid) return toast("Paste a valid YouTube link for the live.", true);
+      if(!vid) return toast(t("tBadYt"), true);
       const s = await addDoc(sessionsCol, {
         title: $("f-stitle").value.trim() || "Live session",
         videoId: vid, date: $("f-sdate").value || "", createdAt: serverTimestamp()
@@ -498,48 +697,48 @@ window.saveBhajan = async ()=>{
     };
     if(editingId){
       await updateDoc(doc(db,"bhajans",editingId), rec);
-      toast("Bhajan updated ✓");
+      toast(t("tUpdated"));
     }else{
       rec.createdAt = serverTimestamp();
       await addDoc(bhajansCol, rec);
-      toast("Bhajan added for everyone 🎉");
+      toast(t("tAdded"));
     }
     editingId = null; go("bhajans");
-  }catch(e){ console.error(e); toast("Could not save. Check your internet.", true); }
+  }catch(e){ console.error(e); toast(t("tSaveFail"), true); }
 };
 
 window.editBhajan = (id)=>{ editingId=id; go("add"); };
 window.delBhajan = async (id)=>{
-  if(!confirm("Delete this bhajan for everyone?")) return;
-  try{ await deleteDoc(doc(db,"bhajans",id)); toast("Deleted."); }
-  catch{ toast("Could not delete.", true); }
+  if(!confirm(t("confirmDel"))) return;
+  try{ await deleteDoc(doc(db,"bhajans",id)); toast(t("tDeleted")); }
+  catch{ toast(t("tDelFail"), true); }
 };
 window.delSession = async (id)=>{
-  if(!confirm("Delete this live and all its bhajans, for everyone?")) return;
+  if(!confirm(t("confirmDelLive"))) return;
   try{
     const batch = writeBatch(db);
     bhajans.filter(b=>b.sessionId===id).forEach(b=>batch.delete(doc(db,"bhajans",b.id)));
     batch.delete(doc(db,"sessions",id));
     await batch.commit();
-    toast("Live deleted.");
-  }catch{ toast("Could not delete.", true); }
+    toast(t("tLiveDeleted"));
+  }catch{ toast(t("tDelFail"), true); }
 };
 
 window.doParse = ()=>{
   bulkRows = parseBulk($("bk-text").value);
-  if(bulkRows.length===0) toast("No bhajan lines found — check the pasted text.", true);
+  if(bulkRows.length===0) toast(t("tParseFail"), true);
   render();
 };
 window.bulkEdit = (key, field, val)=>{ const r=bulkRows.find(x=>x.key===key); if(r) r[field]=val; };
 window.bulkRemove = (key)=>{ bulkRows = bulkRows.filter(x=>x.key!==key); render(); };
 
 window.importBulk = async ()=>{
-  if(bulkRows.length===0) return toast("Parse the list first.", true);
+  if(bulkRows.length===0) return toast(t("tParseFirst"), true);
   let sessionId = $("bk-session").value;
   try{
     if(sessionId === "__new__"){
       const vid = getVideoId($("bk-url").value);
-      if(!vid) return toast("Paste a valid YouTube link for the live.", true);
+      if(!vid) return toast(t("tBadYt"), true);
       const s = await addDoc(sessionsCol, {
         title: $("bk-stitle").value.trim() || "Live session",
         videoId: vid, date: $("bk-sdate").value || "", createdAt: serverTimestamp()
@@ -561,9 +760,9 @@ window.importBulk = async ()=>{
     }
     await batch.commit();
     bulkRows = [];
-    toast(`${count} bhajans added for everyone 🎉`);
+    toast(`${count} ${t("tBulkAdded")}`);
     go("bhajans");
-  }catch(e){ console.error(e); toast("Could not import. Check your internet.", true); }
+  }catch(e){ console.error(e); toast(t("tSaveFail"), true); }
 };
 
 window.openLyrics = (id)=>{
@@ -578,12 +777,12 @@ window.openLyrics = (id)=>{
           <h3>${esc(b.name)}</h3>
           <div class="meta" style="margin-top:8px">${singerChip(b.singer)}${b.scale?scaleChip(b.scale):""}</div>
         </div>
-        <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕ Close</button>
+        <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">${t("close")}</button>
       </div>
       <div class="modal-body">
-        ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 Open lyrics link</a>` : ""}
+        ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">${t("openLyricsLink")}</a>` : ""}
         ${b.lyricsText ? `<div class="lyrics-text">${esc(b.lyricsText)}</div>` : ""}
-        ${!b.lyricsLink && !b.lyricsText ? `<div class="empty">No lyrics added yet — tap ✎ on the bhajan to add.</div>` : ""}
+        ${!b.lyricsLink && !b.lyricsText ? `<div class="empty">${t("noLyrics")}</div>` : ""}
       </div>
     </div>`;
   document.body.appendChild(div);
@@ -594,10 +793,17 @@ const sessById = ()=> Object.fromEntries(sessions.map(s=>[s.id,s]));
 const allSingers = ()=> [...new Set(bhajans.map(b=>(b.singer||"").trim()).filter(Boolean))].sort();
 const hasLyrics = (b)=> b.lyricsLink || b.lyricsText;
 
+function topSingers(n=3){
+  const counts = {};
+  bhajans.forEach(b=>{ const s=(b.singer||"").trim(); if(s) counts[s]=(counts[s]||0)+1; });
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
+}
+
 function filtered(){
   const q = search.trim().toLowerCase();
   const S = sessById();
   return bhajans.filter(b=>{
+    if(favOnly && !favs.has(b.id)) return false;
     if(scaleF && b.scale!==scaleF) return false;
     if(singerF && (b.singer||"").trim()!==singerF) return false;
     if(!q) return true;
@@ -611,22 +817,23 @@ function filtered(){
 
 function bhajanCard(b){
   const sess = sessById()[b.sessionId];
+  const fav = favs.has(b.id);
   return `
   <div class="card">
     <div class="card-top">
       <div style="min-width:0;flex:1">
-        <h3>${esc(b.name)}</h3>
+        <h3><button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="⭐">⭐</button><span>${esc(b.name)}</span></h3>
         <div class="meta">
           ${singerChip(b.singer)}
           ${b.scale ? scaleChip(b.scale) : ""}
-          ${sess ? `<span class="src">📺 ${esc(sess.title)}${sess.date?` · ${esc(sess.date)}`:""}${b.seconds?` · at ${fmtTime(b.seconds)}`:""}</span>` : ""}
+          ${sess ? `<span class="src">📺 ${esc(sess.title)}${sess.date?` · ${esc(sess.date)}`:""}${b.seconds?` · ${t("at")} ${fmtTime(b.seconds)}`:""}</span>` : ""}
         </div>
         ${b.notes ? `<div class="notes">${esc(b.notes)}</div>` : ""}
-        ${b.addedBy ? `<div class="by">added by ${esc(b.addedBy)}</div>` : ""}
+        ${b.addedBy ? `<div class="by">${t("addedBy")} ${esc(b.addedBy)}</div>` : ""}
       </div>
       <div class="actions">
-        ${sess ? `<a class="btn btn-gold" href="${yt(sess.videoId,b.seconds)}" target="_blank" rel="noreferrer">▶ Play on YouTube</a>` : ""}
-        ${hasLyrics(b) ? `<button class="btn btn-teal" onclick="openLyrics('${b.id}')">📜 Lyrics</button>` : ""}
+        ${sess ? `<a class="btn btn-gold" href="${yt(sess.videoId,b.seconds)}" target="_blank" rel="noreferrer">${t("play")}</a>` : ""}
+        ${hasLyrics(b) ? `<button class="btn btn-teal" onclick="openLyrics('${b.id}')">${t("lyrics")}</button>` : ""}
         <button class="btn btn-ghost" title="Edit" onclick="editBhajan('${b.id}')">✎</button>
         <button class="btn btn-ghost danger" title="Delete" onclick="delBhajan('${b.id}')">✕</button>
       </div>
@@ -637,54 +844,55 @@ function bhajanCard(b){
 function sessionSelect(idPrefix, urlId, titleId, dateId){
   return `
   <div>
-    <label>Which live?</label>
+    <label>${t("whichLive")}</label>
     <select id="${idPrefix}-session" onchange="document.getElementById('${idPrefix}-newlive').style.display=this.value==='__new__'?'flex':'none'">
-      <option value="">No live linked</option>
+      <option value="">${t("noLive")}</option>
       ${sessions.map(s=>`<option value="${s.id}">${esc(s.title)}${s.date?` (${esc(s.date)})`:""}</option>`).join("")}
-      <option value="__new__">+ New live (paste YouTube link)</option>
+      <option value="__new__">${t("newLive")}</option>
     </select>
   </div>
   <div class="subpanel" id="${idPrefix}-newlive" style="display:none">
-    <div><label>YouTube link of the live</label><input id="${urlId}" placeholder="https://www.youtube.com/watch?v=…"></div>
+    <div><label>${t("ytLink")}</label><input id="${urlId}" placeholder="https://www.youtube.com/watch?v=…"></div>
     <div class="row">
-      <div style="flex:2"><label>Live title</label><input id="${titleId}" placeholder="e.g. Sunday evening live"></div>
-      <div><label>Date</label><input id="${dateId}" type="date"></div>
+      <div style="flex:2"><label>${t("liveTitle")}</label><input id="${titleId}" placeholder="Sunday evening live"></div>
+      <div><label>${t("date")}</label><input id="${dateId}" type="date"></div>
     </div>
   </div>`;
 }
-const scaleOptions = (sel)=> `<option value="">Not set</option>` + SCALES.map(s=>`<option value="${s[0]}" ${sel===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("");
+const scaleOptions = (sel)=> `<option value="">${t("notSet")}</option>` + SCALES.map(s=>`<option value="${s[0]}" ${sel===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("");
 
 function render(){
   if(!ready.b || !ready.s){ return; }
-  const S = sessById();
 
   let body = "";
 
-  /* tabs */
   body += `<div class="tabs">
-    <button class="tab ${tab==="bhajans"?"active":""}" onclick="go('bhajans')">🪕 Bhajans (${bhajans.length})</button>
-    <button class="tab ${tab==="lives"?"active":""}" onclick="go('lives')">📺 Lives (${sessions.length})</button>
-    <button class="tab ${tab==="add"?"active":""}" onclick="go('add')">${editingId?"✎ Edit bhajan":"+ Add bhajan"}</button>
-    <button class="tab ${tab==="bulk"?"active":""}" onclick="go('bulk')">⚡ Bulk add</button>
+    <button class="tab ${tab==="bhajans"?"active":""}" onclick="go('bhajans')">${t("tabBhajans")} (${bhajans.length})</button>
+    <button class="tab ${tab==="lives"?"active":""}" onclick="go('lives')">${t("tabLives")} (${sessions.length})</button>
+    <button class="tab ${tab==="add"?"active":""}" onclick="go('add')">${editingId?t("tabEdit"):t("tabAdd")}</button>
+    <button class="tab ${tab==="bulk"?"active":""}" onclick="go('bulk')">${t("tabBulk")}</button>
   </div>`;
 
   if(tab==="bhajans"){
+    const tops = topSingers();
     body += `<div class="stats">
-      <div class="stat"><b>${bhajans.length}</b><span>Bhajans</span></div>
-      <div class="stat"><b>${sessions.length}</b><span>Lives</span></div>
-      <div class="stat"><b>${allSingers().length}</b><span>Singers</span></div>
+      <div class="stat"><b>${bhajans.length}</b><span>${t("stBhajans")}</span></div>
+      <div class="stat"><b>${sessions.length}</b><span>${t("stLives")}</span></div>
+      <div class="stat"><b>${allSingers().length}</b><span>${t("stSingers")}</span></div>
     </div>
+    ${tops.length ? `<div class="trending">${t("trending")} ${tops.map(([s,c])=>`<button class="tchip" onclick="pickSinger('${esc(s)}')">🎤 ${esc(s)} <b>${c}</b></button>`).join("")}</div>` : ""}
     <div class="toolbar">
-      <input placeholder="🔍  Search bhajan, singer, live…" value="${esc(search)}" oninput="onSearch(this.value)">
-      <select onchange="onSingerF(this.value)"><option value="">All singers</option>${allSingers().map(s=>`<option ${singerF===s?"selected":""} value="${esc(s)}">${esc(s)}</option>`).join("")}</select>
-      <select onchange="onScaleF(this.value)"><option value="">All scales</option>${SCALES.map(s=>`<option value="${s[0]}" ${scaleF===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("")}</select>
+      <input placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)">
+      <select onchange="onSingerF(this.value)"><option value="">${t("allSingers")}</option>${allSingers().map(s=>`<option ${singerF===s?"selected":""} value="${esc(s)}">${esc(s)}</option>`).join("")}</select>
+      <select onchange="onScaleF(this.value)"><option value="">${t("allScales")}</option>${SCALES.map(s=>`<option value="${s[0]}" ${scaleF===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("")}</select>
     </div>
+    <button class="favfilter ${favOnly?"on":""}" onclick="toggleFavOnly()">${t("myFavs")} (${favs.size})</button>
     <div class="list" id="bhajan-list"></div>`;
   }
 
   if(tab==="lives"){
     body += sessions.length===0
-      ? `<div class="empty"><span class="om">🪔</span>No lives yet. Add a bhajan and choose “+ New live” with the YouTube link.</div>`
+      ? `<div class="empty"><span class="om">🪔</span>${t("emptyLives")}</div>`
       : `<div class="list">` + sessions.map(s=>{
           const inS = bhajans.filter(b=>b.sessionId===s.id).sort((a,b)=>(a.seconds||0)-(b.seconds||0));
           return `<div class="card live-card">
@@ -696,10 +904,10 @@ function render(){
                 <div class="card-top">
                   <div>
                     <h3>${esc(s.title)}</h3>
-                    <div class="meta"><span class="src">${s.date?`${esc(s.date)} · `:""}${inS.length} bhajan${inS.length!==1?"s":""} noted</span></div>
+                    <div class="meta"><span class="src">${s.date?`${esc(s.date)} · `:""}${inS.length} ${t("stBhajans").toLowerCase()} ${t("noted")}</span></div>
                   </div>
                   <div class="actions">
-                    <a class="btn btn-ghost" style="border-color:var(--gold);color:var(--gold-2)" href="${yt(s.videoId,0)}" target="_blank" rel="noreferrer">Open live</a>
+                    <a class="btn btn-ghost" style="border-color:var(--gold);color:var(--gold-2)" href="${yt(s.videoId,0)}" target="_blank" rel="noreferrer">${t("openLive")}</a>
                     <button class="btn btn-ghost danger" onclick="delSession('${s.id}')">✕</button>
                   </div>
                 </div>
@@ -718,24 +926,24 @@ function render(){
     const b = editingId ? bhajans.find(x=>x.id===editingId) : null;
     body += `<div class="panel">
       <div class="row">
-        <div style="flex:2"><label>Bhajan name *</label><input id="f-name" placeholder="e.g. Shyam Baba bhajan name…" value="${esc(b?.name||"")}"></div>
-        <div><label>Singer</label><input id="f-singer" list="singers" placeholder="e.g. Shubham Rupam" value="${esc(b?.singer||"")}"></div>
+        <div style="flex:2"><label>${t("bhajanName")}</label><input id="f-name" placeholder="…" value="${esc(b?.name||"")}"></div>
+        <div><label>${t("singer")}</label><input id="f-singer" list="singers" placeholder="Shubham Rupam" value="${esc(b?.singer||"")}"></div>
       </div>
       <datalist id="singers">${allSingers().map(s=>`<option value="${esc(s)}">`).join("")}</datalist>
       <div class="row">
-        <div><label>Scale (singing pitch)</label><select id="f-scale">${scaleOptions(b?.scale||"")}</select></div>
-        <div><label>Timestamp in the live</label><input id="f-time" placeholder="e.g. 1:23:45 or 23:45" value="${b?.seconds?fmtTime(b.seconds):""}"><div class="hint">One tap opens YouTube exactly at this moment.</div></div>
+        <div><label>${t("scale")}</label><select id="f-scale">${scaleOptions(b?.scale||"")}</select></div>
+        <div><label>${t("timestamp")}</label><input id="f-time" placeholder="1:23:45" value="${b?.seconds?fmtTime(b.seconds):""}"><div class="hint">${t("tsHint")}</div></div>
       </div>
       ${sessionSelect("f","f-url","f-stitle","f-sdate")}
       <div class="lyrics-box">
-        <div class="lbl">📜 LYRICS — link, text, or both</div>
-        <div><label>Lyrics link</label><input id="f-llink" placeholder="https://… (any lyrics site, or a Google Drive PDF link)" value="${esc(b?.lyricsLink||"")}"></div>
-        <div><label>Or paste lyrics here</label><textarea id="f-ltext" placeholder="Paste the full lyrics…">${esc(b?.lyricsText||"")}</textarea></div>
+        <div class="lbl">${t("lyricsHead")}</div>
+        <div><label>${t("lyricsLink")}</label><input id="f-llink" placeholder="${t("lyricsLinkPh")}" value="${esc(b?.lyricsLink||"")}"></div>
+        <div><label>${t("lyricsPaste")}</label><textarea id="f-ltext" placeholder="${t("lyricsPastePh")}">${esc(b?.lyricsText||"")}</textarea></div>
       </div>
-      <div><label>Notes (optional)</label><input id="f-notes" placeholder="e.g. slow start, taal keherwa, second antara high…" value="${esc(b?.notes||"")}"></div>
+      <div><label>${t("notes")}</label><input id="f-notes" placeholder="${t("notesPh")}" value="${esc(b?.notes||"")}"></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-gold btn-big" onclick="saveBhajan()">${editingId?"Save changes":"Add bhajan"}</button>
-        ${editingId?`<button class="btn btn-ghost btn-big" onclick="editingId=null;go('bhajans')">Cancel</button>`:""}
+        <button class="btn btn-gold btn-big" onclick="saveBhajan()">${editingId?t("save"):t("add")}</button>
+        ${editingId?`<button class="btn btn-ghost btn-big" onclick="editingId=null;go('bhajans')">${t("cancel")}</button>`:""}
       </div>
     </div>`;
   }
@@ -743,26 +951,22 @@ function render(){
   if(tab==="bulk"){
     body += `<div class="panel">
       <div class="subpanel" style="border-style:solid;border-color:var(--line-soft)">
-        <div style="font-size:14px;color:var(--dim);line-height:1.7;font-weight:300">
-          <b style="color:var(--gold-2)">⚡ Add a whole live in one go.</b>
-          Copy the timestamp list from the live's description or pinned comment and paste it below. Lines like
-          <code style="color:var(--text)">14:20 Bhajan name</code> or <code style="color:var(--text)">Bhajan name | 1:05:10</code> all work.
-        </div>
+        <div style="font-size:14px;color:var(--dim);line-height:1.7;font-weight:300">${t("bulkIntro")}</div>
       </div>
       ${sessionSelect("bk","bk-url","bk-stitle","bk-sdate")}
       <div class="row">
-        <div><label>Singer (applied to all)</label><input id="bk-singer" list="singers" placeholder="e.g. Shubham Rupam"></div>
-        <div><label>Scale (applied to all, optional)</label><select id="bk-scale">${scaleOptions("")}</select></div>
+        <div><label>${t("bulkSinger")}</label><input id="bk-singer" list="singers" placeholder="Shubham Rupam"></div>
+        <div><label>${t("bulkScale")}</label><select id="bk-scale"><option value="">${t("scaleLater")}</option>${SCALES.map(s=>`<option value="${s[0]}">${s[0]} · ${s[1]}</option>`).join("")}</select></div>
       </div>
       <datalist id="singers">${allSingers().map(s=>`<option value="${esc(s)}">`).join("")}</datalist>
       <div>
-        <label>Paste the bhajan list</label>
-        <textarea id="bk-text" class="mono" placeholder="14:20 Pehla bhajan naam&#10;32:45 Doosra bhajan naam&#10;1:05:10 Teesra bhajan naam"></textarea>
-        <button class="btn btn-teal" style="margin-top:10px" onclick="doParse()">🔍 Parse list</button>
+        <label>${t("pasteList")}</label>
+        <textarea id="bk-text" class="mono" placeholder="14:20 …&#10;32:45 …&#10;1:05:10 …"></textarea>
+        <button class="btn btn-teal" style="margin-top:10px" onclick="doParse()">${t("parse")}</button>
       </div>
       ${bulkRows.length ? `
       <div class="preview">
-        <div class="preview-head">Preview — ${bulkRows.length} bhajans found <span>check names & times, edit if needed</span></div>
+        <div class="preview-head">${t("previewHead")} ${bulkRows.length} ${t("found")} <span>${t("previewHint")}</span></div>
         <div class="preview-rows">
           ${bulkRows.map((r,i)=>`
           <div class="prow">
@@ -773,7 +977,7 @@ function render(){
           </div>`).join("")}
         </div>
       </div>
-      <button class="btn btn-gold btn-big" onclick="importBulk()">⚡ Add all ${bulkRows.length} bhajans</button>` : ""}
+      <button class="btn btn-gold btn-big" onclick="importBulk()">${t("addAll")} ${bulkRows.length} ${t("addAllSuffix")}</button>` : ""}
     </div>`;
   }
 
@@ -787,9 +991,9 @@ function renderListOnly(){
   const list = filtered();
   el.innerHTML = list.length
     ? list.map(bhajanCard).join("")
-    : `<div class="empty"><span class="om">🪔</span>${bhajans.length===0
-        ? "The sangrah is empty — be the first to add a bhajan! Tap “+ Add bhajan” or “⚡ Bulk add”."
-        : "Nothing matches your search or filters."}</div>`;
+    : `<div class="empty"><span class="om">🪔</span>${
+        bhajans.length===0 ? t("emptyAll") : favOnly ? t("emptyFavs") : t("emptyFilter")
+      }</div>`;
 }
 </script>
 </body>
