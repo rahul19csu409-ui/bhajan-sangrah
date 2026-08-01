@@ -523,6 +523,7 @@ const ICONS = {
   edit:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>',
   trash:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2m1 0v14H7V6M10 11v6M14 11v6"/></svg>',
   ytsearch:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"/><path d="M21 21l-5-5M8.5 8.2v4.6l4-2.3z" fill="currentColor" stroke-width="0"/><path d="M21 21l-5-5"/></svg>',
+  globe:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.7 2.6 4 5.7 4 9s-1.3 6.4-4 9c-2.7-2.6-4-5.7-4-9s1.3-6.4 4-9z"/></svg>',
   star:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>',
   playBig:'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>',
 };
@@ -850,6 +851,7 @@ window.openLyrics = async (id)=>{
         <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕ ${t("close")}</button>
       </div>
       <div class="reader-body" id="rbody">
+        <a class="btn btn-ghost" style="align-self:flex-start;font-size:12.5px;padding:8px 14px" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">🌐 Search lyrics on web</a>
         ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 ${t("openLyricsLink")}</a>` : ""}
         ${b.lyricsText ? `<div class="read-text">${esc(b.lyricsText)}</div>` : ""}
         ${b.hasFiles ? `<div class="loading pulse" id="rload">…</div>` : ""}
@@ -891,8 +893,49 @@ function topSingers(n=3){
   bhajans.forEach(b=>{ const s=(b.singer||"").trim(); if(s) counts[s]=(counts[s]||0)+1; });
   return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
 }
+/* ---- fuzzy search: forgives Hinglish spelling differences & typos ---- */
+function normTxt(s){
+  s = String(s||"").toLowerCase();
+  s = s.replace(/[^a-z0-9\u0900-\u097F ]+/g, " ");
+  // common transliteration equivalences
+  s = s.replace(/aa/g,"a").replace(/ee/g,"i").replace(/oo/g,"u")
+       .replace(/w/g,"v").replace(/ph/g,"f").replace(/z/g,"j")
+       .replace(/chh/g,"ch").replace(/q/g,"k").replace(/x/g,"ks");
+  s = s.replace(/h/g,"");            // shyam/sham/syam → sam; hai/he → ai/e
+  s = s.replace(/y/g,"i");
+  s = s.replace(/(.)\1+/g,"$1");     // collapse doubles
+  return s.replace(/\s+/g," ").trim();
+}
+function lev(a, b){
+  if(a===b) return 0;
+  const m=a.length, n=b.length;
+  if(Math.abs(m-n) > 2) return 3;
+  let prev = Array.from({length:n+1}, (_,i)=>i);
+  for(let i=1;i<=m;i++){
+    const cur=[i];
+    for(let j=1;j<=n;j++){
+      cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (a[i-1]===b[j-1]?0:1));
+    }
+    prev=cur;
+  }
+  return prev[n];
+}
+function fuzzyMatch(hay, q){
+  const H = normTxt(hay), Q = normTxt(q);
+  if(!Q) return true;
+  if(H.includes(Q)) return true;
+  const hw = H.split(" ");
+  return Q.split(" ").every(tk =>
+    hw.some(w => {
+      if(w.includes(tk) || tk.includes(w)) return true;
+      const tol = tk.length>=6 ? 2 : tk.length>=4 ? 1 : 0;
+      return tol>0 && lev(w, tk) <= tol;
+    })
+  );
+}
+
 function filtered(){
-  const q = search.trim().toLowerCase();
+  const q = search.trim();
   const S = sessById();
   return bhajans.filter(b=>{
     if(favOnly && !favs.has(b.id)) return false;
@@ -900,10 +943,8 @@ function filtered(){
     if(singerF && (b.singer||"").trim()!==singerF) return false;
     if(!q) return true;
     const sess = S[b.sessionId];
-    return b.name.toLowerCase().includes(q)
-      || (b.singer||"").toLowerCase().includes(q)
-      || (b.notes||"").toLowerCase().includes(q)
-      || (sess && sess.title.toLowerCase().includes(q));
+    const hay = [b.name, b.singer||"", b.notes||"", sess?sess.title:""].join(" ");
+    return fuzzyMatch(hay, q);
   });
 }
 
@@ -927,7 +968,9 @@ function bhajanRow(b){
       ${sess
         ? `<a class="ab play" href="${yt(sess.videoId,b.seconds)}" target="_blank" rel="noreferrer" title="YouTube">${ICONS.play}</a>`
         : `<a class="ab play" href="https://www.youtube.com/results?search_query=${encodeURIComponent(b.name + " " + (b.singer||"") + " bhajan")}" target="_blank" rel="noreferrer" title="Find on YouTube">${ICONS.ytsearch}</a>`}
-      ${hasAnyLyrics(b) ? `<button class="ab doc" onclick="openLyrics('${b.id}')" title="Lyrics">${ICONS.doc}</button>` : ""}
+      ${hasAnyLyrics(b)
+        ? `<button class="ab doc" onclick="openLyrics('${b.id}')" title="Lyrics">${ICONS.doc}</button>`
+        : `<a class="ab doc" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer" title="Search lyrics on web">${ICONS.globe}</a>`}
       <button class="ab" onclick="editBhajan('${b.id}')" title="Edit">${ICONS.edit}</button>
       ${admin ? `<button class="ab danger" onclick="hideBhajan('${b.id}')" title="Remove">${ICONS.trash}</button>` : ""}
     </div>
