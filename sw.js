@@ -1,5 +1,5 @@
 /* Shyam Bhajan Sangrah — service worker */
-const CACHE = "bhajan-shell-v5";
+const CACHE = "bhajan-shell-v6";
 const CORE = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
