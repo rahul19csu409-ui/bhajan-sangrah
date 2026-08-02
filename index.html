@@ -213,6 +213,31 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 .tanp-key:active{transform:scale(.96)}
 .tanp-key.playing{outline:3px solid var(--gold);box-shadow:0 0 18px rgba(176,119,15,.4);animation:pulseSc 1s ease infinite}
 
+/* tabla */
+.tabla-panel{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--card);display:flex;flex-direction:column;gap:12px}
+.tp-head{font-size:13px;font-weight:700;color:var(--gold-ink);letter-spacing:.06em;text-transform:uppercase}
+.tp-row{display:flex;gap:9px}
+.tb-matras{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.mt{
+  width:46px;padding:7px 0;border-radius:10px;border:1.5px solid var(--line);text-align:center;
+  display:flex;flex-direction:column;gap:1px;background:var(--field);transition:all .08s;
+}
+.mt b{font-size:14px;color:var(--text)}
+.mt span{font-size:9.5px;color:var(--dim2)}
+.mt.sam{border-color:var(--gold);background:var(--gold-soft)}
+.mt.sam b{color:var(--gold-ink)}
+.mt.kh{border-style:dashed}
+.mt.on{background:var(--gold);border-color:var(--gold);transform:scale(1.12);box-shadow:0 0 14px rgba(176,119,15,.45)}
+.mt.on b,.mt.on span{color:#fff}
+[data-theme="dark"] .mt.on b,[data-theme="dark"] .mt.on span{color:#241604}
+#tablabar{
+  position:fixed;bottom:140px;left:50%;transform:translateX(-50%);z-index:35;display:none;
+  align-items:center;gap:10px;background:var(--card);border:1px solid var(--teal);
+  color:var(--teal);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;
+  box-shadow:var(--shadow-lg);cursor:pointer;white-space:nowrap;
+}
+#tablabar .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);animation:pulse 1s ease infinite}
+
 #shrutibar{
   position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:35;display:none;
   align-items:center;gap:10px;background:var(--card);border:1px solid var(--gold);
@@ -458,6 +483,7 @@ footer .m{font-family:var(--fd);color:var(--gold);letter-spacing:.24em;font-size
 
 <button class="fab" id="fab" onclick="go('add')" title="+">+</button>
 <div id="shrutibar" onclick="stopShruti()"><span class="dot"></span><span id="shrutitxt"></span></div>
+<div id="tablabar" onclick="tablaStop()"><span class="dot"></span><span id="tablabartxt"></span></div>
 <div id="toast"></div>
 
 <!-- ═════════════════════════════════════════════════════
@@ -1436,6 +1462,104 @@ function render(){
 }
 window.setAddMode = (m)=>{ addMode=m; render(); };
 
+/* ================= tabla engine ================= */
+const TAALS = {
+  "Keherwa · 8": {n:8, khaali:5, seq:["dha","ge","na","tin","na","ke","dhin","na"]},
+  "Dadra · 6":   {n:6, khaali:4, seq:["dha","dhin","na","dha","tin","na"]},
+  "Bhajani · 8": {n:8, khaali:5, seq:["dhin","na","dhin","dhin","na","tin","na","dhin"]},
+  "Teentaal · 16":{n:16, khaali:9, seq:["dha","dhin","dhin","dha","dha","dhin","dhin","dha","dha","tin","tin","ta","ta","dhin","dhin","dha"]},
+};
+let tablaOn = false, tablaTaal = "Keherwa · 8", tablaBpm = parseInt(localStorage.getItem("bhajan-bpm")||"92");
+let tMaster = null, tNext = 0, tBeat = 0, tTimer = null, noiseB = null;
+
+function ctx(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); return audioCtx; }
+function tOut(){ if(!tMaster){ tMaster = ctx().createGain(); tMaster.gain.value = .9; tMaster.connect(audioCtx.destination); } return tMaster; }
+function noiseBuf(){
+  if(noiseB) return noiseB;
+  const b = ctx().createBuffer(1, 4410, 44100), d = b.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  return noiseB = b;
+}
+function sBass(t, g){ // baya (ge/dhin) — pitch-bent low thump
+  const o=audioCtx.createOscillator(), ga=audioCtx.createGain();
+  o.type="sine";
+  o.frequency.setValueAtTime(165, t);
+  o.frequency.exponentialRampToValueAtTime(56, t+.22);
+  ga.gain.setValueAtTime(.0001, t);
+  ga.gain.exponentialRampToValueAtTime(.95*g, t+.008);
+  ga.gain.exponentialRampToValueAtTime(.0001, t+.3);
+  o.connect(ga); ga.connect(tOut()); o.start(t); o.stop(t+.32);
+}
+function sStrike(t, f, g, dur){ // dayan strike (na/ta/tin)
+  const o=audioCtx.createOscillator(), ga=audioCtx.createGain();
+  o.type="triangle"; o.frequency.value=f;
+  ga.gain.setValueAtTime(.0001, t);
+  ga.gain.exponentialRampToValueAtTime(.55*g, t+.004);
+  ga.gain.exponentialRampToValueAtTime(.0001, t+dur);
+  o.connect(ga); ga.connect(tOut()); o.start(t); o.stop(t+dur+.02);
+  const s=audioCtx.createBufferSource(); s.buffer=noiseBuf();
+  const hp=audioCtx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=3200;
+  const g2=audioCtx.createGain();
+  g2.gain.setValueAtTime(.22*g, t); g2.gain.exponentialRampToValueAtTime(.0001, t+.035);
+  s.connect(hp); hp.connect(g2); g2.connect(tOut()); s.start(t); s.stop(t+.05);
+}
+const BOLS = {
+  dha:(t)=>{ sBass(t,1); sStrike(t,588,1,.13); },
+  dhin:(t)=>{ sBass(t,.75); sStrike(t,588,.8,.16); },
+  ge:(t)=>{ sBass(t,.9); },
+  na:(t)=>{ sStrike(t,588,.9,.12); },
+  ta:(t)=>{ sStrike(t,620,.9,.1); },
+  tin:(t)=>{ sStrike(t,760,.7,.14); },
+  ke:(t)=>{ sStrike(t,340,.5,.05); },
+};
+function tablaTick(){
+  const T = TAALS[tablaTaal];
+  while(tNext < audioCtx.currentTime + .12){
+    const beat = tBeat % T.n;
+    (BOLS[T.seq[beat]]||BOLS.na)(tNext);
+    const delay = Math.max(0,(tNext - audioCtx.currentTime)*1000);
+    const bshow = beat;
+    setTimeout(()=>highlightBeat(bshow), delay);
+    tNext += 60 / tablaBpm;
+    tBeat++;
+  }
+}
+function highlightBeat(b){
+  document.querySelectorAll(".mt").forEach((el,i)=>el.classList.toggle("on", i===b));
+  const bar = $("tablabartxt");
+  if(bar) bar.textContent = `🥁 ${tablaTaal} · ${tablaBpm} BPM · ${b+1}`;
+}
+window.tablaToggle = ()=>{
+  if(tablaOn){ tablaStop(); return; }
+  ctx(); tablaOn = true;
+  tBeat = 0; tNext = audioCtx.currentTime + .08;
+  tTimer = setInterval(tablaTick, 25);
+  $("tablabar").style.display = "flex";
+  const btn = $("tb-play"); if(btn) btn.textContent = "⏹ Stop";
+};
+window.tablaStop = ()=>{
+  tablaOn = false; clearInterval(tTimer);
+  $("tablabar").style.display = "none";
+  document.querySelectorAll(".mt.on").forEach(el=>el.classList.remove("on"));
+  const btn = $("tb-play"); if(btn) btn.textContent = "▶ Play";
+};
+window.tablaSetTaal = (v)=>{ tablaTaal = v; tBeat = 0; drawMatras(); };
+window.tablaSetBpm = (v)=>{
+  tablaBpm = Math.max(40, Math.min(220, parseInt(v)||92));
+  localStorage.setItem("bhajan-bpm", tablaBpm);
+  const n = $("tb-bpmnum"), s = $("tb-bpm");
+  if(n) n.textContent = tablaBpm;
+  if(s) s.value = tablaBpm;
+};
+function drawMatras(){
+  const el = $("tb-matras"); if(!el) return;
+  const T = TAALS[tablaTaal];
+  el.innerHTML = T.seq.map((bol,i)=>`
+    <div class="mt ${i===0?"sam":""} ${i===T.khaali-1?"kh":""}">
+      <b>${i+1}</b><span>${bol}</span>
+    </div>`).join("");
+}
+
 /* ================= tanpura keyboard ================= */
 window.openTanpura = ()=>{
   const div = document.createElement("div");
@@ -1447,17 +1571,36 @@ window.openTanpura = ()=>{
       <b>${s[0]}</b><span>${s[1]}</span>
     </button>`).join("");
   div.innerHTML = `
-    <div class="reader" style="max-width:520px;height:auto;max-height:88vh">
+    <div class="reader" style="max-width:560px;height:auto;max-height:90vh">
       <div class="reader-head">
-        <div><h3>🎵 Tanpura / Shruti</h3><div class="rm2">${t("shrutiHint")}</div></div>
+        <div><h3>🎵 Riyaz — Tanpura + Tabla</h3><div class="rm2">${t("shrutiHint")}</div></div>
         <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕</button>
       </div>
       <div class="reader-body">
         <div class="tanp-grid">${keys}</div>
+
+        <div class="tabla-panel">
+          <div class="tp-head">🥁 Tabla</div>
+          <div class="tp-row">
+            <select onchange="tablaSetTaal(this.value)" style="flex:1">
+              ${Object.keys(TAALS).map(k=>`<option ${k===tablaTaal?"selected":""}>${k}</option>`).join("")}
+            </select>
+            <button class="btn btn-gold" id="tb-play" onclick="tablaToggle()">${tablaOn?"⏹ Stop":"▶ Play"}</button>
+          </div>
+          <div class="tp-row" style="align-items:center">
+            <button class="ab" onclick="tablaSetBpm(tablaBpmGet()-4)">−</button>
+            <input type="range" id="tb-bpm" min="40" max="220" value="${tablaBpm}" oninput="tablaSetBpm(this.value)" style="flex:1;padding:0">
+            <button class="ab" onclick="tablaSetBpm(tablaBpmGet()+4)">＋</button>
+            <span style="min-width:74px;text-align:right;font-weight:700;color:var(--gold-ink)"><span id="tb-bpmnum">${tablaBpm}</span> BPM</span>
+          </div>
+          <div class="tb-matras" id="tb-matras"></div>
+        </div>
       </div>
     </div>`;
   document.body.appendChild(div);
+  drawMatras();
 };
+window.tablaBpmGet = ()=> tablaBpm;
 window.__sn = ()=> shrutiNote;
 
 /* ================= setlist picker ================= */
