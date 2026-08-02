@@ -810,7 +810,6 @@ let audioCtx = null, shrutiNodes = [], shrutiNote = null;
 const SND = {};           // decoded AudioBuffers
 let sndLoading = null;
 const SOUND_FILES = {
-  tanpura_C:"sounds/tanpura_C.mp3", tanpura_E:"sounds/tanpura_E.mp3", tanpura_Gs:"sounds/tanpura_Gs.mp3",
   dha:"sounds/t_dha.mp3", dhin:"sounds/t_dhin.mp3", ge:"sounds/t_ge.mp3",
   na:"sounds/t_na.mp3", ta:"sounds/t_ta.mp3", tin:"sounds/t_tin.mp3", ke:"sounds/t_ke.mp3",
 };
@@ -829,29 +828,29 @@ async function loadSounds(){
   })();
   return sndLoading;
 }
-window.toggleShruti = async (note, ev)=>{
+function noteFreq(note, octave){ return 261.6256 * Math.pow(2,(NOTE_SEMI[note]||0)/12) * Math.pow(2, octave-4); }
+window.toggleShruti = (note, ev)=>{
   if(ev){ ev.stopPropagation(); ev.preventDefault(); }
   if(shrutiNote === note){ stopShruti(); return; }
   stopShruti();
   try{
     actx();
-    if(!SND.tanpura_C){ toast("🎵 Loading sounds…"); await loadSounds(); }
-    const semi = NOTE_SEMI[note]||0;
-    // pick nearest base sample (C=0, E=4, G#=8) → shift at most ±2 semitones
-    const bases = [["tanpura_C",0],["tanpura_E",4],["tanpura_Gs",8],["tanpura_C",12]];
-    let best = bases[0], bd = 99;
-    for(const b of bases){ const d = Math.abs(semi - b[1]); if(d < bd){ bd = d; best = b; } }
-    const buf = SND[best[0]];
-    if(!buf) return toast("Sound files missing — upload the sounds folder.", true);
-    const src = audioCtx.createBufferSource();
-    src.buffer = buf; src.loop = true;
-    src.playbackRate.value = Math.pow(2, (semi - (best[1]%12)) / 12);
-    const g = audioCtx.createGain();
-    g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-    g.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 0.8);
-    src.connect(g); g.connect(audioCtx.destination);
-    src.start();
-    shrutiNodes = [src, g];
+    const master = audioCtx.createGain(); master.gain.value = 0;
+    const lp = audioCtx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value = 1600;
+    master.connect(lp); lp.connect(audioCtx.destination);
+    // smooth continuous Sa+Pa drone (the original)
+    const voices = [
+      {f:noteFreq(note,3), g:.5}, {f:noteFreq(note,3)*1.5, g:.28},
+      {f:noteFreq(note,4), g:.3}, {f:noteFreq(note,4)*1.003, g:.12},
+    ];
+    for(const v of voices){
+      const o = audioCtx.createOscillator(); o.type = "sawtooth";
+      const g = audioCtx.createGain(); g.gain.value = v.g;
+      o.frequency.value = v.f; o.connect(g); g.connect(master); o.start();
+      shrutiNodes.push(o);
+    }
+    master.gain.linearRampToValueAtTime(.16, audioCtx.currentTime + .6);
+    shrutiNodes.push(master);
     shrutiNote = note;
     const info = SCALES.find(s=>s[0]===note);
     $("shrutitxt").textContent = `${t("playingShruti")}: ${note} · ${info?info[1]:""} — ${t("stopShruti")}`;
@@ -860,15 +859,7 @@ window.toggleShruti = async (note, ev)=>{
   }catch(e){ console.error(e); }
 };
 window.stopShruti = ()=>{
-  const [src, g] = shrutiNodes;
-  if(g && audioCtx){
-    try{
-      g.gain.cancelScheduledValues(audioCtx.currentTime);
-      g.gain.setValueAtTime(g.gain.value, audioCtx.currentTime);
-      g.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
-      setTimeout(()=>{ try{ src.stop(); }catch{} }, 300);
-    }catch{ try{ src.stop(); }catch{} }
-  }
+  shrutiNodes.forEach(n=>{ try{ n.stop ? n.stop() : n.disconnect(); }catch{} });
   shrutiNodes = []; shrutiNote = null;
   $("shrutibar").style.display = "none";
   document.querySelectorAll(".sc.playing").forEach(el=>el.classList.remove("playing"));
@@ -1240,32 +1231,47 @@ function lev(a, b){
   }
   return prev[n];
 }
-function fuzzyMatch(hay, q){
+function searchScore(hay, q){
   const H = normTxt(hay), Q = normTxt(q);
-  if(!Q) return true;
-  if(H.includes(Q)) return true;
-  const hw = H.split(" ");
-  return Q.split(" ").every(tk =>
+  if(!Q) return 1;
+  if(H.includes(Q)) return H.startsWith(Q) ? 5 : 4;          // exact phrase
+  const hw = H.split(" "), qw = Q.split(" ");
+  // every word typed is a prefix of some word in the name
+  if(qw.every(tk => hw.some(w => w.startsWith(tk)))) return 3;
+  // every word is a substring
+  if(qw.every(tk => hw.some(w => w.includes(tk)))) return 2;
+  // spelling-tolerant (typos / Hinglish variants)
+  const ok = qw.every(tk =>
     hw.some(w => {
-      if(w.includes(tk) || tk.includes(w)) return true;
       const tol = tk.length>=6 ? 2 : tk.length>=4 ? 1 : 0;
       return tol>0 && lev(w, tk) <= tol;
     })
   );
+  return ok ? 1 : 0;
 }
 
 function filtered(){
   const q = search.trim();
   const S = sessById();
-  return bhajans.filter(b=>{
+  let list = bhajans.filter(b=>{
     if(favOnly && !favs.has(b.id)) return false;
     if(scaleF && b.scale!==scaleF) return false;
     if(singerF && (b.singer||"").trim()!==singerF) return false;
-    if(!q) return true;
-    const sess = S[b.sessionId];
-    const hay = [b.name, b.singer||"", b.notes||"", sess?sess.title:""].join(" ");
-    return fuzzyMatch(hay, q);
+    return true;
   });
+  if(!q) return list;
+  const scored = [];
+  for(const b of list){
+    const sess = S[b.sessionId];
+    const s = Math.max(
+      searchScore(b.name, q),
+      searchScore(b.singer||"", q) - 1,
+      searchScore((b.notes||"") + " " + (sess?sess.title:""), q) - 2
+    );
+    if(s > 0) scored.push([s, b]);
+  }
+  scored.sort((a,b)=> b[0]-a[0] || a[1].name.localeCompare(b[1].name));
+  return scored.map(x=>x[1]);
 }
 
 function bhajanRow(b){
@@ -1620,7 +1626,7 @@ window.openPicker = (sid)=>{
   const chosen = new Set(s.items);
   function rowsHtml(q){
     let list = bhajans;
-    if(q) list = bhajans.filter(b=>fuzzyMatch(b.name+" "+(b.singer||""), q));
+    if(q) list = bhajans.map(b=>[searchScore(b.name+" "+(b.singer||""), q), b]).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
     return list.slice(0,300).map(b=>`
       <div class="pk ${chosen.has(b.id)?"sel":""}" data-id="${b.id}">
         <span class="cb">${chosen.has(b.id)?"✓":""}</span>
@@ -1738,7 +1744,10 @@ function renderListOnly(){
   }
   let letters = [];
   let chunks = [];   // array of html strings, rendered progressively
-  if(sortBy === "recent" || sortBy === "views"){
+  if(search.trim()){
+    // ranked results: best matches first
+    for(let i=0;i<list.length;i+=80) chunks.push(list.slice(i,i+80).map(bhajanRow).join(""));
+  }else if(sortBy === "recent" || sortBy === "views"){
     list = [...list].sort(sortBy==="recent"
       ? (a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0)
       : (a,b)=>((b.views||0)-(a.views||0)));
