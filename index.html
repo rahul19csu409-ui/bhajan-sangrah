@@ -886,7 +886,10 @@ window.newSetlist = ()=>{
   sets.unshift({id:"s"+Date.now(), name:n.trim(), items:[], created:Date.now()});
   saveSets(sets); render();
 };
-window.openSet = (id)=>{ openSetId = id; render(); };
+window.openSet = (id)=>{
+  if(id) navPush(()=>{ openSetId=null; if(tab==="sets") render(); });
+  openSetId = id; render();
+};
 window.delSet = (id, ev)=>{ if(ev) ev.stopPropagation(); if(!confirm(t("delSet"))) return;
   saveSets(getSets().filter(s=>s.id!==id)); if(openSetId===id) openSetId=null; render(); };
 window.setMove = (sid, i, dir)=>{
@@ -908,6 +911,19 @@ function countView(id){
   updateDoc(doc(db,"bhajans",id), {views: increment(1)}).catch(()=>{});
 }
 window.playAndCount = (id)=>{ countView(id); };
+
+/* ---- in-app back navigation (Android/iOS back button & gestures) ---- */
+const navStack = [];
+history.replaceState({root:true}, "");
+function navPush(closeFn){
+  navStack.push(closeFn);
+  history.pushState({d:navStack.length}, "");
+}
+window.addEventListener("popstate", ()=>{
+  const fn = navStack.pop();
+  if(fn){ try{ fn(); }catch(e){ console.error(e); } }
+});
+window.navBack = ()=>{ if(navStack.length) history.back(); };
 
 window.onSort = (v)=>{ sortBy=v; localStorage.setItem("bhajan-sort", v); renderListOnly(); };
 let _pending = [], _pendingIdx = 0, _inner = null, _secObs = null;
@@ -1045,6 +1061,10 @@ async function ensureSession(url, title, date){
 
 /* ================= actions ================= */
 window.go = (tb)=>{
+  if(tb !== tab){
+    const prev = tab;
+    navPush(()=>{ tab=prev; if(prev!=="sets") openSetId=null; render(); });
+  }
   tab=tb;
   if(tb!=="add"){ editingId=null; formFiles=[]; existingFiles=[]; }
   if(tb!=="sets") openSetId=null;
@@ -1268,7 +1288,8 @@ window.openLyrics = async (id)=>{
   countView(id);
   const div = document.createElement("div");
   div.className = "overlay";
-  div.onclick = (e)=>{ if(e.target===div){ teleStop(); div.remove(); } };
+  navPush(()=>{ teleStop(); div.remove(); });
+  div.onclick = (e)=>{ if(e.target===div) navBack(); };
   div.innerHTML = `
     <div class="reader">
       <div class="reader-head">
@@ -1278,7 +1299,7 @@ window.openLyrics = async (id)=>{
         </div>
         <div style="display:flex;gap:7px;flex-shrink:0">
           <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
-          <button class="btn btn-ghost" onclick="teleStop();this.closest('.overlay').remove()">✕</button>
+          <button class="btn btn-ghost" onclick="navBack()">✕</button>
         </div>
       </div>
       ${(b.lyricsText || b.hasFiles) ? `
@@ -1605,7 +1626,7 @@ function render(){
       const items = cur.items.map(id=>bhajans.find(b=>b.id===id)).filter(Boolean);
       body += `
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-        <button class="btn btn-ghost" onclick="openSet(null)">← ${t("tabSets")}</button>
+        <button class="btn btn-ghost" onclick="navBack()">← ${t("tabSets")}</button>
         <div style="display:flex;gap:8px">
           <button class="btn btn-teal" onclick="openPicker('${cur.id}')">${t("addToSet")}</button>
           ${items.length?`<button class="btn btn-ghost" onclick="shareSetlist('${cur.id}')" title="Share on WhatsApp">📤 WhatsApp</button>`:""}
@@ -1721,7 +1742,8 @@ function drawMatras(){
 window.openTanpura = ()=>{
   const div = document.createElement("div");
   div.className = "overlay";
-  div.onclick = (e)=>{ if(e.target===div) div.remove(); };
+  navPush(()=>div.remove());
+  div.onclick = (e)=>{ if(e.target===div) navBack(); };
   const keys = SCALES.map(s=>`
     <button class="tanp-key ${s[2]?"k-black":"k-white"} ${shrutiNote===s[0]?"playing":""}" data-note="${s[0]}"
       onclick="toggleShruti('${s[0]}', event); this.closest('.overlay').querySelectorAll('.tanp-key').forEach(k=>k.classList.toggle('playing', k.dataset.note===window.__sn()));">
@@ -1731,7 +1753,7 @@ window.openTanpura = ()=>{
     <div class="reader" style="max-width:560px;height:auto;max-height:90vh">
       <div class="reader-head">
         <div><h3>🎵 Riyaz — Tanpura + Tabla</h3><div class="rm2">${t("shrutiHint")}</div></div>
-        <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕</button>
+        <button class="btn btn-ghost" onclick="navBack()">✕</button>
       </div>
       <div class="reader-body">
         <div class="tanp-grid">${keys}</div>
@@ -1765,7 +1787,8 @@ window.openPicker = (sid)=>{
   const sets = getSets(); const s = sets.find(x=>x.id===sid); if(!s) return;
   const div = document.createElement("div");
   div.className = "overlay";
-  div.onclick = (e)=>{ if(e.target===div){ div.remove(); render(); } };
+  navPush(()=>{ div.remove(); render(); });
+  div.onclick = (e)=>{ if(e.target===div) navBack(); };
   const chosen = new Set(s.items);
   function rowsHtml(q){
     let list = bhajans;
@@ -1805,7 +1828,7 @@ window.openPicker = (sid)=>{
       s2.items = [...kept, ...added];
       saveSets(sets2);
     }
-    div.remove(); render();
+    navBack();
   };
 };
 
@@ -1830,12 +1853,13 @@ window.performSet = (sid)=>{
   let i = 0;
   const div = document.createElement("div");
   div.className = "overlay";
+  navPush(()=>{ div.remove(); stopShruti(); });
   function draw(){
     const b = items[i];
     div.innerHTML = `
       <div class="perform">
         <div class="pf-head">
-          <button class="btn btn-ghost" onclick="this.closest('.overlay').remove();stopShruti()">✕</button>
+          <button class="btn btn-ghost" onclick="navBack()">✕</button>
           <span style="font-family:var(--fd)">🎼 ${esc(s.name)}</span>
           <span class="pf-prog">${i+1} / ${items.length}</span>
         </div>
@@ -1856,7 +1880,7 @@ window.performSet = (sid)=>{
     div.querySelector("#pf-prev").onclick = ()=>{ if(i>0){ i--; stopShruti(); draw(); } };
     div.querySelector("#pf-next").onclick = ()=>{
       if(i<items.length-1){ i++; stopShruti(); draw(); }
-      else{ div.remove(); stopShruti(); }
+      else navBack();
     };
   }
   draw();
