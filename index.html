@@ -199,6 +199,10 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 }
 @keyframes shimmer{to{background-position:-200% 0}}
 .pagecap{font-size:11px;color:var(--dim2);text-align:center;margin-top:-8px}
+.telebar{
+  display:flex;align-items:center;gap:8px;justify-content:center;
+  padding:8px 14px;border-bottom:1px solid var(--line);background:var(--card);
+}
 
 /* clickable scale chips (shruti) */
 .sc{cursor:pointer;user-select:none}
@@ -1054,6 +1058,35 @@ let _sdeb; window.onSearch = (v)=>{ search=v; clearTimeout(_sdeb); _sdeb=setTime
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
 window.pickSinger = (s)=>{ singerF=s; render(); };
+/* ---- teleprompter: hands-free auto-scrolling lyrics ---- */
+let teleRaf = null, teleOn = false, teleSpeed = parseFloat(localStorage.getItem("bhajan-tele")||"1");
+window.teleToggle = ()=>{
+  teleOn ? teleStop() : teleStart();
+};
+function teleStart(){
+  const rb = document.querySelector(".overlay .reader-body");
+  if(!rb) return;
+  teleOn = true;
+  const btn = document.getElementById("telebtn"); if(btn) btn.textContent = "⏸";
+  function step(){
+    if(!teleOn || !document.body.contains(rb)){ teleStop(); return; }
+    rb.scrollTop += 0.45 * teleSpeed;
+    if(rb.scrollTop + rb.clientHeight >= rb.scrollHeight - 2){ teleStop(); return; }
+    teleRaf = requestAnimationFrame(step);
+  }
+  teleRaf = requestAnimationFrame(step);
+}
+window.teleStop = ()=>{
+  teleOn = false;
+  if(teleRaf) cancelAnimationFrame(teleRaf);
+  const btn = document.getElementById("telebtn"); if(btn) btn.textContent = "▶";
+};
+window.teleAdj = (d)=>{
+  teleSpeed = Math.max(0.25, Math.min(4, Math.round((teleSpeed + d)*4)/4));
+  localStorage.setItem("bhajan-tele", teleSpeed);
+  const s = document.getElementById("telespeed"); if(s) s.textContent = teleSpeed + "×";
+};
+
 window.rowOpen = (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
   if(b.hasFiles || b.lyricsText) openLyrics(id);
@@ -1105,6 +1138,52 @@ window.saveBhajan = async ()=>{
     tab="bhajans"; render();
   }catch(e){ console.error(e); toast(t("tSaveFail"), true); }
   saving = false;
+};
+
+/* ---- backup & restore (admin) ---- */
+window.backupAll = async ()=>{
+  toast("💾 Preparing backup…");
+  try{
+    const bs = await getDocs(bhajansCol);
+    const ss = await getDocs(sessionsCol);
+    const data = {
+      v:1, exported:new Date().toISOString(),
+      bhajans: bs.docs.map(d=>{ const x={id:d.id,...d.data()}; if(x.createdAt&&x.createdAt.seconds) x.createdAt=x.createdAt.seconds; return x; }),
+      sessions: ss.docs.map(d=>{ const x={id:d.id,...d.data()}; if(x.createdAt&&x.createdAt.seconds) x.createdAt=x.createdAt.seconds; return x; }),
+    };
+    const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `bhajan-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    toast(`💾 Backup: ${data.bhajans.length} bhajans, ${data.sessions.length} lives`);
+  }catch(e){ console.error(e); toast("Backup failed.", true); }
+};
+window.restorePick = ()=>{ const f=$("restore-file"); if(f) f.click(); };
+window.onRestoreFile = async (e)=>{
+  const f = e.target.files && e.target.files[0]; e.target.value=""; if(!f) return;
+  try{
+    const data = JSON.parse(await f.text());
+    if(!data.bhajans) return toast("Not a valid backup file.", true);
+    if(!confirm(`Restore ${data.bhajans.length} bhajans? Existing names are skipped.`)) return;
+    const existing = new Set(bhajans.map(b=>b.name.trim().toLowerCase()));
+    const existVid = new Set(sessions.map(s=>s.videoId));
+    let batch = writeBatch(db), n=0, added=0;
+    for(const s of (data.sessions||[])){
+      if(s.videoId && existVid.has(s.videoId)) continue;
+      const {id, ...rest} = s; rest.createdAt = serverTimestamp();
+      batch.set(doc(sessionsCol), rest); n++;
+      if(n>=200){ await batch.commit(); batch=writeBatch(db); n=0; }
+    }
+    for(const b of data.bhajans){
+      if(existing.has((b.name||"").trim().toLowerCase())) continue;
+      const {id, ...rest} = b; rest.createdAt = serverTimestamp();
+      batch.set(doc(bhajansCol), rest); n++; added++;
+      if(n>=200){ await batch.commit(); batch=writeBatch(db); n=0; }
+    }
+    if(n>0) await batch.commit();
+    toast(`📥 Restored ${added} bhajans ✓`);
+  }catch(err){ console.error(err); toast("Restore failed.", true); }
 };
 
 window.hideBhajan = async (id)=>{
@@ -1172,7 +1251,7 @@ window.openLyrics = async (id)=>{
   countView(id);
   const div = document.createElement("div");
   div.className = "overlay";
-  div.onclick = (e)=>{ if(e.target===div) div.remove(); };
+  div.onclick = (e)=>{ if(e.target===div){ teleStop(); div.remove(); } };
   div.innerHTML = `
     <div class="reader">
       <div class="reader-head">
@@ -1182,9 +1261,17 @@ window.openLyrics = async (id)=>{
         </div>
         <div style="display:flex;gap:7px;flex-shrink:0">
           <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
-          <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕</button>
+          <button class="btn btn-ghost" onclick="teleStop();this.closest('.overlay').remove()">✕</button>
         </div>
       </div>
+      ${(b.lyricsText || b.hasFiles) ? `
+      <div class="telebar">
+        <span style="font-size:11px;color:var(--dim2);letter-spacing:.06em">AUTO-SCROLL</span>
+        <button class="ab" id="telebtn" onclick="teleToggle()">▶</button>
+        <button class="ab" onclick="teleAdj(-0.25)">−</button>
+        <span id="telespeed" style="min-width:36px;text-align:center;font-weight:700;color:var(--gold-ink)">${teleSpeed}×</span>
+        <button class="ab" onclick="teleAdj(0.25)">＋</button>
+      </div>` : ""}
       <div class="reader-body" id="rbody">
         <a class="btn btn-ghost" style="align-self:flex-start;font-size:12.5px;padding:8px 14px" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">🌐 Search lyrics on web</a>
         ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 ${t("openLyricsLink")}</a>` : ""}
@@ -1382,6 +1469,11 @@ function render(){
       <select onchange="onSort(this.value)"><option value="az" ${sortBy==="az"?"selected":""}>A → Z</option><option value="recent" ${sortBy==="recent"?"selected":""}>${lang==="hi"?"नए पहले":"Recent first"}</option><option value="views" ${sortBy==="views"?"selected":""}>📊 ${t("mostViewed")}</option></select>
     </div>
     <button class="favtoggle ${favOnly?"on":""}" onclick="toggleFavOnly()">${t("myFavs")} (${favs.size})</button>
+    ${admin ? `<span style="margin-left:8px;display:inline-flex;gap:8px">
+      <button class="favtoggle" onclick="backupAll()">💾 Backup</button>
+      <button class="favtoggle" onclick="restorePick()">📥 Restore</button>
+      <input type="file" id="restore-file" accept=".json" style="display:none" onchange="onRestoreFile(event)">
+    </span>` : ""}
     <div id="bhajan-list"></div>`;
   }
 
@@ -1488,6 +1580,7 @@ function render(){
             <div><h3>🎼 ${esc(s.name)}</h3><div class="sm">${s.items.length} ${t("itemsWord")} · ${new Date(s.created).toLocaleDateString()}</div></div>
             <div style="display:flex;gap:7px">
               ${s.items.length?`<button class="btn btn-gold" onclick="event.stopPropagation();performSet('${s.id}')">${t("perform")}</button>`:""}
+              ${s.items.length?`<button class="ab" onclick="shareSetlist('${s.id}', event)" title="WhatsApp">📤</button>`:""}
               <button class="ab danger" onclick="delSet('${s.id}', event)">${ICONS.trash}</button>
             </div>
           </div>`).join("");
@@ -1498,6 +1591,7 @@ function render(){
         <button class="btn btn-ghost" onclick="openSet(null)">← ${t("tabSets")}</button>
         <div style="display:flex;gap:8px">
           <button class="btn btn-teal" onclick="openPicker('${cur.id}')">${t("addToSet")}</button>
+          ${items.length?`<button class="btn btn-ghost" onclick="shareSetlist('${cur.id}')" title="Share on WhatsApp">📤 WhatsApp</button>`:""}
           ${items.length?`<button class="btn btn-gold" onclick="performSet('${cur.id}')">${t("perform")}</button>`:""}
         </div>
       </div>
@@ -1699,6 +1793,19 @@ window.openPicker = (sid)=>{
 };
 
 /* ================= perform mode ================= */
+window.shareSetlist = (sid, ev)=>{
+  if(ev) ev.stopPropagation();
+  const s = getSets().find(x=>x.id===sid); if(!s) return;
+  const items = s.items.map(id=>bhajans.find(b=>b.id===id)).filter(Boolean);
+  let txt = `🎼 *${s.name}*\n`;
+  items.forEach((b,i)=>{
+    const sc = b.scale ? ` — ${b.scale}·${(SCALES.find(x=>x[0]===b.scale)||[])[1]||""}` : "";
+    txt += `${i+1}. ${b.name}${sc}\n`;
+  });
+  txt += `\n🪕 Shyam Bhajan Sangrah\n${location.origin + location.pathname}`;
+  window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+};
+
 window.performSet = (sid)=>{
   const s = getSets().find(x=>x.id===sid); if(!s || !s.items.length) return;
   const items = s.items.map(id=>bhajans.find(b=>b.id===id)).filter(Boolean);
