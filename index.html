@@ -181,9 +181,14 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 }
 .azrail button{
   background:none;border:none;color:var(--dim2);font-size:9.5px;font-weight:700;cursor:pointer;
-  padding:1.5px 5px;line-height:1.2;border-radius:6px;
+  padding:1.5px 5px;line-height:1.2;border-radius:6px;transition:all .12s;
 }
-.azrail button:hover{color:var(--gold-ink);background:var(--gold-soft)}
+.azrail button:hover{color:var(--gold-ink);background:var(--gold-soft);transform:scale(1.35)}
+.azrail button.active{color:#fff;background:var(--gold);transform:scale(1.2)}
+[data-theme="dark"] .azrail button.active{color:#241604}
+.alpha{scroll-margin-top:118px}
+.ri{touch-action:manipulation}
+.ri-main{cursor:pointer}
 @media(min-width:900px){.azrail{right:calc(50% - 430px)}}
 
 /* skeleton shimmer */
@@ -899,7 +904,28 @@ function countView(id){
 window.playAndCount = (id)=>{ countView(id); };
 
 window.onSort = (v)=>{ sortBy=v; localStorage.setItem("bhajan-sort", v); renderListOnly(); };
-window.jumpTo = (id)=>{ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); };
+let _pending = [], _pendingIdx = 0, _inner = null, _secObs = null;
+function flushChunks(){
+  if(!_inner || !document.body.contains(_inner)) return;
+  while(_pendingIdx < _pending.length) _inner.insertAdjacentHTML("beforeend", _pending[_pendingIdx++]);
+}
+window.jumpTo = (id)=>{
+  let el = document.getElementById(id);
+  if(!el){ flushChunks(); el = document.getElementById(id); }
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+};
+function watchSections(){
+  if(_secObs) _secObs.disconnect();
+  _secObs = new IntersectionObserver((entries)=>{
+    for(const e of entries){
+      if(e.isIntersecting){
+        const L = e.target.textContent.trim();
+        document.querySelectorAll(".azrail button").forEach(b=>b.classList.toggle("active", b.textContent===L));
+      }
+    }
+  }, {rootMargin:"-100px 0px -70% 0px"});
+  setTimeout(()=>document.querySelectorAll(".alpha").forEach(a=>_secObs.observe(a)), 50);
+}
 window.shareBhajan = async (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
   const url = location.origin + location.pathname + "#b=" + id;
@@ -1028,6 +1054,12 @@ let _sdeb; window.onSearch = (v)=>{ search=v; clearTimeout(_sdeb); _sdeb=setTime
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
 window.pickSinger = (s)=>{ singerF=s; render(); };
+window.rowOpen = (id)=>{
+  const b = bhajans.find(x=>x.id===id); if(!b) return;
+  if(b.hasFiles || b.lyricsText) openLyrics(id);
+  else if(b.lyricsLink){ countView(id); window.open(b.lyricsLink, "_blank", "noopener"); }
+  else window.open("https://www.google.com/search?q=" + encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics"), "_blank", "noopener");
+};
 window.editBhajan = (id)=>{ editingId=id; formFiles=[]; existingFiles=[]; tab="add"; render(); loadEditFiles(); };
 
 window.saveBhajan = async ()=>{
@@ -1287,7 +1319,7 @@ function bhajanRow(b){
   return `
   <div class="ri">
     <button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="★">${ICONS.star}</button>
-    <div class="ri-main">
+    <div class="ri-main" ondblclick="rowOpen('${b.id}')" title="Double-tap: open lyrics">
       <div class="ri-name">${esc(b.name)}</div>
       <div class="ri-meta">${b.scale?scMini(b.scale):""}<span style="overflow:hidden;text-overflow:ellipsis">${meta}</span></div>
     </div>
@@ -1772,13 +1804,14 @@ function renderListOnly(){
   // progressive render: first chunk immediately, rest on idle (keeps phones snappy)
   el.innerHTML = `<div class="listbox" id="listbox-inner">${chunks[0]||""}</div>`;
   const inner = $("listbox-inner");
-  let ci = 1;
+  _pending = chunks; _pendingIdx = 1; _inner = inner;
   function next(){
-    if(ci >= chunks.length || !document.body.contains(inner)) return;
-    inner.insertAdjacentHTML("beforeend", chunks[ci++]);
+    if(_pendingIdx >= _pending.length || !document.body.contains(_inner)) return;
+    _inner.insertAdjacentHTML("beforeend", _pending[_pendingIdx++]);
     (window.requestIdleCallback||setTimeout)(next, 1);
   }
   (window.requestIdleCallback||setTimeout)(next, 1);
+  watchSections();
 
   // A-Z jump rail
   const oldRail = document.getElementById("azrail"); if(oldRail) oldRail.remove();
