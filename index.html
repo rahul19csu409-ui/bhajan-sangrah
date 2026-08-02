@@ -195,6 +195,65 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 @keyframes shimmer{to{background-position:-200% 0}}
 .pagecap{font-size:11px;color:var(--dim2);text-align:center;margin-top:-8px}
 
+/* clickable scale chips (shruti) */
+.sc{cursor:pointer;user-select:none}
+.sc.playing{outline:2px solid var(--gold);animation:pulseSc 1s ease infinite}
+@keyframes pulseSc{0%,100%{outline-color:var(--gold)}50%{outline-color:transparent}}
+#shrutibar{
+  position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:35;display:none;
+  align-items:center;gap:10px;background:var(--card);border:1px solid var(--gold);
+  color:var(--gold-ink);padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;
+  box-shadow:var(--shadow-lg);cursor:pointer;
+}
+#shrutibar .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);animation:pulse 1s ease infinite}
+
+/* segmented control */
+.seg{display:flex;gap:4px;padding:4px;background:var(--field);border:1px solid var(--line);border-radius:11px;width:fit-content}
+.seg button{border:none;background:transparent;color:var(--dim);font-size:13px;font-weight:700;padding:7px 18px;border-radius:8px;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--gold-ink);box-shadow:var(--shadow)}
+
+/* setlists */
+.setcard{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;
+  box-shadow:var(--shadow);margin-bottom:12px;display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;
+  transition:transform .13s;
+}
+.setcard:hover{transform:translateY(-2px)}
+.setcard h3{font-family:var(--fd);font-weight:400;font-size:18px}
+.setcard .sm{font-size:12px;color:var(--dim2);margin-top:3px}
+.sitem{display:flex;align-items:center;gap:9px;padding:11px 12px;border-top:1px solid var(--line)}
+.sitem:first-child{border-top:none}
+.sitem .num{font-family:var(--fd);color:var(--gold-ink);min-width:24px;text-align:right;font-size:15px}
+.sitem .nm{flex:1;min-width:0;font-family:var(--fd);font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sitem .mv{display:flex;flex-direction:column;gap:2px}
+.sitem .mv button{width:26px;height:20px;border:1px solid var(--line);background:var(--field);color:var(--dim);border-radius:6px;cursor:pointer;font-size:10px;line-height:1;display:flex;align-items:center;justify-content:center}
+
+/* picker overlay */
+.picker{background:var(--bg);width:100%;height:100%;max-width:640px;display:flex;flex-direction:column}
+@media(min-width:700px){.picker{height:86vh;border-radius:18px;border:1px solid var(--line);box-shadow:var(--shadow-lg)}}
+.picker-head{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card);display:flex;gap:10px;align-items:center}
+.picker-head input{flex:1}
+.picker-list{flex:1;overflow-y:auto}
+.pk{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid var(--line);cursor:pointer}
+.pk:hover{background:var(--hover)}
+.pk .cb{width:21px;height:21px;border-radius:7px;border:2px solid var(--line2);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+.pk.sel .cb{background:var(--gold);border-color:var(--gold)}
+.pk .nm{font-family:var(--fd);font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk .si{font-size:11px;color:var(--dim2)}
+
+/* perform mode */
+.perform{background:var(--bg);width:100%;height:100%;display:flex;flex-direction:column}
+.pf-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);background:var(--card)}
+.pf-prog{font-size:13px;color:var(--dim2);font-weight:700}
+.pf-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:16px}
+.pf-main h2{font-family:var(--fd);font-weight:400;font-size:clamp(26px,6vw,40px);line-height:1.25}
+.pf-scale{transform:scale(1.5);margin:8px 0}
+.pf-acts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.pf-nav{display:flex;gap:10px;padding:16px;border-top:1px solid var(--line);background:var(--card)}
+.pf-nav button{flex:1;padding:15px;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--text);font-size:16px;font-weight:700;cursor:pointer}
+.pf-nav button.main{background:var(--gold);border-color:var(--gold);color:#fff}
+[data-theme="dark"] .pf-nav button.main{color:#241604}
+
 /* ---------- live cards ---------- */
 .lcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px}
 .lhead{display:flex;gap:12px;padding:12px;align-items:center}
@@ -381,15 +440,19 @@ footer .m{font-family:var(--fd);color:var(--gold);letter-spacing:.24em;font-size
 </div>
 
 <button class="fab" id="fab" onclick="go('add')" title="+">+</button>
+<div id="shrutibar" onclick="stopShruti()"><span class="dot"></span><span id="shrutitxt"></span></div>
 <div id="toast"></div>
 
 <!-- ═════════════════════════════════════════════════════
-     SETTINGS — change these two if you want:
-     ADMIN_PIN: the secret PIN that unlocks delete buttons.
-     BANNER_URL: optional image link for a header banner.
+     SETTINGS — change these:
+     ADMIN_PIN: fallback PIN for delete buttons.
+     ADMIN_EMAILS: Google accounts allowed as admin (needs
+       Google sign-in enabled in Firebase → Authentication).
+     BANNER_URL: optional header image link.
      ═════════════════════════════════════════════════════ -->
 <script>
 window.ADMIN_PIN = "7379";
+window.ADMIN_EMAILS = ["rahul19csu409@gmail.com"];
 window.BANNER_URL = "";
 
 window.FIREBASE_CONFIG = {
@@ -448,6 +511,16 @@ const I18N = {
     tLoadFail: "Could not load — check internet / Firestore rules.",
     confirmDel: "Remove this bhajan for everyone?", confirmDelLive: "Remove this live and all its bhajans?",
     loading: "Loading the sangrah…", reused: "Linked to the existing live (same video).",
+    tabSets: "Setlists", newSetlist: "＋ New setlist", setlistName: "Setlist name", setlistNamePh: "e.g. Saturday Jagran",
+    perform: "▶ Perform", addToSet: "＋ Add bhajans", emptySet: "This setlist is empty — tap “＋ Add bhajans” to build tonight's program.",
+    emptySets: "No setlists yet. Create one for your next program — pick bhajans, reorder, and perform from one screen.",
+    pickTitle: "Add to setlist", pickDone: "Done", itemsWord: "bhajans",
+    delSet: "Delete this setlist?", moveUp: "Up", moveDown: "Down",
+    shrutiHint: "Tap any scale chip to hear its shruti (drone) — tap again to stop.",
+    playingShruti: "Shruti playing", stopShruti: "tap to stop",
+    mostViewed: "Most viewed", views: "views",
+    signInGoogle: "Admin sign-in with Google…", adminHello: "Admin ON —", notAdminEmail: "This Google account is not in the admin list.",
+    single: "Single", bulkMode: "Bulk",
   },
   hi: {
     contribAs: "योगदानकर्ता:", changeName: "बदलें", anon: "अनाम",
@@ -492,6 +565,16 @@ const I18N = {
     tLoadFail: "लोड नहीं हुआ — इंटरनेट/Rules जाँचें।",
     confirmDel: "यह भजन सबके लिए हटाएँ?", confirmDelLive: "यह लाइव और इसके सभी भजन हटाएँ?",
     loading: "संग्रह लोड हो रहा है…", reused: "उसी वीडियो का लाइव पहले से था — उसी से जोड़ दिया।",
+    tabSets: "सेटलिस्ट", newSetlist: "＋ नई सेटलिस्ट", setlistName: "सेटलिस्ट का नाम", setlistNamePh: "जैसे: शनिवार जागरण",
+    perform: "▶ प्रस्तुति", addToSet: "＋ भजन जोड़ें", emptySet: "यह सेटलिस्ट खाली है — “＋ भजन जोड़ें” से आज का कार्यक्रम बनाएँ।",
+    emptySets: "अभी कोई सेटलिस्ट नहीं। अगले कार्यक्रम के लिए बनाएँ — भजन चुनें, क्रम लगाएँ, और एक स्क्रीन से गाएँ।",
+    pickTitle: "सेटलिस्ट में जोड़ें", pickDone: "हो गया", itemsWord: "भजन",
+    delSet: "यह सेटलिस्ट हटाएँ?", moveUp: "ऊपर", moveDown: "नीचे",
+    shrutiHint: "किसी भी स्केल चिप पर टैप करें — उसकी श्रुति (ड्रोन) सुनाई देगी। फिर टैप करने पर बंद।",
+    playingShruti: "श्रुति चल रही है", stopShruti: "रोकने के लिए टैप करें",
+    mostViewed: "सबसे ज़्यादा देखे", views: "बार देखा",
+    signInGoogle: "Google से एडमिन साइन-इन…", adminHello: "एडमिन चालू —", notAdminEmail: "यह Google अकाउंट एडमिन सूची में नहीं है।",
+    single: "एक", bulkMode: "एक साथ",
   }
 };
 let lang = localStorage.getItem("bhajan-lang") || "en";
@@ -513,15 +596,40 @@ function applyStatics(){
   renderId();
 }
 
-/* ================= admin ================= */
+/* ================= admin (Google sign-in, PIN fallback) ================= */
 let admin = sessionStorage.getItem("bhajan-admin")==="1";
-window.toggleAdmin = ()=>{
-  if(admin){ admin=false; sessionStorage.removeItem("bhajan-admin"); toast(t("adminOff")); }
-  else{
-    const p = prompt(t("adminPrompt"));
-    if(p === null) return;
-    if(p === String(window.ADMIN_PIN)){ admin=true; sessionStorage.setItem("bhajan-admin","1"); toast(t("adminOn")); }
-    else return toast(t("adminWrong"), true);
+let authMod = null;
+async function pinFallback(){
+  const p = prompt(t("adminPrompt"));
+  if(p === null) return false;
+  if(p === String(window.ADMIN_PIN)) return true;
+  toast(t("adminWrong"), true); return false;
+}
+window.toggleAdmin = async ()=>{
+  if(admin){
+    admin=false; sessionStorage.removeItem("bhajan-admin"); toast(t("adminOff"));
+    try{ if(authMod) await authMod.signOut(authMod.getAuth()); }catch{}
+  }else{
+    let ok = false;
+    try{
+      toast(t("signInGoogle"));
+      if(!authMod) authMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+      const auth = authMod.getAuth(app);
+      const res = await authMod.signInWithPopup(auth, new authMod.GoogleAuthProvider());
+      const email = (res.user && res.user.email || "").toLowerCase();
+      if((window.ADMIN_EMAILS||[]).map(e=>e.toLowerCase()).includes(email)){
+        ok = true; toast(`${t("adminHello")} ${email}`);
+      }else{
+        toast(t("notAdminEmail"), true);
+        await authMod.signOut(auth);
+      }
+    }catch(e){
+      /* Google sign-in not enabled or popup blocked → PIN fallback */
+      ok = await pinFallback();
+      if(ok) toast(t("adminOn"));
+    }
+    if(!ok){ render(); return; }
+    admin = true; sessionStorage.setItem("bhajan-admin","1");
   }
   $("adminbtn").classList.toggle("on", admin);
   render();
@@ -597,7 +705,7 @@ function parseBulk(text){
 function scMini(w){
   const info = SCALES.find(s=>s[0]===w);
   if(!info) return "";
-  return `<span class="sc ${info[2]?"black":"white"}">${info[0]}·${info[1].replace("Safed ","S").replace("Kali ","K")}</span>`;
+  return `<span class="sc ${info[2]?"black":"white"} ${shrutiNote===w?"playing":""}" data-note="${w}" onclick="toggleShruti('${w}', event)" title="Shruti: ${info[1]}">${info[0]}·${info[1].replace("Safed ","S").replace("Kali ","K")}</span>`;
 }
 function toast(msg, isErr){
   const el = $("toast");
@@ -626,7 +734,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager, getFirestore,
   collection, addDoc, doc, updateDoc, onSnapshot, query, orderBy, where, getDocs,
-  serverTimestamp, writeBatch
+  serverTimestamp, writeBatch, increment
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp(cfg);
@@ -650,6 +758,82 @@ let formFiles = [];        // new files chosen in the form
 let existingFiles = [];    // saved files of the bhajan being edited
 let saving = false;
 let deepLinked = false;
+let addMode = "one";       // one | bulk
+let openSetId = null;      // which setlist detail is open
+
+/* ================= shruti / tanpura drone ================= */
+const NOTE_SEMI = {"C":0,"C#":1,"D":2,"D#":3,"E":4,"F":5,"F#":6,"G":7,"G#":8,"A":9,"A#":10,"B":11};
+let audioCtx = null, shrutiNodes = [], shrutiNote = null;
+function noteFreq(note, octave){ return 261.6256 * Math.pow(2,(NOTE_SEMI[note]||0)/12) * Math.pow(2, octave-4); }
+window.toggleShruti = (note, ev)=>{
+  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  if(shrutiNote === note){ stopShruti(); return; }
+  stopShruti();
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === "suspended") audioCtx.resume();
+    const master = audioCtx.createGain(); master.gain.value = 0;
+    const lp = audioCtx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value = 1600;
+    master.connect(lp); lp.connect(audioCtx.destination);
+    // tanpura-ish: Sa (low), Pa, Sa (mid), slight detune shimmer
+    const voices = [
+      {f:noteFreq(note,3), g:.5}, {f:noteFreq(note,3)*1.5, g:.28},
+      {f:noteFreq(note,4), g:.3}, {f:noteFreq(note,4)*1.003, g:.12},
+    ];
+    for(const v of voices){
+      const o = audioCtx.createOscillator(); o.type = "sawtooth";
+      const g = audioCtx.createGain(); g.gain.value = v.g;
+      o.frequency.value = v.f; o.connect(g); g.connect(master); o.start();
+      shrutiNodes.push(o);
+    }
+    master.gain.linearRampToValueAtTime(.16, audioCtx.currentTime + .6);
+    shrutiNodes.push(master);
+    shrutiNote = note;
+    const info = SCALES.find(s=>s[0]===note);
+    $("shrutitxt").textContent = `${t("playingShruti")}: ${note} · ${info?info[1]:""} — ${t("stopShruti")}`;
+    $("shrutibar").style.display = "flex";
+    document.querySelectorAll(".sc").forEach(el=>{ el.classList.toggle("playing", el.dataset.note===note); });
+  }catch(e){ console.error(e); }
+};
+window.stopShruti = ()=>{
+  shrutiNodes.forEach(n=>{ try{ n.stop ? n.stop() : n.disconnect(); }catch{} });
+  shrutiNodes = []; shrutiNote = null;
+  $("shrutibar").style.display = "none";
+  document.querySelectorAll(".sc.playing").forEach(el=>el.classList.remove("playing"));
+};
+
+/* ================= setlists (per device) ================= */
+function getSets(){ try{ return JSON.parse(localStorage.getItem("bhajan-sets")||"[]"); }catch{ return []; } }
+function saveSets(s){ localStorage.setItem("bhajan-sets", JSON.stringify(s)); }
+window.newSetlist = ()=>{
+  const n = prompt(t("setlistName"), "");
+  if(n===null || !n.trim()) return;
+  const sets = getSets();
+  sets.unshift({id:"s"+Date.now(), name:n.trim(), items:[], created:Date.now()});
+  saveSets(sets); render();
+};
+window.openSet = (id)=>{ openSetId = id; render(); };
+window.delSet = (id, ev)=>{ if(ev) ev.stopPropagation(); if(!confirm(t("delSet"))) return;
+  saveSets(getSets().filter(s=>s.id!==id)); if(openSetId===id) openSetId=null; render(); };
+window.setMove = (sid, i, dir)=>{
+  const sets = getSets(); const s = sets.find(x=>x.id===sid); if(!s) return;
+  const j = i+dir; if(j<0||j>=s.items.length) return;
+  [s.items[i], s.items[j]] = [s.items[j], s.items[i]];
+  saveSets(sets); render();
+};
+window.setRemove = (sid, i)=>{
+  const sets = getSets(); const s = sets.find(x=>x.id===sid); if(!s) return;
+  s.items.splice(i,1); saveSets(sets); render();
+};
+
+/* ================= view counter ================= */
+const viewedThisSession = new Set();
+function countView(id){
+  if(viewedThisSession.has(id)) return;
+  viewedThisSession.add(id);
+  updateDoc(doc(db,"bhajans",id), {views: increment(1)}).catch(()=>{});
+}
+window.playAndCount = (id)=>{ countView(id); };
 
 window.onSort = (v)=>{ sortBy=v; localStorage.setItem("bhajan-sort", v); renderListOnly(); };
 window.jumpTo = (id)=>{ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); };
@@ -675,7 +859,7 @@ applyStatics();
 /* IMPORTANT: never re-render while the user is filling a form —
    live updates from others would wipe their inputs. */
 function safeRender(){
-  if(tab==="add" || tab==="bulk"){ updateTabCounts(); return; }
+  if(tab==="add"){ updateTabCounts(); return; }
   render();
 }
 function updateTabCounts(){
@@ -768,6 +952,7 @@ async function ensureSession(url, title, date){
 window.go = (tb)=>{
   tab=tb;
   if(tb!=="add"){ editingId=null; formFiles=[]; existingFiles=[]; }
+  if(tb!=="sets") openSetId=null;
   render();
   if(tb==="add" && editingId) loadEditFiles();
 };
@@ -776,7 +961,7 @@ async function loadEditFiles(){
   existingFiles = await loadFilesFor(editingId);
   renderFileThumbs();
 }
-window.onSearch = (v)=>{ search=v; renderListOnly(); };
+let _sdeb; window.onSearch = (v)=>{ search=v; clearTimeout(_sdeb); _sdeb=setTimeout(renderListOnly, 160); };
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
 window.pickSinger = (s)=>{ singerF=s; render(); };
@@ -889,6 +1074,7 @@ window.importBulk = async ()=>{
 /* ================= reader (fullscreen lyrics) ================= */
 window.openLyrics = async (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
+  countView(id);
   const div = document.createElement("div");
   div.className = "overlay";
   div.onclick = (e)=>{ if(e.target===div) div.remove(); };
@@ -1017,6 +1203,7 @@ function bhajanRow(b){
     b.singer ? `🎤 ${esc(b.singer)}` : "",
     sess ? esc(sess.title) : "",
     b.seconds ? fmtTime(b.seconds) : "",
+    sortBy==="views" && b.views ? `👁 ${b.views} ${t("views")}` : "",
     b.addedBy ? `${t("addedBy")} ${esc(b.addedBy)}` : "",
   ].filter(Boolean).join(" · ");
   return `
@@ -1028,8 +1215,8 @@ function bhajanRow(b){
     </div>
     <div class="ri-acts">
       ${sess
-        ? `<a class="ab play" href="${yt(sess.videoId,b.seconds)}" target="_blank" rel="noreferrer" title="YouTube">${ICONS.play}</a>`
-        : `<a class="ab play" href="https://www.youtube.com/results?search_query=${encodeURIComponent(b.name + " " + (b.singer||"") + " bhajan")}" target="_blank" rel="noreferrer" title="Find on YouTube">${ICONS.ytsearch}</a>`}
+        ? `<a class="ab play" href="${yt(sess.videoId,b.seconds)}" onclick="playAndCount('${b.id}')" target="_blank" rel="noreferrer" title="YouTube">${ICONS.play}</a>`
+        : `<a class="ab play" href="https://www.youtube.com/results?search_query=${encodeURIComponent(b.name + " " + (b.singer||"") + " bhajan")}" onclick="playAndCount('${b.id}')" target="_blank" rel="noreferrer" title="Find on YouTube">${ICONS.ytsearch}</a>`}
       ${hasAnyLyrics(b)
         ? `<button class="ab doc" onclick="openLyrics('${b.id}')" title="Lyrics">${ICONS.doc}</button>`
         : `<a class="ab doc" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer" title="Search lyrics on web">${ICONS.globe}</a>`}
@@ -1067,7 +1254,7 @@ function render(){
     <button class="tab ${tab==="bhajans"?"active":""}" id="tab-b" onclick="go('bhajans')">${t("tabBhajans")} (${bhajans.length})</button>
     <button class="tab ${tab==="lives"?"active":""}" id="tab-l" onclick="go('lives')">${t("tabLives")} (${sessions.length})</button>
     <button class="tab ${tab==="add"?"active":""}" onclick="go('add')">＋ ${t("tabAdd")}</button>
-    <button class="tab ${tab==="bulk"?"active":""}" onclick="go('bulk')">⚡ ${t("tabBulk")}</button>
+    <button class="tab ${tab==="sets"?"active":""}" onclick="go('sets')">🎼 ${t("tabSets")}</button>
   </div>`;
 
   if(tab==="bhajans"){
@@ -1082,7 +1269,7 @@ function render(){
       <input placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)">
       <select onchange="onSingerF(this.value)"><option value="">${t("allSingers")}</option>${allSingers().map(s=>`<option ${singerF===s?"selected":""} value="${esc(s)}">${esc(s)}</option>`).join("")}</select>
       <select onchange="onScaleF(this.value)"><option value="">${t("allScales")}</option>${SCALES.map(s=>`<option value="${s[0]}" ${scaleF===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("")}</select>
-      <select onchange="onSort(this.value)"><option value="az" ${sortBy==="az"?"selected":""}>A → Z</option><option value="recent" ${sortBy==="recent"?"selected":""}>${lang==="hi"?"नए पहले":"Recent first"}</option></select>
+      <select onchange="onSort(this.value)"><option value="az" ${sortBy==="az"?"selected":""}>A → Z</option><option value="recent" ${sortBy==="recent"?"selected":""}>${lang==="hi"?"नए पहले":"Recent first"}</option><option value="views" ${sortBy==="views"?"selected":""}>📊 ${t("mostViewed")}</option></select>
     </div>
     <button class="favtoggle ${favOnly?"on":""}" onclick="toggleFavOnly()">${t("myFavs")} (${favs.size})</button>
     <div id="bhajan-list"></div>`;
@@ -1117,9 +1304,8 @@ function render(){
         }).join("");
   }
 
-  if(tab==="add"){
-    const b = editingId ? bhajans.find(x=>x.id===editingId) : null;
-    body += `<div class="panel">
+  function addSingleForm(b){
+    return `<div class="panel">
       <div class="row">
         <div style="flex:2"><label>${t("bhajanName")}</label><input id="f-name" placeholder="…" value="${esc(b?.name||"")}"></div>
         <div><label>${t("singer")}</label><input id="f-singer" list="singers" placeholder="Shubham Rupam" value="${esc(b?.singer||"")}"></div>
@@ -1149,7 +1335,18 @@ function render(){
     </div>`;
   }
 
-  if(tab==="bulk"){
+  if(tab==="add"){
+    const b = editingId ? bhajans.find(x=>x.id===editingId) : null;
+    body += editingId ? "" : `<div class="seg" style="margin-bottom:14px">
+      <button class="${addMode==="one"?"on":""}" onclick="setAddMode('one')">${t("single")}</button>
+      <button class="${addMode==="bulk"?"on":""}" onclick="setAddMode('bulk')">⚡ ${t("bulkMode")}</button>
+    </div>`;
+  }
+  if(tab==="add" && (editingId || addMode==="one")){
+    const b = editingId ? bhajans.find(x=>x.id===editingId) : null;
+    body += addSingleForm(b);
+  }
+  if(tab==="add" && !editingId && addMode==="bulk"){
     body += `<div class="panel">
       <div class="subpanel" style="border-style:solid;border-color:var(--line)">
         <div style="font-size:13.5px;color:var(--dim);line-height:1.7">${t("bulkIntro")}</div>
@@ -1169,13 +1366,148 @@ function render(){
     </div>`;
   }
 
+  if(tab==="sets"){
+    const sets = getSets();
+    const cur = openSetId ? sets.find(s=>s.id===openSetId) : null;
+    if(!cur){
+      body += `<button class="btn btn-gold" style="margin-bottom:14px" onclick="newSetlist()">${t("newSetlist")}</button>`;
+      body += sets.length===0
+        ? `<div class="empty"><span class="om">🎼</span>${t("emptySets")}</div>`
+        : sets.map(s=>`
+          <div class="setcard" onclick="openSet('${s.id}')">
+            <div><h3>🎼 ${esc(s.name)}</h3><div class="sm">${s.items.length} ${t("itemsWord")} · ${new Date(s.created).toLocaleDateString()}</div></div>
+            <div style="display:flex;gap:7px">
+              ${s.items.length?`<button class="btn btn-gold" onclick="event.stopPropagation();performSet('${s.id}')">${t("perform")}</button>`:""}
+              <button class="ab danger" onclick="delSet('${s.id}', event)">${ICONS.trash}</button>
+            </div>
+          </div>`).join("");
+    }else{
+      const items = cur.items.map(id=>bhajans.find(b=>b.id===id)).filter(Boolean);
+      body += `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="openSet(null)">← ${t("tabSets")}</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-teal" onclick="openPicker('${cur.id}')">${t("addToSet")}</button>
+          ${items.length?`<button class="btn btn-gold" onclick="performSet('${cur.id}')">${t("perform")}</button>`:""}
+        </div>
+      </div>
+      <div class="statline"><span style="font-family:var(--fd);font-size:16px;color:var(--text)">🎼 ${esc(cur.name)}</span><span class="sep">·</span><span>${items.length} ${t("itemsWord")}</span></div>
+      <div class="hint" style="margin-bottom:10px">${t("shrutiHint")}</div>`;
+      body += items.length===0
+        ? `<div class="empty"><span class="om">🎼</span>${t("emptySet")}</div>`
+        : `<div class="listbox">` + items.map((b,i)=>`
+          <div class="sitem">
+            <span class="num">${i+1}.</span>
+            <span class="nm">${esc(b.name)}</span>
+            ${b.scale?scMini(b.scale):""}
+            ${hasAnyLyrics(b)?`<button class="ab doc" onclick="openLyrics('${b.id}')">${ICONS.doc}</button>`:""}
+            <div class="mv">
+              <button onclick="setMove('${cur.id}',${i},-1)" title="${t("moveUp")}">▲</button>
+              <button onclick="setMove('${cur.id}',${i},1)" title="${t("moveDown")}">▼</button>
+            </div>
+            <button class="ab danger" onclick="setRemove('${cur.id}',${i})">✕</button>
+          </div>`).join("") + `</div>`;
+    }
+  }
+
   $("app").innerHTML = body;
   $("fab").style.display = (tab==="bhajans"||tab==="lives") ? "flex" : "none";
   if(tab!=="bhajans"){ const r=document.getElementById("azrail"); if(r) r.remove(); }
   if(tab==="bhajans") renderListOnly();
-  if(tab==="add"){ renderFileThumbs(); if(b_sessionPreselect()) {} }
-  if(tab==="bulk") renderBulkPreview();
+  if(tab==="add" && (editingId || addMode==="one")){ renderFileThumbs(); b_sessionPreselect(); }
+  if(tab==="add" && !editingId && addMode==="bulk") renderBulkPreview();
 }
+window.setAddMode = (m)=>{ addMode=m; render(); };
+
+/* ================= setlist picker ================= */
+window.openPicker = (sid)=>{
+  const sets = getSets(); const s = sets.find(x=>x.id===sid); if(!s) return;
+  const div = document.createElement("div");
+  div.className = "overlay";
+  div.onclick = (e)=>{ if(e.target===div){ div.remove(); render(); } };
+  const chosen = new Set(s.items);
+  function rowsHtml(q){
+    let list = bhajans;
+    if(q) list = bhajans.filter(b=>fuzzyMatch(b.name+" "+(b.singer||""), q));
+    return list.slice(0,300).map(b=>`
+      <div class="pk ${chosen.has(b.id)?"sel":""}" data-id="${b.id}">
+        <span class="cb">${chosen.has(b.id)?"✓":""}</span>
+        <div style="min-width:0"><div class="nm">${esc(b.name)}</div><div class="si">${b.singer?esc(b.singer):""}${b.scale?` · ${b.scale}`:""}</div></div>
+      </div>`).join("");
+  }
+  div.innerHTML = `
+    <div class="picker">
+      <div class="picker-head">
+        <input id="pk-q" placeholder="${t("search")}">
+        <button class="btn btn-gold" id="pk-done">${t("pickDone")}</button>
+      </div>
+      <div class="picker-list" id="pk-list">${rowsHtml("")}</div>
+    </div>`;
+  document.body.appendChild(div);
+  const listEl = div.querySelector("#pk-list");
+  listEl.addEventListener("click", (e)=>{
+    const row = e.target.closest(".pk"); if(!row) return;
+    const id = row.dataset.id;
+    if(chosen.has(id)){ chosen.delete(id); row.classList.remove("sel"); row.querySelector(".cb").textContent=""; }
+    else{ chosen.add(id); row.classList.add("sel"); row.querySelector(".cb").textContent="✓"; }
+  });
+  let deb;
+  div.querySelector("#pk-q").addEventListener("input", (e)=>{
+    clearTimeout(deb);
+    deb = setTimeout(()=>{ listEl.innerHTML = rowsHtml(e.target.value); }, 150);
+  });
+  div.querySelector("#pk-done").onclick = ()=>{
+    const sets2 = getSets(); const s2 = sets2.find(x=>x.id===sid);
+    if(s2){
+      const kept = s2.items.filter(id=>chosen.has(id));
+      const added = [...chosen].filter(id=>!s2.items.includes(id));
+      s2.items = [...kept, ...added];
+      saveSets(sets2);
+    }
+    div.remove(); render();
+  };
+};
+
+/* ================= perform mode ================= */
+window.performSet = (sid)=>{
+  const s = getSets().find(x=>x.id===sid); if(!s || !s.items.length) return;
+  const items = s.items.map(id=>bhajans.find(b=>b.id===id)).filter(Boolean);
+  if(!items.length) return;
+  let i = 0;
+  const div = document.createElement("div");
+  div.className = "overlay";
+  function draw(){
+    const b = items[i];
+    div.innerHTML = `
+      <div class="perform">
+        <div class="pf-head">
+          <button class="btn btn-ghost" onclick="this.closest('.overlay').remove();stopShruti()">✕</button>
+          <span style="font-family:var(--fd)">🎼 ${esc(s.name)}</span>
+          <span class="pf-prog">${i+1} / ${items.length}</span>
+        </div>
+        <div class="pf-main">
+          <h2>${esc(b.name)}</h2>
+          ${b.singer?`<div style="color:var(--dim)">🎤 ${esc(b.singer)}</div>`:""}
+          ${b.scale?`<div class="pf-scale">${scMini(b.scale)}</div><div class="hint">${t("shrutiHint")}</div>`:""}
+          <div class="pf-acts">
+            ${hasAnyLyrics(b)?`<button class="btn btn-teal" onclick="openLyrics('${b.id}')">${ICONS.doc} Lyrics</button>`:""}
+            <a class="btn btn-ghost" href="https://www.youtube.com/results?search_query=${encodeURIComponent(b.name+" "+(b.singer||"")+" bhajan")}" target="_blank" rel="noreferrer">▶ YouTube</a>
+          </div>
+        </div>
+        <div class="pf-nav">
+          <button ${i===0?"disabled":""} id="pf-prev">←</button>
+          <button class="main" id="pf-next">${i===items.length-1 ? "✓" : "→"}</button>
+        </div>
+      </div>`;
+    div.querySelector("#pf-prev").onclick = ()=>{ if(i>0){ i--; stopShruti(); draw(); } };
+    div.querySelector("#pf-next").onclick = ()=>{
+      if(i<items.length-1){ i++; stopShruti(); draw(); }
+      else{ div.remove(); stopShruti(); }
+    };
+  }
+  draw();
+  document.body.appendChild(div);
+};
 function b_sessionPreselect(){
   /* when editing, preselect the bhajan's live */
   if(tab!=="add"||!editingId) return false;
@@ -1212,12 +1544,14 @@ function renderListOnly(){
     const oldRail = document.getElementById("azrail"); if(oldRail) oldRail.remove();
     return;
   }
-  let html = "", letters = [];
-  if(sortBy === "recent"){
-    list = [...list].sort((a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0));
-    html = `<div class="listbox">${list.map(bhajanRow).join("")}</div>`;
+  let letters = [];
+  let chunks = [];   // array of html strings, rendered progressively
+  if(sortBy === "recent" || sortBy === "views"){
+    list = [...list].sort(sortBy==="recent"
+      ? (a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0)
+      : (a,b)=>((b.views||0)-(a.views||0)));
+    for(let i=0;i<list.length;i+=80) chunks.push(list.slice(i,i+80).map(bhajanRow).join(""));
   }else{
-    // A→Z with section headers
     const groups = {};
     for(const b of list){
       let ch = (b.name.trim()[0]||"#").toUpperCase();
@@ -1225,13 +1559,27 @@ function renderListOnly(){
       (groups[ch] = groups[ch]||[]).push(b);
     }
     letters = Object.keys(groups).sort();
-    html = `<div class="listbox">` + letters.map(L=>
-      `<div class="alpha" id="sec-${L==="#"?"num":L.charCodeAt(0)}">${L}</div>` + groups[L].map(bhajanRow).join("")
-    ).join("") + `</div>`;
+    let buf = "", count = 0;
+    for(const L of letters){
+      buf += `<div class="alpha" id="sec-${L==="#"?"num":L.charCodeAt(0)}">${L}</div>` + groups[L].map(bhajanRow).join("");
+      count += groups[L].length;
+      if(count >= 80){ chunks.push(buf); buf=""; count=0; }
+    }
+    if(buf) chunks.push(buf);
   }
-  el.innerHTML = html;
 
-  // A-Z jump rail (only for A→Z view with enough sections)
+  // progressive render: first chunk immediately, rest on idle (keeps phones snappy)
+  el.innerHTML = `<div class="listbox" id="listbox-inner">${chunks[0]||""}</div>`;
+  const inner = $("listbox-inner");
+  let ci = 1;
+  function next(){
+    if(ci >= chunks.length || !document.body.contains(inner)) return;
+    inner.insertAdjacentHTML("beforeend", chunks[ci++]);
+    (window.requestIdleCallback||setTimeout)(next, 1);
+  }
+  (window.requestIdleCallback||setTimeout)(next, 1);
+
+  // A-Z jump rail
   const oldRail = document.getElementById("azrail"); if(oldRail) oldRail.remove();
   if(sortBy==="az" && letters.length > 4){
     const rail = document.createElement("div");
