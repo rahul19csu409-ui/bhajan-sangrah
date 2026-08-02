@@ -138,10 +138,12 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 .listwrap{position:relative}
 .listbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .alpha{
-  position:sticky;top:64px;z-index:5;padding:5px 14px;font-family:var(--fd);font-size:13px;
+  position:sticky;top:62px;z-index:8;padding:5px 14px;font-family:var(--fd);font-size:13px;
   color:var(--gold-ink);background:var(--field);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  letter-spacing:.14em;
+  letter-spacing:.14em;box-shadow:0 2px 6px rgba(60,45,15,.06);
 }
+[data-theme="dark"] .alpha{box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.ri{z-index:1}
 .listbox .alpha:first-child{border-top:none}
 .ri{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-top:1px solid var(--line);transition:background .12s;position:relative}
 .ri::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:2.5px;border-radius:3px;background:transparent;transition:background .15s}
@@ -1894,8 +1896,9 @@ function renderListOnly(){
   }else{
     const groups = {};
     for(const b of list){
-      let ch = (b.name.trim()[0]||"#").toUpperCase();
-      if(!/[A-Z]/.test(ch) && !/[\u0900-\u097F]/.test(ch)) ch = "#";
+      // first REAL letter — ignores zero-width chars, spaces, quotes, numbers-only prefixes etc.
+      const m = String(b.name).normalize("NFC").match(/[A-Za-z\u0900-\u097F]/);
+      let ch = m ? m[0].toUpperCase() : "#";
       (groups[ch] = groups[ch]||[]).push(b);
     }
     letters = Object.keys(groups).sort();
