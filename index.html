@@ -199,6 +199,20 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 .sc{cursor:pointer;user-select:none}
 .sc.playing{outline:2px solid var(--gold);animation:pulseSc 1s ease infinite}
 @keyframes pulseSc{0%,100%{outline-color:var(--gold)}50%{outline-color:transparent}}
+/* tanpura keyboard */
+.tanp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.tanp-key{
+  border-radius:12px;padding:14px 8px;cursor:pointer;text-align:center;
+  display:flex;flex-direction:column;gap:3px;align-items:center;transition:all .12s;
+  border:1.5px solid var(--line2);
+}
+.tanp-key b{font-size:18px;font-family:var(--fd);font-weight:400}
+.tanp-key span{font-size:10.5px;opacity:.75}
+.tanp-key.k-white{background:#f6f0dc;color:#1c1530}
+.tanp-key.k-black{background:#1d1733;color:#f0e9d5;border-color:#4a4078}
+.tanp-key:active{transform:scale(.96)}
+.tanp-key.playing{outline:3px solid var(--gold);box-shadow:0 0 18px rgba(176,119,15,.4);animation:pulseSc 1s ease infinite}
+
 #shrutibar{
   position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:35;display:none;
   align-items:center;gap:10px;background:var(--card);border:1px solid var(--gold);
@@ -419,6 +433,9 @@ footer .m{font-family:var(--fd);color:var(--gold);letter-spacing:.24em;font-size
       </div>
     </div>
     <div class="ctrl">
+      <button class="iconbtn" onclick="openTanpura()" title="Tanpura / Shruti">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      </button>
       <button class="iconbtn" id="adminbtn" onclick="toggleAdmin()" title="Admin">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L19 4m-3.5 3.5L18 10"/></svg>
       </button>
@@ -1418,6 +1435,30 @@ function render(){
   if(tab==="add" && !editingId && addMode==="bulk") renderBulkPreview();
 }
 window.setAddMode = (m)=>{ addMode=m; render(); };
+
+/* ================= tanpura keyboard ================= */
+window.openTanpura = ()=>{
+  const div = document.createElement("div");
+  div.className = "overlay";
+  div.onclick = (e)=>{ if(e.target===div) div.remove(); };
+  const keys = SCALES.map(s=>`
+    <button class="tanp-key ${s[2]?"k-black":"k-white"} ${shrutiNote===s[0]?"playing":""}" data-note="${s[0]}"
+      onclick="toggleShruti('${s[0]}', event); this.closest('.overlay').querySelectorAll('.tanp-key').forEach(k=>k.classList.toggle('playing', k.dataset.note===window.__sn()));">
+      <b>${s[0]}</b><span>${s[1]}</span>
+    </button>`).join("");
+  div.innerHTML = `
+    <div class="reader" style="max-width:520px;height:auto;max-height:88vh">
+      <div class="reader-head">
+        <div><h3>🎵 Tanpura / Shruti</h3><div class="rm2">${t("shrutiHint")}</div></div>
+        <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕</button>
+      </div>
+      <div class="reader-body">
+        <div class="tanp-grid">${keys}</div>
+      </div>
+    </div>`;
+  document.body.appendChild(div);
+};
+window.__sn = ()=> shrutiNote;
 
 /* ================= setlist picker ================= */
 window.openPicker = (sid)=>{
