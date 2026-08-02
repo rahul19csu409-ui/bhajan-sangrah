@@ -135,16 +135,25 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 .favtoggle.on{border-color:var(--gold);color:var(--gold-ink);background:var(--gold-soft)}
 
 /* ---------- compact list ---------- */
+.listwrap{position:relative}
 .listbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-.ri{display:flex;align-items:center;gap:10px;padding:11px 12px;border-top:1px solid var(--line);transition:background .12s}
-.ri:first-child{border-top:none}
+.alpha{
+  position:sticky;top:64px;z-index:5;padding:5px 14px;font-family:var(--fd);font-size:13px;
+  color:var(--gold-ink);background:var(--field);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  letter-spacing:.14em;
+}
+.listbox .alpha:first-child{border-top:none}
+.ri{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-top:1px solid var(--line);transition:background .12s;position:relative}
+.ri::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:2.5px;border-radius:3px;background:transparent;transition:background .15s}
+.ri:hover::before{background:var(--gold)}
+.ri:first-child,.alpha + .ri{border-top:none}
 .ri:hover{background:var(--hover)}
 .ri .star{background:none;border:none;cursor:pointer;padding:4px;color:var(--dim2);transition:all .13s;line-height:0}
 .ri .star.on{color:var(--gold)}
 .ri .star:hover{transform:scale(1.15)}
 .ri-main{flex:1;min-width:0;cursor:default}
 .ri-name{font-family:var(--fd);font-size:16.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ri-meta{font-size:11.5px;color:var(--dim2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.ri-meta{font-size:11.5px;color:var(--dim2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .ri-meta .sc{
   display:inline-flex;align-items:center;padding:0 6px;border-radius:4px;font-size:10.5px;font-weight:700;
   height:16px;line-height:16px;letter-spacing:.02em;flex-shrink:0;
@@ -153,16 +162,38 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 .sc.black{background:#1d1733;color:#efe8d3;border:1px solid #4a4078}
 .ri-acts{display:flex;gap:5px;align-items:center}
 .ab{
-  width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;
+  width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:transparent;
   color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s;
   text-decoration:none;
 }
 .ab:hover{color:var(--text);border-color:var(--line2)}
-.ab.play{background:var(--gold);border-color:var(--gold);color:#fff}
+.ab.play{background:var(--gold);border-color:var(--gold);color:#fff;border-radius:50%;box-shadow:0 2px 8px rgba(176,119,15,.3)}
 [data-theme="dark"] .ab.play{color:#241604}
 .ab.play:hover{filter:brightness(1.08)}
 .ab.doc{color:var(--teal);border-color:var(--teal-soft);background:var(--teal-soft)}
 .ab.danger{color:var(--red)}
+
+/* A-Z jump rail */
+.azrail{
+  position:fixed;right:2px;top:50%;transform:translateY(-50%);z-index:25;
+  display:flex;flex-direction:column;gap:0;padding:6px 3px;border-radius:99px;
+  background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);
+}
+.azrail button{
+  background:none;border:none;color:var(--dim2);font-size:9.5px;font-weight:700;cursor:pointer;
+  padding:1.5px 5px;line-height:1.2;border-radius:6px;
+}
+.azrail button:hover{color:var(--gold-ink);background:var(--gold-soft)}
+@media(min-width:900px){.azrail{right:calc(50% - 430px)}}
+
+/* skeleton shimmer */
+.skel{
+  height:180px;border-radius:12px;border:1px solid var(--line);
+  background:linear-gradient(100deg,var(--field) 40%,var(--hover) 50%,var(--field) 60%);
+  background-size:200% 100%;animation:shimmer 1.2s linear infinite;
+}
+@keyframes shimmer{to{background-position:-200% 0}}
+.pagecap{font-size:11px;color:var(--dim2);text-align:center;margin-top:-8px}
 
 /* ---------- live cards ---------- */
 .lcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px}
@@ -613,10 +644,30 @@ if("serviceWorker" in navigator){
 /* ================= state ================= */
 let bhajans = [], sessions = [], ready = {b:false, s:false};
 let tab = "bhajans", search = "", scaleF = "", singerF = "", editingId = null;
+let sortBy = localStorage.getItem("bhajan-sort") || "az";
 let bulkRows = [];
 let formFiles = [];        // new files chosen in the form
 let existingFiles = [];    // saved files of the bhajan being edited
 let saving = false;
+let deepLinked = false;
+
+window.onSort = (v)=>{ sortBy=v; localStorage.setItem("bhajan-sort", v); renderListOnly(); };
+window.jumpTo = (id)=>{ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); };
+window.shareBhajan = async (id)=>{
+  const b = bhajans.find(x=>x.id===id); if(!b) return;
+  const url = location.origin + location.pathname + "#b=" + id;
+  const text = `🪕 ${b.name}${b.singer?` — ${b.singer}`:""}`;
+  try{
+    if(navigator.share) await navigator.share({title:b.name, text, url});
+    else{ await navigator.clipboard.writeText(text+"\n"+url); toast("Link copied ✓"); }
+  }catch{}
+};
+function tryDeepLink(){
+  if(deepLinked || !ready.b) return;
+  const m = location.hash.match(/#b=([A-Za-z0-9]+)/);
+  if(m){ deepLinked = true; const b = bhajans.find(x=>x.id===m[1]); if(b) setTimeout(()=>openLyrics(b.id), 300); }
+  else deepLinked = true;
+}
 
 $("app").innerHTML = `<div class="loading pulse">${t("loading")}</div>`;
 applyStatics();
@@ -635,7 +686,7 @@ function updateTabCounts(){
 
 onSnapshot(query(bhajansCol, orderBy("name")), snap => {
   bhajans = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(b=>!b.hidden);
-  ready.b = true; safeRender();
+  ready.b = true; safeRender(); tryDeepLink();
 }, err => { console.error(err); toast(t("tLoadFail"), true); });
 
 onSnapshot(query(sessionsCol, orderBy("date","desc")), snap => {
@@ -848,13 +899,16 @@ window.openLyrics = async (id)=>{
           <h3>${esc(b.name)}</h3>
           <div class="rm2">${b.singer?`🎤 ${esc(b.singer)}`:""} ${b.scale?` · ${esc(b.scale)}`:""}</div>
         </div>
-        <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕ ${t("close")}</button>
+        <div style="display:flex;gap:7px;flex-shrink:0">
+          <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
+          <button class="btn btn-ghost" onclick="this.closest('.overlay').remove()">✕</button>
+        </div>
       </div>
       <div class="reader-body" id="rbody">
         <a class="btn btn-ghost" style="align-self:flex-start;font-size:12.5px;padding:8px 14px" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">🌐 Search lyrics on web</a>
         ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 ${t("openLyricsLink")}</a>` : ""}
         ${b.lyricsText ? `<div class="read-text">${esc(b.lyricsText)}</div>` : ""}
-        ${b.hasFiles ? `<div class="loading pulse" id="rload">…</div>` : ""}
+        ${b.hasFiles ? `<div class="skel" id="rload"></div>` : ""}
         ${!b.lyricsLink && !b.lyricsText && !b.hasFiles ? `<div class="empty">${t("noLyrics")}</div>` : ""}
       </div>
     </div>`;
@@ -864,12 +918,20 @@ window.openLyrics = async (id)=>{
     const load = div.querySelector("#rload");
     if(load) load.remove();
     const body = div.querySelector("#rbody");
+    const total = files.length;
+    let pageNo = 0;
     for(const f of files){
+      pageNo++;
       if(f.type==="image"){
         const img = document.createElement("img");
         img.className="read-img"; img.src=f.data; img.loading="lazy";
         img.onclick = ()=> img.classList.toggle("zoom");
         body.appendChild(img);
+        if(total>1){
+          const cap = document.createElement("div");
+          cap.className="pagecap"; cap.textContent = `${pageNo} / ${total}`;
+          body.appendChild(cap);
+        }
       }else if(f.type==="pdf"){
         try{
           const blob = await (await fetch(f.data)).blob();
@@ -1020,6 +1082,7 @@ function render(){
       <input placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)">
       <select onchange="onSingerF(this.value)"><option value="">${t("allSingers")}</option>${allSingers().map(s=>`<option ${singerF===s?"selected":""} value="${esc(s)}">${esc(s)}</option>`).join("")}</select>
       <select onchange="onScaleF(this.value)"><option value="">${t("allScales")}</option>${SCALES.map(s=>`<option value="${s[0]}" ${scaleF===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("")}</select>
+      <select onchange="onSort(this.value)"><option value="az" ${sortBy==="az"?"selected":""}>A → Z</option><option value="recent" ${sortBy==="recent"?"selected":""}>${lang==="hi"?"नए पहले":"Recent first"}</option></select>
     </div>
     <button class="favtoggle ${favOnly?"on":""}" onclick="toggleFavOnly()">${t("myFavs")} (${favs.size})</button>
     <div id="bhajan-list"></div>`;
@@ -1108,6 +1171,7 @@ function render(){
 
   $("app").innerHTML = body;
   $("fab").style.display = (tab==="bhajans"||tab==="lives") ? "flex" : "none";
+  if(tab!=="bhajans"){ const r=document.getElementById("azrail"); if(r) r.remove(); }
   if(tab==="bhajans") renderListOnly();
   if(tab==="add"){ renderFileThumbs(); if(b_sessionPreselect()) {} }
   if(tab==="bulk") renderBulkPreview();
@@ -1140,12 +1204,41 @@ function renderBulkPreview(){
 function renderListOnly(){
   const el = $("bhajan-list");
   if(!el) return;
-  const list = filtered();
-  el.innerHTML = list.length
-    ? `<div class="listbox">${list.map(bhajanRow).join("")}</div>`
-    : `<div class="empty"><span class="om">🪔</span>${
-        bhajans.length===0 ? t("emptyAll") : favOnly ? t("emptyFavs") : t("emptyFilter")
-      }</div>`;
+  let list = filtered();
+  if(!list.length){
+    el.innerHTML = `<div class="empty"><span class="om">🪔</span>${
+      bhajans.length===0 ? t("emptyAll") : favOnly ? t("emptyFavs") : t("emptyFilter")
+    }</div>`;
+    const oldRail = document.getElementById("azrail"); if(oldRail) oldRail.remove();
+    return;
+  }
+  let html = "", letters = [];
+  if(sortBy === "recent"){
+    list = [...list].sort((a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0));
+    html = `<div class="listbox">${list.map(bhajanRow).join("")}</div>`;
+  }else{
+    // A→Z with section headers
+    const groups = {};
+    for(const b of list){
+      let ch = (b.name.trim()[0]||"#").toUpperCase();
+      if(!/[A-Z]/.test(ch) && !/[\u0900-\u097F]/.test(ch)) ch = "#";
+      (groups[ch] = groups[ch]||[]).push(b);
+    }
+    letters = Object.keys(groups).sort();
+    html = `<div class="listbox">` + letters.map(L=>
+      `<div class="alpha" id="sec-${L==="#"?"num":L.charCodeAt(0)}">${L}</div>` + groups[L].map(bhajanRow).join("")
+    ).join("") + `</div>`;
+  }
+  el.innerHTML = html;
+
+  // A-Z jump rail (only for A→Z view with enough sections)
+  const oldRail = document.getElementById("azrail"); if(oldRail) oldRail.remove();
+  if(sortBy==="az" && letters.length > 4){
+    const rail = document.createElement("div");
+    rail.className = "azrail"; rail.id = "azrail";
+    rail.innerHTML = letters.map(L=>`<button onclick="jumpTo('sec-${L==="#"?"num":L.charCodeAt(0)}')">${L}</button>`).join("");
+    document.body.appendChild(rail);
+  }
 }
 </script>
 </body>

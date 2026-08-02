@@ -1,5 +1,5 @@
 /* Shyam Bhajan Sangrah — service worker */
-const CACHE = "bhajan-shell-v3";
+const CACHE = "bhajan-shell-v4";
 const CORE = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -21,16 +21,20 @@ self.addEventListener("fetch", (e) => {
   // Never intercept Firestore/Google API traffic — Firestore has its own offline cache
   if (url.hostname.includes("googleapis.com") || url.hostname.includes("firestore")) return;
 
-  // App shell (same-origin navigations): network first, cache fallback (offline)
+  // App shell (same-origin): STALE-WHILE-REVALIDATE — respond instantly from
+  // cache (fixes "app frozen after coming back from YouTube"), refresh in background
   if (url.origin === location.origin) {
     e.respondWith(
-      fetch(e.request)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, copy));
-          return res;
-        })
-        .catch(() => caches.match(e.request).then((r) => r || caches.match("./index.html")))
+      caches.match(e.request).then((hit) => {
+        const net = fetch(e.request)
+          .then((res) => {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, copy));
+            return res;
+          })
+          .catch(() => hit || caches.match("./index.html"));
+        return hit || net;
+      })
     );
     return;
   }
