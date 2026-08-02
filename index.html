@@ -55,7 +55,7 @@
   --shadow-lg:0 20px 60px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;max-width:100vw}
+html,body{overflow-x:hidden;max-width:100vw;touch-action:manipulation}
 body{
   background:var(--bg);color:var(--text);font-family:var(--fb);
   min-height:100vh;-webkit-font-smoothing:antialiased;
@@ -138,12 +138,12 @@ label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase
 .listwrap{position:relative}
 .listbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .alpha{
-  position:sticky;top:62px;z-index:8;padding:5px 14px;font-family:var(--fd);font-size:13px;
-  color:var(--gold-ink);background:var(--field);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  letter-spacing:.14em;box-shadow:0 2px 6px rgba(60,45,15,.06);
+  padding:6px 14px;font-family:var(--fd);font-size:13.5px;
+  color:var(--gold-ink);background:var(--field);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  letter-spacing:.18em;display:flex;align-items:center;gap:10px;
 }
-[data-theme="dark"] .alpha{box-shadow:0 2px 6px rgba(0,0,0,.3)}
-.ri{z-index:1}
+.alpha::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent)}
 .listbox .alpha:first-child{border-top:none}
 .ri{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-top:1px solid var(--line);transition:background .12s;position:relative}
 .ri::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:2.5px;border-radius:3px;background:transparent;transition:background .15s}
@@ -1089,6 +1089,21 @@ window.teleAdj = (d)=>{
   const s = document.getElementById("telespeed"); if(s) s.textContent = teleSpeed + "×";
 };
 
+/* double-tap detection that works on iOS (dblclick is unreliable there) */
+let _lastTap = {t:0, id:null};
+document.addEventListener("click", (e)=>{
+  const main = e.target.closest(".ri-main");
+  if(!main) return;
+  const id = main.dataset.bid;
+  const now = Date.now();
+  if(_lastTap.id === id && (now - _lastTap.t) < 350){
+    _lastTap = {t:0, id:null};
+    rowOpen(id);
+  }else{
+    _lastTap = {t:now, id:id};
+  }
+});
+
 window.rowOpen = (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
   if(b.hasFiles || b.lyricsText) openLyrics(id);
@@ -1408,7 +1423,7 @@ function bhajanRow(b){
   return `
   <div class="ri">
     <button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="★">${ICONS.star}</button>
-    <div class="ri-main" ondblclick="rowOpen('${b.id}')" title="Double-tap: open lyrics">
+    <div class="ri-main" data-bid="${b.id}" title="Double-tap: open lyrics">
       <div class="ri-name">${esc(b.name)}</div>
       <div class="ri-meta">${b.scale?scMini(b.scale):""}<span style="overflow:hidden;text-overflow:ellipsis">${meta}</span></div>
     </div>
