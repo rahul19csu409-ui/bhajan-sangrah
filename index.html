@@ -414,6 +414,7 @@ textarea.mono{font-family:ui-monospace,monospace;font-size:13px}
 .read-img.zoom{cursor:zoom-out;border-radius:0}
 .read-pdf{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;background:#fff}
 .pdfholder{display:flex;flex-direction:column;gap:10px}
+.pdfbar{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:700;color:var(--dim)}
 .read-pdfpage{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
 
 #toast{
@@ -1043,6 +1044,11 @@ const I18N = {
     pullRefresh: "Release to refresh",
     tanpuraLoad: "loading real tanpura…", tanpuraVol: "Tanpura volume",
     realTabla: "Real tabla (recordings)", tablaLoops: "Tabla — real loops", speed: "Speed",
+    ocrBtn: "📷 Scan lyrics from book", ocrHint: "Photograph a printed bhajan page — the app reads the Hindi text into the box below. Check, correct, save.",
+    ocrLoading: "Loading Hindi reader (first time only, ~2 MB)…", ocrReading: "Reading page…",
+    ocrDone: "Lyrics scanned ✓ — check and correct, then save", ocrFail: "Couldn't read that photo — try brighter light, page flat, text filling the frame.",
+    noLyricsChip: "Need lyrics", waAsk: "Ask on WhatsApp",
+    waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "Tap a bhajan → ▶ YouTube at that moment · Double-tap → 📖 lyrics (or web if none)",
     setDblHint: "Double-tap a bhajan name → lyrics / PDF opens (or Google search if none).",
     setsSharedNote: "Setlists are shared — everyone in the satsang sees them, with scales.",
@@ -1117,6 +1123,11 @@ const I18N = {
     pullRefresh: "रिफ़्रेश के लिए छोड़ें",
     tanpuraLoad: "असली तानपूरा लोड हो रहा…", tanpuraVol: "तानपूरा आवाज़",
     realTabla: "असली तबला (रिकॉर्डिंग)", tablaLoops: "तबला — असली लूप्स", speed: "रफ़्तार",
+    ocrBtn: "📷 किताब से लिरिक्स स्कैन करें", ocrHint: "छपे भजन के पन्ने की फ़ोटो लें — ऐप हिंदी टेक्स्ट पढ़कर नीचे बॉक्स में डाल देगा। जाँचें, सुधारें, सहेजें।",
+    ocrLoading: "हिंदी रीडर लोड हो रहा (सिर्फ़ पहली बार, ~2 MB)…", ocrReading: "पन्ना पढ़ रहे हैं…",
+    ocrDone: "लिरिक्स स्कैन हो गए ✓ — जाँचकर सहेजें", ocrFail: "फ़ोटो पढ़ नहीं पाए — अच्छी रोशनी में, पन्ना सीधा रखकर, पास से फ़ोटो लें।",
+    noLyricsChip: "लिरिक्स बाकी", waAsk: "WhatsApp पर माँगें",
+    waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "टैप → ▶ यूट्यूब उसी समय पर · डबल-टैप → 📖 लिरिक्स (न हों तो वेब)",
     setDblHint: "भजन के नाम पर डबल-टैप → लिरिक्स/PDF खुलेगी (न हो तो Google)।",
     setsSharedNote: "सेटलिस्ट साझा हैं — सत्संग में सबको स्केल के साथ दिखती हैं।",
@@ -1194,6 +1205,8 @@ if(admin) document.addEventListener("DOMContentLoaded",()=>$("adminbtn").classLi
 /* ================= favourites ================= */
 let favs = new Set(JSON.parse(localStorage.getItem("bhajan-favs") || "[]"));
 let favOnly = false;
+let missF = false;
+window.toggleMissF = ()=>{ missF = !missF; buzz(6); render(); };
 window.toggleFav = (id)=>{
   buzz(8);
   favs.has(id) ? favs.delete(id) : favs.add(id);
@@ -1869,6 +1882,49 @@ function compressImage(file, maxW, quality){
     img.src = URL.createObjectURL(file);
   });
 }
+/* ---- OCR: scan lyrics from a printed bhajan book (photo → Hindi text) ---- */
+let _tessReady = null;
+function loadTesseract(){
+  if(_tessReady) return _tessReady;
+  _tessReady = _loadScript("https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.5/tesseract.min.js");
+  _tessReady.catch(()=>{ _tessReady = null; });
+  return _tessReady;
+}
+window.scanPick = ()=> $("f-scan").click();
+window.onScanPick = async (e)=>{
+  const files = [...(e.target.files||[])]; e.target.value = "";
+  if(!files.length) return;
+  const st = $("scanstat");
+  const setSt = (m)=>{ if(st) st.textContent = m; };
+  let worker = null;
+  try{
+    setSt("⏳ " + t("ocrLoading"));
+    await loadTesseract();
+    worker = await Tesseract.createWorker("hin+eng", 1, {
+      logger: (m)=>{ if(m.status === "recognizing text") setSt(`🔍 ${t("ocrReading")} ${Math.round(m.progress*100)}%`); }
+    });
+    let out = "";
+    for(let i=0; i<files.length; i++){
+      setSt(`📷 ${i+1}/${files.length} — ${t("ocrReading")}`);
+      const dataUrl = await compressImage(files[i], 1600, 0.92);
+      const {data} = await worker.recognize(dataUrl);
+      const txt = (data.text||"").replace(/\n{3,}/g,"\n\n").trim();
+      if(txt) out += (out ? "\n\n" : "") + txt;
+    }
+    const ta = $("f-ltext");
+    if(ta && out){ ta.value = (ta.value ? ta.value + "\n\n" : "") + out; }
+    setSt(out ? "✅ " + t("ocrDone") : "❌ " + t("ocrFail"));
+    if(out){ toast(t("ocrDone")); buzz(15); } else toast(t("ocrFail"), true);
+  }catch(err){
+    console.error("ocr:", err);
+    setSt("❌ " + t("ocrFail"));
+    toast(t("ocrFail"), true);
+    _tessReady = null;
+  }finally{
+    try{ if(worker) await worker.terminate(); }catch{}
+  }
+};
+
 window.pickFiles = ()=> $("f-files").click();
 window.onFilePick = async (e)=>{
   const files = [...(e.target.files||[])];
@@ -1957,7 +2013,7 @@ window.clearSearch = ()=>{
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
 window.pickSinger = (s)=>{ singerF = (singerF===s ? "" : s); render(); };
-window.chipAll = ()=>{ singerF=""; favOnly=false; render(); };
+window.chipAll = ()=>{ singerF=""; favOnly=false; missF=false; render(); };
 /* ---- teleprompter: hands-free auto-scrolling lyrics ---- */
 let teleRaf = null, teleOn = false, teleSpeed = parseFloat(localStorage.getItem("bhajan-tele")||"1");
 window.teleToggle = ()=>{
@@ -2191,19 +2247,28 @@ window.importBulk = async ()=>{
 
 /* ---- PDF rendering via PDF.js (Android Chrome can't show PDFs in iframes) ---- */
 let _pdfjsReady = null;
-function loadPdfJs(){
-  if(_pdfjsReady) return _pdfjsReady;
-  _pdfjsReady = new Promise((res, rej)=>{
+function _loadScript(url){
+  return new Promise((res, rej)=>{
     const s = document.createElement("script");
-    s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
-    s.onload = ()=>{
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-      res();
-    };
-    s.onerror = rej;
+    s.src = url; s.onload = res; s.onerror = ()=>rej(new Error("load "+url));
     document.head.appendChild(s);
   });
+}
+function loadPdfJs(){
+  if(_pdfjsReady) return _pdfjsReady;
+  _pdfjsReady = (async ()=>{
+    try{
+      /* self-hosted (same-origin worker — most reliable) */
+      await _loadScript("pdfjs/pdf.min.js");
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = "pdfjs/pdf.worker.min.js";
+    }catch(e){
+      /* CDN fallback if the pdfjs folder wasn't uploaded */
+      await _loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+  })();
+  _pdfjsReady.catch(()=>{ _pdfjsReady = null; });   /* allow retry next time */
   return _pdfjsReady;
 }
 async function renderPdfInto(holder, dataUrl){
@@ -2296,25 +2361,25 @@ window.openLyrics = async (id)=>{
       }else if(f.type==="pdf"){
         const holder = document.createElement("div");
         holder.className = "pdfholder";
-        holder.innerHTML = `<div class="skel" style="height:220px"></div>`;
         body.appendChild(holder);
+        /* header bar: file name + open in phone's own viewer (always available) */
+        let extUrl = "";
+        try{ extUrl = URL.createObjectURL(await (await fetch(f.data)).blob()); }catch{}
+        const bar = document.createElement("div");
+        bar.className = "pdfbar";
+        bar.innerHTML = `<span>📄 ${esc(f.name||"PDF")}</span>` +
+          (extUrl ? `<a class="btn btn-ghost" style="padding:6px 12px;font-size:12px" href="${extUrl}" target="_blank" rel="noreferrer">↗ Open</a>` : "");
+        holder.appendChild(bar);
+        const zone = document.createElement("div");
+        zone.innerHTML = `<div class="skel" style="height:220px"></div>`;
+        holder.appendChild(zone);
         try{
-          holder.innerHTML = "";
-          await renderPdfInto(holder, f.data);
+          zone.innerHTML = "";
+          await renderPdfInto(zone, f.data);
         }catch(e){
           console.error("pdf render:", e);
-          holder.innerHTML = "";
-          /* fallback: open in the phone's own PDF viewer */
-          try{
-            const blob = await (await fetch(f.data)).blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.className = "btn btn-gold";
-            a.style.alignSelf = "flex-start";
-            a.textContent = `📄 ${esc(f.name||"Open PDF")} ↗`;
-            a.href = url; a.target = "_blank"; a.rel = "noreferrer";
-            holder.appendChild(a);
-          }catch{}
+          zone.innerHTML = `<div class="hint" style="padding:10px;border:1px dashed var(--line2);border-radius:10px">
+            PDF preview failed on this device — use the <b>↗ Open</b> button above to view it.</div>`;
         }
       }
     }
@@ -2382,6 +2447,7 @@ function filtered(){
   const S = sessById();
   let list = bhajans.filter(b=>{
     if(favOnly && !favs.has(b.id)) return false;
+    if(missF && hasAnyLyrics(b)) return false;
     if(scaleF && b.scale!==scaleF) return false;
     if(singerF && (b.singer||"").trim()!==singerF) return false;
     return true;
@@ -2482,6 +2548,8 @@ function render(){
     <div class="chips">
       <button class="chip ${!singerF && !favOnly ? "on":""}" onclick="chipAll()">${t("chipAll")}</button>
       <button class="chip ${favOnly?"on":""}" onclick="toggleFavOnly()">★ ${favs.size}</button>
+      <button class="chip ${missF?"on":""}" onclick="toggleMissF()">📖 ${t("noLyricsChip")} · ${bhajans.filter(b=>!hasAnyLyrics(b)).length}</button>
+      ${missF?`<button class="chip" style="border-color:var(--teal);color:var(--teal)" onclick="waRequest()">📤 ${t("waAsk")}</button>`:""}
       ${singers.map(s=>`<button class="chip ${singerF===s?"on":""}" onclick="pickSinger('${esc(s)}')">${esc(s)}</button>`).join("")}
     </div>
     <div class="filterline">
@@ -2539,6 +2607,11 @@ function render(){
       ${sessionSelect("f","f-url","f-stitle","f-sdate")}
       <div class="lyrics-box">
         <div class="lbl">${t("lyricsHead")}</div>
+        <div>
+          <button class="btn btn-teal" onclick="scanPick()">${t("ocrBtn")}</button>
+          <input type="file" id="f-scan" accept="image/*" capture="environment" multiple style="display:none" onchange="onScanPick(event)">
+          <div class="hint" id="scanstat" style="margin-top:6px">${t("ocrHint")}</div>
+        </div>
         <div><label>${t("lyricsPaste")}</label><textarea id="f-ltext" placeholder="${t("lyricsPastePh")}">${esc(b?.lyricsText||"")}</textarea></div>
         <div><label>${t("lyricsLink")}</label><input id="f-llink" placeholder="${t("lyricsLinkPh")}" value="${esc(b?.lyricsLink||"")}"></div>
         <div>
@@ -2878,6 +2951,15 @@ window.openPicker = (sid)=>{
 };
 
 /* ================= perform mode ================= */
+window.waRequest = ()=>{
+  const list = filtered().slice(0, 30);
+  if(!list.length) return;
+  let txt = `🙏 *${t("waMsgHead")}*\n\n`;
+  list.forEach((b,i)=>{ txt += `${i+1}. ${b.name}${b.singer?` — ${b.singer}`:""}\n`; });
+  txt += `\n📿 ${location.origin + location.pathname}\n(${t("waMsgFoot")})`;
+  window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+};
+
 window.shareSetlist = (sid, ev)=>{
   if(ev) ev.stopPropagation();
   const s = getSets().find(x=>x.id===sid); if(!s) return;

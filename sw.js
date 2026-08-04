@@ -1,6 +1,6 @@
 /* Shyam Bhajan Sangrah — service worker */
-const CACHE = "bhajan-shell-v13";
-const CORE = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+const CACHE = "bhajan-shell-v15";
+const CORE = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./pdfjs/pdf.min.js", "./pdfjs/pdf.worker.min.js"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -47,6 +47,8 @@ self.addEventListener("fetch", (e) => {
     url.hostname.includes("ragajunglism.org") ||
     url.hostname.includes("cdnjs.cloudflare.com") ||
     url.hostname.includes("archive.org") ||
+    url.hostname.includes("cdn.jsdelivr.net") ||
+    url.hostname.includes("tessdata.projectnaptha.com") ||
     url.hostname.includes("gstatic.com")
   ) {
     e.respondWith(
