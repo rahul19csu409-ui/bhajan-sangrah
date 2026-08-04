@@ -413,6 +413,8 @@ textarea.mono{font-family:ui-monospace,monospace;font-size:13px}
 .read-img{width:100%;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;background:#fff}
 .read-img.zoom{cursor:zoom-out;border-radius:0}
 .read-pdf{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;background:#fff}
+.pdfholder{display:flex;flex-direction:column;gap:10px}
+.read-pdfpage{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
 
 #toast{
   position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);
@@ -2130,6 +2132,49 @@ window.importBulk = async ()=>{
   saving = false;
 };
 
+/* ---- PDF rendering via PDF.js (Android Chrome can't show PDFs in iframes) ---- */
+let _pdfjsReady = null;
+function loadPdfJs(){
+  if(_pdfjsReady) return _pdfjsReady;
+  _pdfjsReady = new Promise((res, rej)=>{
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    s.onload = ()=>{
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      res();
+    };
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
+  return _pdfjsReady;
+}
+async function renderPdfInto(holder, dataUrl){
+  await loadPdfJs();
+  const b64 = dataUrl.split(",")[1];
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  const pdf = await window.pdfjsLib.getDocument({data: bytes}).promise;
+  const width = Math.min(holder.clientWidth || 700, 900);
+  for(let p=1; p<=pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const base = page.getViewport({scale: 1});
+    const scale = Math.min(3, (width / base.width) * Math.min(window.devicePixelRatio || 1, 2.5));
+    const vp = page.getViewport({scale});
+    const c = document.createElement("canvas");
+    c.width = vp.width; c.height = vp.height;
+    c.className = "read-pdfpage";
+    holder.appendChild(c);
+    await page.render({canvasContext: c.getContext("2d"), viewport: vp}).promise;
+    if(pdf.numPages > 1){
+      const cap = document.createElement("div");
+      cap.className = "pagecap"; cap.textContent = `${p} / ${pdf.numPages}`;
+      holder.appendChild(cap);
+    }
+  }
+}
+
 /* ================= reader (fullscreen lyrics) ================= */
 window.openLyrics = async (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
@@ -2192,13 +2237,28 @@ window.openLyrics = async (id)=>{
           body.appendChild(cap);
         }
       }else if(f.type==="pdf"){
+        const holder = document.createElement("div");
+        holder.className = "pdfholder";
+        holder.innerHTML = `<div class="skel" style="height:220px"></div>`;
+        body.appendChild(holder);
         try{
-          const blob = await (await fetch(f.data)).blob();
-          const url = URL.createObjectURL(blob);
-          const fr = document.createElement("iframe");
-          fr.className="read-pdf"; fr.src=url;
-          body.appendChild(fr);
-        }catch{}
+          holder.innerHTML = "";
+          await renderPdfInto(holder, f.data);
+        }catch(e){
+          console.error("pdf render:", e);
+          holder.innerHTML = "";
+          /* fallback: open in the phone's own PDF viewer */
+          try{
+            const blob = await (await fetch(f.data)).blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.className = "btn btn-gold";
+            a.style.alignSelf = "flex-start";
+            a.textContent = `📄 ${esc(f.name||"Open PDF")} ↗`;
+            a.href = url; a.target = "_blank"; a.rel = "noreferrer";
+            holder.appendChild(a);
+          }catch{}
+        }
       }
     }
   }
