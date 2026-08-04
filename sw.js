@@ -1,5 +1,5 @@
 /* Shyam Bhajan Sangrah — service worker */
-const CACHE = "bhajan-shell-v12";
+const CACHE = "bhajan-shell-v13";
 const CORE = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -46,6 +46,7 @@ self.addEventListener("fetch", (e) => {
     url.hostname.includes("img.youtube.com") ||
     url.hostname.includes("ragajunglism.org") ||
     url.hostname.includes("cdnjs.cloudflare.com") ||
+    url.hostname.includes("archive.org") ||
     url.hostname.includes("gstatic.com")
   ) {
     e.respondWith(
