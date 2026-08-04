@@ -872,6 +872,39 @@ footer .m{letter-spacing:.28em}
   #tablabar{bottom:calc(204px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 140px);font-size:12px;padding:9px 14px}
   .azrail{right:2px}
 }
+
+/* ═══ audio controls + extra shine ═══ */
+.volrow{display:flex;align-items:center;gap:9px;padding:4px 2px;color:var(--dim)}
+.volrow input[type=range]{accent-color:var(--gold)}
+
+/* tanpura keys: real keyboard feel */
+.tanp-key{box-shadow:var(--shadow);transition:all .12s}
+.tanp-key.k-white{background:linear-gradient(#FFFDF6,#F3E8CC);color:#3E1A12;border-color:#DFC788}
+.tanp-key.k-black{background:linear-gradient(#4A2318,#241209);color:#F3E4C2;border-color:#6E4A2E}
+[data-theme="dark"] .tanp-key.k-white{background:linear-gradient(#43321A,#2F2410);color:var(--gold-ink);border-color:#6B5322}
+[data-theme="dark"] .tanp-key.k-black{background:linear-gradient(#1A0E08,#0D0704);border-color:#3B2A1B}
+.tanp-key:hover{transform:translateY(-2px)}
+.tanp-key.playing{outline:3px solid var(--gold);box-shadow:0 0 22px rgba(185,138,30,.5)}
+
+/* reader header: soft gilded gradient */
+.reader-head{background:linear-gradient(var(--card), var(--bg))}
+
+/* live cards: thumbnail zoom on hover */
+.thumb{transition:transform .25s}
+.lcard:hover .thumb{transform:scale(1.04)}
+.thumb-link{overflow:hidden;border-radius:9px}
+
+/* chips + buttons press feedback */
+.chip:active,.tab:active{transform:scale(.95)}
+.ab:active{transform:scale(.9)}
+
+/* setcards: left accent rib */
+.setcard{position:relative;overflow:hidden}
+.setcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--gold),var(--kumkum))}
+
+/* perform mode: big breathing scale badge */
+.pf-scale .sc{animation:breathe 2.6s ease infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 </style>
 </head>
 <body>
@@ -918,7 +951,7 @@ footer .m{letter-spacing:.28em}
   <span class="fab-note" id="fabNote" style="display:none"></span>
 </button>
 <div id="shrutibar" onclick="stopShruti()"><span class="dot"></span><span id="shrutitxt"></span></div>
-<div id="tablabar" onclick="tablaStop()"><span class="dot"></span><span id="tablabartxt"></span></div>
+<div id="tablabar" onclick="rhythmStop()"><span class="dot"></span><span id="tablabartxt"></span></div>
 <div id="toast"></div>
 <button id="totop" onclick="toTop()" title="Top" aria-label="Scroll to top">↑</button>
 <div id="ptr"><span>↓</span></div>
@@ -1006,6 +1039,8 @@ const I18N = {
     tOnline: "✅ Back online — synced.",
     installApp: "Install app", tInstalled: "🎉 App installed! Find it on your home screen.",
     pullRefresh: "Release to refresh",
+    tanpuraLoad: "loading real tanpura…", tanpuraVol: "Tanpura volume",
+    realTabla: "Real tabla (recordings)",
     liveHint: "Tap a bhajan → ▶ YouTube at that moment · Double-tap → 📖 lyrics (or web if none)",
     setDblHint: "Double-tap a bhajan name → lyrics / PDF opens (or Google search if none).",
     setsSharedNote: "Setlists are shared — everyone in the satsang sees them, with scales.",
@@ -1078,6 +1113,8 @@ const I18N = {
     tOnline: "✅ इंटरनेट वापस — सिंक हो गया।",
     installApp: "ऐप इंस्टॉल करें", tInstalled: "🎉 ऐप इंस्टॉल! होम स्क्रीन पर देखें।",
     pullRefresh: "रिफ़्रेश के लिए छोड़ें",
+    tanpuraLoad: "असली तानपूरा लोड हो रहा…", tanpuraVol: "तानपूरा आवाज़",
+    realTabla: "असली तबला (रिकॉर्डिंग)",
     liveHint: "टैप → ▶ यूट्यूब उसी समय पर · डबल-टैप → 📖 लिरिक्स (न हों तो वेब)",
     setDblHint: "भजन के नाम पर डबल-टैप → लिरिक्स/PDF खुलेगी (न हो तो Google)।",
     setsSharedNote: "सेटलिस्ट साझा हैं — सत्संग में सबको स्केल के साथ दिखती हैं।",
@@ -1397,36 +1434,63 @@ const NOTE_SEMI = {"C":0,"C#":1,"D":2,"D#":3,"E":4,"F":5,"F#":6,"G":7,"G#":8,"A"
 let audioCtx = null, shrutiNodes = [], shrutiNote = null;
 const SND = {};           // decoded AudioBuffers
 let sndLoading = null;
-const SOUND_FILES = {
-  dha:"sounds/t_dha.mp3", dhin:"sounds/t_dhin.mp3", ge:"sounds/t_ge.mp3",
-  na:"sounds/t_na.mp3", ta:"sounds/t_ta.mp3", tin:"sounds/t_tin.mp3", ke:"sounds/t_ke.mp3",
+const BOL_BASE = "https://ragajunglism.org/wp-content/uploads/2023/04/TALAS-Bol-Syllable-";
+const SOUND_FILES = {   /* [real recording, local fallback] */
+  dha:[BOL_BASE+"Dha.mp3","sounds/t_dha.mp3"],
+  dhin:[BOL_BASE+"Dhin.mp3","sounds/t_dhin.mp3"],
+  ge:[BOL_BASE+"Gi.mp3","sounds/t_ge.mp3"],
+  na:[BOL_BASE+"Na.mp3","sounds/t_na.mp3"],
+  ta:[BOL_BASE+"Ta.mp3","sounds/t_ta.mp3"],
+  tin:[BOL_BASE+"Tun.mp3","sounds/t_tin.mp3"],
+  ke:[BOL_BASE+"Ki.mp3","sounds/t_ke.mp3"],
 };
 function actx(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); return audioCtx; }
 async function loadSounds(){
   if(sndLoading) return sndLoading;
   sndLoading = (async ()=>{
     actx();
-    const jobs = Object.entries(SOUND_FILES).map(async ([k, url])=>{
-      try{
-        const buf = await (await fetch(url)).arrayBuffer();
-        SND[k] = await audioCtx.decodeAudioData(buf);
-      }catch(e){ console.error("sound load failed:", k, e); }
+    const jobs = Object.entries(SOUND_FILES).map(async ([k, urls])=>{
+      for(const url of urls){
+        try{
+          const buf = await (await fetch(url)).arrayBuffer();
+          SND[k] = await audioCtx.decodeAudioData(buf);
+          return;
+        }catch(e){ /* try next source */ }
+      }
+      console.error("sound load failed:", k);
     });
     await Promise.all(jobs);
   })();
   return sndLoading;
 }
 function noteFreq(note, octave){ return 261.6256 * Math.pow(2,(NOTE_SEMI[note]||0)/12) * Math.pow(2, octave-4); }
-window.toggleShruti = (note, ev)=>{
-  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
-  if(shrutiNote === note){ stopShruti(); return; }
-  stopShruti();
+/* REAL tanpura recordings (ragajunglism.org) — Sa-Pa "thick" set, looped.
+   Falls back to the built-in synth drone if the recording can't load. */
+const TANPURA_FILE = {C:"c","C#":"db",D:"d","D#":"eb",E:"e",F:"f","F#":"gb",G:"g","G#":"ab",A:"a","A#":"bb",B:"b"};
+const tanpuraUrl = (n)=> `https://ragajunglism.org/wp-content/uploads/2020/03/${TANPURA_FILE[n]}-tanpura-thick.mp3`;
+let shrutiAudio = null;
+let shrutiVol = Math.min(1, Math.max(0, parseFloat(localStorage.getItem("bhajan-shruti-vol")||"0.85")));
+window.shrutiVolSet = (v)=>{
+  shrutiVol = +v; localStorage.setItem("bhajan-shruti-vol", shrutiVol);
+  if(shrutiAudio) shrutiAudio.volume = shrutiVol;
+};
+
+function shrutiUiOn(note, statusTxt){
+  const info = SCALES.find(s=>s[0]===note);
+  $("shrutitxt").textContent = statusTxt || `${t("playingShruti")}: ${note} · ${info?info[1]:""} — ${t("stopShruti")}`;
+  $("shrutibar").style.display = "flex";
+  const ft = $("fabTanpura"); if(ft) ft.classList.add("live");
+  const fn = $("fabNote"); if(fn){ fn.textContent = note; fn.style.display = "flex"; }
+  document.querySelectorAll(".sc").forEach(el=>{ el.classList.toggle("playing", el.dataset.note===note); });
+  document.querySelectorAll(".tanp-key").forEach(el=>{ el.classList.toggle("playing", el.dataset.note===note); });
+}
+function synthShruti(note){
+  /* fallback drone (offline / file blocked) */
   try{
     actx();
     const master = audioCtx.createGain(); master.gain.value = 0;
     const lp = audioCtx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value = 1600;
     master.connect(lp); lp.connect(audioCtx.destination);
-    // smooth continuous Sa+Pa drone (the original)
     const voices = [
       {f:noteFreq(note,3), g:.5}, {f:noteFreq(note,3)*1.5, g:.28},
       {f:noteFreq(note,4), g:.3}, {f:noteFreq(note,4)*1.003, g:.12},
@@ -1437,25 +1501,74 @@ window.toggleShruti = (note, ev)=>{
       o.frequency.value = v.f; o.connect(g); g.connect(master); o.start();
       shrutiNodes.push(o);
     }
-    master.gain.linearRampToValueAtTime(.16, audioCtx.currentTime + .6);
+    master.gain.linearRampToValueAtTime(.16 * shrutiVol + .04, audioCtx.currentTime + .6);
     shrutiNodes.push(master);
-    shrutiNote = note;
-    const info = SCALES.find(s=>s[0]===note);
-    $("shrutitxt").textContent = `${t("playingShruti")}: ${note} · ${info?info[1]:""} — ${t("stopShruti")}`;
-    $("shrutibar").style.display = "flex";
-    const ft = $("fabTanpura"); if(ft) ft.classList.add("live");
-    const fn = $("fabNote"); if(fn){ fn.textContent = note; fn.style.display = "flex"; }
-    document.querySelectorAll(".sc").forEach(el=>{ el.classList.toggle("playing", el.dataset.note===note); });
   }catch(e){ console.error(e); }
+}
+window.toggleShruti = (note, ev)=>{
+  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
+  if(shrutiNote === note){ stopShruti(); return; }
+  stopShruti();
+  buzz(8);
+  shrutiNote = note;
+  shrutiUiOn(note, `🎵 ${note} — ${t("tanpuraLoad")}`);
+  const a = new Audio(tanpuraUrl(note));
+  a.loop = true; a.preload = "auto"; a.volume = shrutiVol;
+  shrutiAudio = a;
+  const fallback = ()=>{ if(shrutiNote===note && shrutiAudio===a){ shrutiAudio=null; synthShruti(note); shrutiUiOn(note); } };
+  a.addEventListener("error", fallback, {once:true});
+  a.play().then(()=>{ if(shrutiNote===note) shrutiUiOn(note); }).catch(fallback);
 };
 window.stopShruti = ()=>{
+  if(shrutiAudio){ try{ shrutiAudio.pause(); shrutiAudio.src=""; }catch{} shrutiAudio = null; }
   shrutiNodes.forEach(n=>{ try{ n.stop ? n.stop() : n.disconnect(); }catch{} });
   shrutiNodes = []; shrutiNote = null;
   $("shrutibar").style.display = "none";
   const ft = $("fabTanpura"); if(ft) ft.classList.remove("live");
   const fn = $("fabNote"); if(fn) fn.style.display = "none";
   document.querySelectorAll(".sc.playing").forEach(el=>el.classList.remove("playing"));
+  document.querySelectorAll(".tanp-key.playing").forEach(el=>el.classList.remove("playing"));
 };
+
+
+/* ================= real tabla recordings (looping full-cycle demos) ================= */
+const TALA_BASE = "https://ragajunglism.org/wp-content/uploads/2023/02/";
+const TALA_LOOPS = {
+  "Keherwa · 8":   [["Tilang","KEHERWA-Tilang.mp3"],["Marriage","KEHERWA-Marriage.mp3"],["Agra","KEHERWA-Agra.mp3"]],
+  "Dadra · 6":     [["Pilu","DADRA-Pilu.mp3"],["Dhun","DADRA-Dhun.mp3"],["Bhairavi","DADRA-Bhairavi.mp3"]],
+  "Tintal · 16":   [["Ahir Bhairav","TINTAL-Ahir-Bhairav.mp3"],["Rageshri","TINTAL-Rageshri.mp3"],["Chandranandan","TINTAL-Chandranandan.mp3"],["Eka","TINTAL-Eka.mp3"]],
+  "Ektal · 12":    [["Bageshri","EKTAL-Bageshri.mp3"],["Bhatiyar","EKTAL-Bhatiyar.mp3"],["Asa Bhairav","EKTAL-Asa-Bhairav.mp3"],["Jog","EKTAL-Jog.mp3"]],
+  "Jhaptal · 10":  [["Megh 1","JHAPTAL-Megh-1.mp3"],["Megh 2","JHAPTAL-Megh-2.mp3"],["Patdeep","JHAPTAL-Patdeep.mp3"],["Bhairavi","JHAPTAL-Bhairavi.mp3"]],
+  "Rupak · 7":     [["Marwa","RUPAK-Marwa.mp3"],["Jansammohini","RUPAK-Jansammohini.mp3"],["Bhairavi","RUPAK-Bhairavi.mp3"]],
+  "Deepchandi · 14":[["Dhun","DEEPCHANDI-Dhun.mp3"]],
+  "Dhamar · 14":   [["Parameshwari","DHAMAR-Parameshwari.mp3"]],
+  "Jhoomra · 14":  [["Bhatiyar","JHOOMRA-Bhatiyar.mp3"]],
+  "Tilwada · 16":  [["Malkauns","TILWADA-Malkauns.mp3"]],
+  "Sitarkhani · 16":[["Mishra Kafi","SITARKHANI-Mishra-Kafi.mp3"]],
+  "Chautal · 12":  [["Todi","CHAUTAL-Todi.mp3"]],
+};
+let talaAudio = null, talaLabel = "";
+window.talaPlay = ()=>{
+  const sel = $("tala-sel"); if(!sel || !sel.value) return;
+  if(talaAudio && talaLabel === sel.value){ talaStop(); return; }
+  tablaStop(); talaStop(); buzz(10);
+  const [label, file] = JSON.parse(sel.value);
+  const a = new Audio(TALA_BASE + file);
+  a.loop = true; a.volume = .95; a.preload = "auto";
+  talaAudio = a; talaLabel = sel.value;
+  const bar = $("tablabartxt"); if(bar) bar.textContent = `🎧 ${label} — loading…`;
+  $("tablabar").style.display = "flex";
+  const btn = $("tala-play"); if(btn) btn.textContent = "⏹";
+  a.play().then(()=>{
+    const b2 = $("tablabartxt"); if(b2 && talaAudio===a) b2.textContent = `🎧 ${label} · ${t("stopShruti")}`;
+  }).catch(()=>{ talaStop(); toast(t("tLoadFail"), true); });
+};
+window.talaStop = ()=>{
+  if(talaAudio){ try{ talaAudio.pause(); talaAudio.src=""; }catch{} talaAudio = null; talaLabel = ""; }
+  if(!tablaOn) $("tablabar").style.display = "none";
+  const btn = $("tala-play"); if(btn) btn.textContent = "▶";
+};
+window.rhythmStop = ()=>{ tablaStop(); talaStop(); };
 
 /* ================= setlists (SHARED — synced to everyone via Firestore) ================= */
 let sharedSets = [];
@@ -1841,7 +1954,13 @@ document.addEventListener("click", (e)=>{
 
   _lastTap = {t:now, key};
   /* ---------- SINGLE TAP (delayed so a double can cancel it) ---------- */
-  if(el.dataset.yt){
+  if(el.classList.contains("ri-main")){
+    const bid = el.dataset.bid;
+    _tapTimer = setTimeout(()=>{
+      const b = bhajans.find(x=>x.id===bid);
+      if(b && (b.hasFiles || b.lyricsText || b.lyricsLink)) rowOpen(bid);
+    }, 300);
+  }else if(el.dataset.yt){
     const url = el.dataset.yt, bid = el.dataset.bid;
     _tapTimer = setTimeout(()=>{ countView(bid); window.open(url, "_blank", "noopener"); }, 330);
   }else if(el.dataset.my){
@@ -2177,7 +2296,7 @@ function bhajanRow(b){
   return `
   <div class="ri">
     <button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="★">${ICONS.star}</button>
-    <div class="ri-main" data-bid="${b.id}" title="Double-tap: open lyrics">
+    <div class="ri-main" data-bid="${b.id}" title="Tap: lyrics · Double-tap: lyrics or web search">
       <div class="ri-name">${esc(b.name)}</div>
       ${subs?`<div class="ri-sub">${subs}</div>`:""}
     </div>
@@ -2498,6 +2617,7 @@ function highlightBeat(b){
 }
 window.tablaToggle = async ()=>{
   if(tablaOn){ tablaStop(); return; }
+  talaStop();
   actx();
   if(!SND.dha){ toast("🥁 Loading sounds…"); await loadSounds(); }
   if(!SND.dha) return toast("Sound files missing — upload the sounds folder.", true);
@@ -2549,6 +2669,24 @@ window.openTanpura = ()=>{
       </div>
       <div class="reader-body">
         <div class="tanp-grid">${keys}</div>
+
+        <div class="volrow">
+          <span>🔉</span>
+          <input type="range" min="0.1" max="1" step="0.05" value="${shrutiVol}" oninput="shrutiVolSet(this.value)" style="flex:1;padding:0">
+          <span>🔊</span>
+          <span style="font-size:11px;color:var(--dim2);font-weight:700;letter-spacing:.05em">${t("tanpuraVol")}</span>
+        </div>
+
+        <div class="tabla-panel">
+          <div class="tp-head">🎧 ${t("realTabla")}</div>
+          <div class="tp-row">
+            <select id="tala-sel" style="flex:1">
+              ${Object.entries(TALA_LOOPS).map(([taal,arr])=>`<optgroup label="${taal}">${arr.map(([lb,f])=>`<option value='${JSON.stringify([taal.split(" ·")[0]+" — "+lb, f])}'>${taal} — ${lb}</option>`).join("")}</optgroup>`).join("")}
+            </select>
+            <button class="btn btn-gold" id="tala-play" onclick="talaPlay()">${talaAudio?"⏹":"▶"}</button>
+          </div>
+          <div class="hint" style="margin:0">Real recordings · loop until stopped</div>
+        </div>
 
         <div class="tabla-panel">
           <div class="tp-head">🥁 Tabla</div>
