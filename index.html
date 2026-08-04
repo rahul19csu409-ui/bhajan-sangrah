@@ -797,6 +797,81 @@ footer .m{letter-spacing:.28em}
   .addbtn{padding:0 14px;font-size:13px}
   .filterline select{min-width:104px}
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CHAMPION UX LAYER — native-app feel
+   ═══════════════════════════════════════════════════════════════ */
+
+/* page transition */
+#app.pagein{animation:pagein .24s ease}
+@keyframes pagein{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* skeleton loading */
+.skeltabs{display:flex;gap:8px;padding:8px 0 14px}
+.skelpill{flex:1;height:38px;border-radius:12px}
+.skelbar{height:46px;border-radius:14px;margin-bottom:14px}
+.skelrow{padding:16px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:9px}
+.skelrow:first-child{border-top:none}
+.skelline{height:12px;border-radius:6px}
+.skelline.w60{width:62%}
+.skelline.w30{width:30%;height:9px}
+.skelpill,.skelbar,.skelline{
+  background:linear-gradient(100deg,var(--field) 40%,var(--hover) 50%,var(--field) 60%);
+  background-size:200% 100%;animation:shimmer 1.15s linear infinite;
+}
+
+/* scroll-to-top */
+#totop{
+  position:fixed;left:16px;bottom:22px;z-index:29;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--line);background:var(--card);color:var(--gold-ink);
+  font-size:18px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-lg);
+  opacity:0;pointer-events:none;transform:translateY(10px);transition:all .2s;
+}
+#totop.show{opacity:1;pointer-events:auto;transform:none}
+
+/* pull-to-refresh */
+#ptr{
+  position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:60;display:none;
+  width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line);
+  align-items:center;justify-content:center;font-size:19px;color:var(--dim);
+  box-shadow:var(--shadow-lg);transition:color .15s;
+}
+#ptr.ready{color:var(--gold-ink);border-color:var(--gold)}
+#ptr.spin span{display:inline-block;animation:ptrspin .7s linear infinite}
+@keyframes ptrspin{to{transform:rotate(360deg)}}
+
+/* ── bottom navigation on phones (thumb-reach, like native apps) ── */
+@media (max-width:700px){
+  .tabs{
+    position:fixed;left:0;right:0;bottom:0;top:auto;z-index:38;
+    margin:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));
+    background:var(--card);border-top:1px solid var(--line);border-bottom:none;
+    box-shadow:0 -8px 24px rgba(70,35,10,.1);
+    backdrop-filter:blur(10px);
+  }
+  [data-theme="dark"] .tabs{box-shadow:0 -8px 24px rgba(0,0,0,.4)}
+  .tab{
+    position:relative;flex:1 1 0;min-width:0;
+    flex-direction:column;gap:3px;padding:7px 2px 6px;
+    font-size:10.5px;border-radius:12px;
+  }
+  .tab svg{width:18px;height:18px}
+  .tab em{
+    position:absolute;top:1px;right:calc(50% - 24px);
+    font-size:9px;padding:2px 5px;
+  }
+  .tab.active{box-shadow:none}
+  .wrap{padding-bottom:170px}
+
+  /* lift the floating pieces above the bottom bar */
+  .fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .fab-tanpura{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+  #totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  #toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+  #shrutibar{bottom:calc(152px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 140px);font-size:12px;padding:9px 14px}
+  #tablabar{bottom:calc(204px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 140px);font-size:12px;padding:9px 14px}
+  .azrail{right:2px}
+}
 </style>
 </head>
 <body>
@@ -816,6 +891,7 @@ footer .m{letter-spacing:.28em}
       <button class="iconbtn" onclick="openTanpura()" title="Tanpura / Shruti">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </button>
+      <button class="iconbtn" id="installbtn" style="display:none" onclick="doInstall()" title="Install app">📲</button>
       <button class="iconbtn" id="adminbtn" onclick="toggleAdmin()" title="Admin">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L19 4m-3.5 3.5L18 10"/></svg>
       </button>
@@ -844,6 +920,8 @@ footer .m{letter-spacing:.28em}
 <div id="shrutibar" onclick="stopShruti()"><span class="dot"></span><span id="shrutitxt"></span></div>
 <div id="tablabar" onclick="tablaStop()"><span class="dot"></span><span id="tablabartxt"></span></div>
 <div id="toast"></div>
+<button id="totop" onclick="toTop()" title="Top" aria-label="Scroll to top">↑</button>
+<div id="ptr"><span>↓</span></div>
 
 <!-- ═════════════════════════════════════════════════════
      SETTINGS — change these:
@@ -924,6 +1002,10 @@ const I18N = {
     signInGoogle: "Admin sign-in with Google…", adminHello: "Admin ON —", notAdminEmail: "This Google account is not in the admin list.",
     single: "Single", bulkMode: "Bulk",
     tabMyList: "Practice", chipAll: "All",
+    tOffline: "📴 Offline — your changes will sync when internet returns.",
+    tOnline: "✅ Back online — synced.",
+    installApp: "Install app", tInstalled: "🎉 App installed! Find it on your home screen.",
+    pullRefresh: "Release to refresh",
     liveHint: "Tap a bhajan → ▶ YouTube at that moment · Double-tap → 📖 lyrics (or web if none)",
     setDblHint: "Double-tap a bhajan name → lyrics / PDF opens (or Google search if none).",
     setsSharedNote: "Setlists are shared — everyone in the satsang sees them, with scales.",
@@ -992,6 +1074,10 @@ const I18N = {
     signInGoogle: "Google से एडमिन साइन-इन…", adminHello: "एडमिन चालू —", notAdminEmail: "यह Google अकाउंट एडमिन सूची में नहीं है।",
     single: "एक", bulkMode: "एक साथ",
     tabMyList: "रियाज़ लिस्ट", chipAll: "सभी",
+    tOffline: "📴 ऑफ़लाइन — इंटरनेट आते ही बदलाव सिंक हो जाएँगे।",
+    tOnline: "✅ इंटरनेट वापस — सिंक हो गया।",
+    installApp: "ऐप इंस्टॉल करें", tInstalled: "🎉 ऐप इंस्टॉल! होम स्क्रीन पर देखें।",
+    pullRefresh: "रिफ़्रेश के लिए छोड़ें",
     liveHint: "टैप → ▶ यूट्यूब उसी समय पर · डबल-टैप → 📖 लिरिक्स (न हों तो वेब)",
     setDblHint: "भजन के नाम पर डबल-टैप → लिरिक्स/PDF खुलेगी (न हो तो Google)।",
     setsSharedNote: "सेटलिस्ट साझा हैं — सत्संग में सबको स्केल के साथ दिखती हैं।",
@@ -1070,6 +1156,7 @@ if(admin) document.addEventListener("DOMContentLoaded",()=>$("adminbtn").classLi
 let favs = new Set(JSON.parse(localStorage.getItem("bhajan-favs") || "[]"));
 let favOnly = false;
 window.toggleFav = (id)=>{
+  buzz(8);
   favs.has(id) ? favs.delete(id) : favs.add(id);
   localStorage.setItem("bhajan-favs", JSON.stringify([...favs]));
   renderListOnly();
@@ -1144,6 +1231,119 @@ function toast(msg, isErr){
   clearTimeout(el._h);
   el._h = setTimeout(()=>el.className="", 3200);
 }
+/* ═══════════ champion UX layer ═══════════ */
+/* haptic tick (Android) */
+function buzz(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms||10); }catch{} }
+
+/* keep the screen awake while singing (lyrics / perform mode) */
+let _wl = null, _wlWant = false;
+async function keepAwake(){
+  _wlWant = true;
+  try{ if("wakeLock" in navigator) _wl = await navigator.wakeLock.request("screen"); }catch{}
+}
+function releaseAwake(){
+  _wlWant = false;
+  try{ if(_wl){ _wl.release(); _wl = null; } }catch{}
+}
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && _wlWant) keepAwake(); });
+
+/* lyrics font size (for singers who need bigger text) */
+let readerFs = parseInt(localStorage.getItem("bhajan-fs")||"18");
+window.fsAdj = (d)=>{
+  readerFs = Math.max(14, Math.min(34, readerFs + d*2));
+  localStorage.setItem("bhajan-fs", readerFs);
+  document.querySelectorAll(".read-text").forEach(el=> el.style.fontSize = readerFs+"px");
+  const lbl = document.getElementById("fslbl"); if(lbl) lbl.textContent = readerFs;
+  buzz(6);
+};
+
+/* install-to-home-screen */
+let _deferredInstall = null;
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault(); _deferredInstall = e;
+  const b = document.getElementById("installbtn"); if(b) b.style.display = "flex";
+});
+window.doInstall = async ()=>{
+  if(!_deferredInstall) return;
+  _deferredInstall.prompt();
+  const r = await _deferredInstall.userChoice.catch(()=>null);
+  if(r && r.outcome === "accepted"){ toast(t("tInstalled")); buzz(20); }
+  _deferredInstall = null;
+  const b = document.getElementById("installbtn"); if(b) b.style.display = "none";
+};
+window.addEventListener("appinstalled", ()=>{ const b=document.getElementById("installbtn"); if(b) b.style.display="none"; });
+
+/* online / offline awareness */
+window.addEventListener("offline", ()=> toast(t("tOffline"), true));
+window.addEventListener("online",  ()=> toast(t("tOnline")));
+
+/* scroll-to-top for long lists */
+window.addEventListener("scroll", ()=>{
+  const b = document.getElementById("totop"); if(!b) return;
+  b.classList.toggle("show", window.scrollY > 700);
+}, {passive:true});
+window.toTop = ()=>{ window.scrollTo({top:0, behavior:"smooth"}); buzz(6); };
+
+/* "/" focuses search (desktop) */
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName)){
+    e.preventDefault();
+    if(tab !== "bhajans"){ tab = "bhajans"; render(); }
+    const q = document.getElementById("q"); if(q) q.focus();
+  }
+});
+
+/* swipe left/right to change tabs (skips overlays, form fields, chip rows) */
+const TABS_ORDER = ["bhajans","lives","mylist","sets"];
+let _swX = null, _swY = null, _swOk = false;
+document.addEventListener("touchstart", (e)=>{
+  const tgt = e.target;
+  _swOk = !document.querySelector(".overlay")
+       && tab !== "add"
+       && !tgt.closest(".chips, input, textarea, select, .preview-rows, .azrail, .tb-matras, .fthumbs, .picker");
+  if(!_swOk) return;
+  _swX = e.touches[0].clientX; _swY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener("touchend", (e)=>{
+  if(!_swOk || _swX===null) return;
+  const dx = e.changedTouches[0].clientX - _swX;
+  const dy = e.changedTouches[0].clientY - _swY;
+  _swX = _swY = null;
+  if(Math.abs(dx) < 70 || Math.abs(dy) > 50 || Math.abs(dx) < Math.abs(dy)*1.6) return;
+  const i = TABS_ORDER.indexOf(tab); if(i < 0) return;
+  const j = i + (dx < 0 ? 1 : -1);
+  if(j < 0 || j >= TABS_ORDER.length) return;
+  buzz(8);
+  go(TABS_ORDER[j]);
+}, {passive:true});
+
+/* pull-to-refresh (top of page) */
+let _ptrY = null, _ptrPull = 0;
+document.addEventListener("touchstart", (e)=>{
+  _ptrY = (window.scrollY <= 0 && !document.querySelector(".overlay")) ? e.touches[0].clientY : null;
+  _ptrPull = 0;
+}, {passive:true});
+document.addEventListener("touchmove", (e)=>{
+  if(_ptrY === null) return;
+  _ptrPull = e.touches[0].clientY - _ptrY;
+  const el = document.getElementById("ptr");
+  if(!el) return;
+  if(_ptrPull > 26){
+    el.style.display = "flex";
+    const p = Math.min(_ptrPull, 130);
+    el.style.transform = `translateX(-50%) translateY(${p*0.55}px)`;
+    el.classList.toggle("ready", _ptrPull > 95);
+  }
+}, {passive:true});
+document.addEventListener("touchend", ()=>{
+  const el = document.getElementById("ptr");
+  if(el){
+    if(_ptrPull > 95){ el.querySelector("span").textContent = "⟳"; el.classList.add("spin"); buzz(12); setTimeout(()=>location.reload(), 250); return; }
+    el.style.display = "none"; el.style.transform = "translateX(-50%)"; el.classList.remove("ready");
+  }
+  _ptrY = null; _ptrPull = 0;
+}, {passive:true});
+
 function myName(){ return localStorage.getItem("bhajan-name") || ""; }
 window.setName = function(){
   const n = prompt(t("namePrompt"), myName());
@@ -1452,7 +1652,12 @@ function tryDeepLink(){
   else deepLinked = true;
 }
 
-$("app").innerHTML = `<div class="loading pulse">${t("loading")}</div>`;
+$("app").innerHTML = `
+  <div class="skeltabs">${Array.from({length:4},()=>`<div class="skelpill"></div>`).join("")}</div>
+  <div class="skelbar"></div>
+  <div class="listbox">${Array.from({length:9},()=>`
+    <div class="skelrow"><div class="skelline w60"></div><div class="skelline w30"></div></div>`).join("")}
+  </div>`;
 applyStatics();
 
 /* IMPORTANT: never re-render while the user is filling a form —
@@ -1549,6 +1754,7 @@ async function ensureSession(url, title, date){
 
 /* ================= actions ================= */
 window.go = (tb)=>{
+  if(tb !== tab) buzz(6);
   if(tb !== tab){
     const prev = tab;
     navPush(()=>{ tab=prev; if(prev!=="sets") openSetId=null; render(); });
@@ -1627,6 +1833,7 @@ document.addEventListener("click", (e)=>{
     /* ---------- DOUBLE TAP ---------- */
     clearTimeout(_tapTimer); _tapTimer = null;
     _lastTap = {t:0, key:null};
+    buzz(12);
     if(el.dataset.my) mySmartOpen(el.dataset.my);
     else rowOpen(el.dataset.bid);
     return;
@@ -1810,7 +2017,8 @@ window.openLyrics = async (id)=>{
   countView(id);
   const div = document.createElement("div");
   div.className = "overlay";
-  navPush(()=>{ teleStop(); div.remove(); });
+  keepAwake();
+  navPush(()=>{ teleStop(); releaseAwake(); div.remove(); });
   div.onclick = (e)=>{ if(e.target===div) navBack(); };
   div.innerHTML = `
     <div class="reader">
@@ -1826,6 +2034,10 @@ window.openLyrics = async (id)=>{
       </div>
       ${(b.lyricsText || b.hasFiles) ? `
       <div class="telebar">
+        <button class="ab" onclick="fsAdj(-1)" title="Smaller text">A−</button>
+        <span id="fslbl" style="min-width:22px;text-align:center;font-size:11px;font-weight:700;color:var(--dim2)">${readerFs}</span>
+        <button class="ab" onclick="fsAdj(1)" title="Bigger text">A＋</button>
+        <span style="width:1px;height:20px;background:var(--line)"></span>
         <span style="font-size:11px;color:var(--dim2);letter-spacing:.06em">AUTO-SCROLL</span>
         <button class="ab" id="telebtn" onclick="teleToggle()">▶</button>
         <button class="ab" onclick="teleAdj(-0.25)">−</button>
@@ -1835,7 +2047,7 @@ window.openLyrics = async (id)=>{
       <div class="reader-body" id="rbody">
         <a class="btn btn-ghost" style="align-self:flex-start;font-size:12.5px;padding:8px 14px" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">🌐 Search lyrics on web</a>
         ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 ${t("openLyricsLink")}</a>` : ""}
-        ${b.lyricsText ? `<div class="read-text">${esc(b.lyricsText)}</div>` : ""}
+        ${b.lyricsText ? `<div class="read-text" style="font-size:${readerFs}px">${esc(b.lyricsText)}</div>` : ""}
         ${b.hasFiles ? `<div class="skel" id="rload"></div>` : ""}
         ${!b.lyricsLink && !b.lyricsText && !b.hasFiles ? `<div class="empty">${t("noLyrics")}</div>` : ""}
       </div>
@@ -2026,7 +2238,7 @@ function render(){
     <div class="toolbar" style="align-items:stretch">
       <div class="searchbox">
         <svg class="si" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <input id="q" placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)" autocomplete="off">
+        <input id="q" type="search" enterkeyhint="search" placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)" autocomplete="off">
         <button class="sclear" id="sclear" style="display:${search?"flex":"none"}" onclick="clearSearch()" aria-label="Clear search" title="Clear">✕</button>
       </div>
       <button class="btn btn-gold addbtn" onclick="go('add')">＋ ${t("tabAdd")}</button>
@@ -2232,6 +2444,7 @@ function render(){
   }
 
   $("app").innerHTML = body;
+  const _ap = $("app"); _ap.classList.remove("pagein"); void _ap.offsetWidth; _ap.classList.add("pagein");
   $("fab").style.display = (tab==="bhajans"||tab==="lives") ? "flex" : "none";
   if(tab!=="bhajans"){ const r=document.getElementById("azrail"); if(r) r.remove(); }
   if(tab==="bhajans") renderListOnly();
@@ -2435,7 +2648,8 @@ window.performSet = (sid)=>{
   let i = 0;
   const div = document.createElement("div");
   div.className = "overlay";
-  navPush(()=>{ div.remove(); stopShruti(); });
+  keepAwake();
+  navPush(()=>{ div.remove(); stopShruti(); releaseAwake(); });
   function draw(){
     const b = items[i];
     div.innerHTML = `
