@@ -953,8 +953,120 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 
+.ri-name mark{background:linear-gradient(transparent 62%, var(--gold-soft) 62%);color:inherit;border-radius:3px;padding:0 1px}
+[data-theme="dark"] .ri-name mark{background:linear-gradient(transparent 60%, #3a2c12 60%)}
+
 /* toolbar breathing room */
 .filterline{margin-top:2px}
+
+/* ===== v4: home dashboard + app-style bottom nav ===== */
+.hero{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:linear-gradient(130deg,#fdf6e6 0%, #f7e8c8 45%, #f3ddb0 100%);
+  border:1px solid #eBdcb8;border-radius:20px;padding:18px 18px;margin:2px 0 14px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.hero::after{content:"ॐ";position:absolute;right:-8px;top:-22px;font-size:110px;opacity:.06;font-family:var(--fd);pointer-events:none}
+[data-theme="dark"] .hero{background:linear-gradient(130deg,#1e1836,#2a2050 60%,#33244e);border-color:#3a3163}
+.hero-om{font-size:36px;filter:drop-shadow(0 3px 8px rgba(176,119,15,.4))}
+.hero-txt{flex:1;min-width:140px}
+.hero-hi{font-family:var(--fd);font-size:clamp(19px,4.6vw,24px);color:var(--gold-ink)}
+[data-theme="dark"] .hero-hi{color:#ffcf7d}
+.hero-dt{font-size:12.5px;color:var(--dim);margin-top:3px;text-transform:capitalize}
+.hero-r{border-radius:999px !important;white-space:nowrap}
+
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px}
+.stat{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 6px 10px;
+  cursor:pointer;text-align:center;box-shadow:var(--shadow);transition:transform .12s;
+  display:flex;flex-direction:column;gap:3px;font-family:var(--fb);
+}
+.stat:active{transform:scale(.96)}
+.stat b{font-family:var(--fd);font-size:21px;color:var(--gold-ink)}
+[data-theme="dark"] .stat b{color:#ffcf7d}
+.stat span{font-size:10.5px;color:var(--dim);font-weight:600;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.hrow{display:flex;align-items:baseline;justify-content:space-between;margin:4px 2px 10px}
+.hrow h2{font-family:var(--fd);font-weight:400;font-size:16.5px;color:var(--text)}
+
+.hscroll{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 2px 8px;margin:0 -2px 12px}
+.hscroll::-webkit-scrollbar{display:none}
+.hcard{
+  flex:0 0 auto;width:158px;text-align:left;cursor:pointer;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 13px 11px;
+  box-shadow:var(--shadow);transition:transform .12s;font-family:var(--fb);
+}
+.hcard:active{transform:scale(.96)}
+.hc-name{font-family:var(--fd);font-size:14.5px;line-height:1.3;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px}
+.hc-sub{font-size:11px;color:var(--dim2);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.taggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:9px;margin-bottom:18px}
+.tgc{
+  display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;
+  border:1px solid var(--line);border-radius:16px;padding:13px 6px 11px;
+  background:var(--card);box-shadow:var(--shadow);transition:transform .12s;font-family:var(--fb);position:relative;
+}
+.tgc:active{transform:scale(.95)}
+.tgc-e{font-size:23px}
+.tgc-n{font-size:12px;font-weight:700;color:var(--text)}
+.tgc-c{font-size:10px;color:var(--dim2);font-weight:600}
+.tgc.t-shyam{background:#f9efdd;border-color:#eBd7ae}
+.tgc.t-shiv{background:#eef4fa;border-color:#cdddef}
+.tgc.t-radha{background:#f0f8f0;border-color:#d3ead3}
+.tgc.t-gurudev{background:#f7f0e8;border-color:#e7d8c6}
+.tgc.t-hanuman{background:#fdf0e6;border-color:#f6d9c2}
+.tgc.t-mata{background:#fcf0f5;border-color:#f3d2df}
+.tgc.t-ganesh{background:#f4f0fc;border-color:#ded4f2}
+.tgc.t-aarti{background:#fdf7e3;border-color:#f3e3b4}
+.tgc.t-fagun{background:#fdf0f6;border-color:#f7d3e3}
+.tgc.t-vinati{background:#eef7f5;border-color:#cfe8e3}
+[data-theme="dark"] .tgc{background:#221b3e !important;border-color:#3a3163 !important}
+
+.homebox{margin-bottom:18px}
+.ri.mini{cursor:pointer;padding:11px 14px}
+.rank{
+  width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:14px;flex-shrink:0;background:var(--field);color:var(--dim);
+}
+.rank.r1{background:linear-gradient(135deg,#f6d365,#d99a1e);color:#5a3c00}
+.rank.r2{background:#e8e4d8;color:#6b6252}
+.rank.r3{background:#f0dcc3;color:#8a5a26}
+[data-theme="dark"] .rank{background:#2a2350;color:#a89dc9}
+[data-theme="dark"] .rank.r1{color:#3a2800}
+
+.rnav{font-size:19px;line-height:1;padding:6px 12px !important}
+.rnav:disabled{opacity:.3;pointer-events:none}
+
+/* ---- app-style bottom navigation (mobile) ---- */
+@media (max-width:720px){
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .tabs{
+    position:fixed;left:0;right:0;bottom:0;top:auto;margin:0;gap:0;
+    border-radius:0;border:none;border-top:1px solid var(--line);
+    padding:7px 6px calc(7px + env(safe-area-inset-bottom));z-index:45;overflow:visible;
+    background:color-mix(in srgb, var(--card) 92%, transparent);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    box-shadow:0 -8px 30px rgba(40,25,5,.10);
+  }
+  [data-theme="dark"] .tabs{box-shadow:0 -8px 30px rgba(0,0,0,.45)}
+  .tab{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;font-size:10px;padding:5px 0;border-radius:12px;flex:1 1 0;
+  }
+  .tab svg{width:21px;height:21px}
+  .tab em{display:none}
+  .tab.active{background:transparent;color:var(--gold-ink)}
+  [data-theme="dark"] .tab.active{color:#ffcf7d}
+  .tab.active svg{filter:drop-shadow(0 3px 9px rgba(176,119,15,.55))}
+  .tab.active::before{
+    content:"";position:absolute;top:-8px;left:28%;right:28%;height:3px;
+    border-radius:0 0 4px 4px;background:var(--gold);
+  }
+  .fab{bottom:calc(96px + env(safe-area-inset-bottom))}
+  .fab-tanpura{bottom:calc(162px + env(safe-area-inset-bottom))}
+  footer{margin-bottom:8px}
+}
 </style>
 </head>
 <body>
@@ -1034,7 +1146,7 @@ const I18N = {
   en: {
     contribAs: "Contributing as", changeName: "change", anon: "Anonymous",
     madeBy: "Made with 🧡 by the satsang community",
-    tabBhajans: "Bhajans", tabLives: "Lives", tabAdd: "Add", tabBulk: "Bulk add",
+    tabBhajans: "Bhajans", tabLives: "Lives", tabAdd: "Add", tabBulk: "Bulk add", tabHome: "Home", homeContinue: "Continue singing", homeBrowse: "Browse by category", homeTop: "Most viewed", homeNew: "Recently added", homeRandom: "Surprise me", seeAll: "See all",
     stBhajans: "bhajans", stLives: "lives", stSingers: "singers", trending: "Top:",
     search: "Search bhajan, singer, live…",
     allSingers: "All singers", allScales: "All scales", myFavs: "★ Favourites",
@@ -1113,7 +1225,7 @@ const I18N = {
   hi: {
     contribAs: "योगदानकर्ता:", changeName: "बदलें", anon: "अनाम",
     madeBy: "सत्संग परिवार द्वारा 🧡 से",
-    tabBhajans: "भजन", tabLives: "लाइव", tabAdd: "जोड़ें", tabBulk: "एक साथ",
+    tabBhajans: "भजन", tabLives: "लाइव", tabAdd: "जोड़ें", tabBulk: "एक साथ", tabHome: "होम", homeContinue: "जहाँ छोड़ा था", homeBrowse: "श्रेणी से देखें", homeTop: "सबसे ज़्यादा देखे गए", homeNew: "नए जुड़े भजन", homeRandom: "कोई भी भजन", seeAll: "सभी देखें",
     stBhajans: "भजन", stLives: "लाइव", stSingers: "गायक", trending: "टॉप:",
     search: "भजन, गायक, लाइव खोजें…",
     allSingers: "सभी गायक", allScales: "सभी स्केल", myFavs: "★ पसंदीदा",
@@ -1298,6 +1410,25 @@ function bTags(b){
 }
 let tagF = "";
 window.pickTag = (k)=>{ tagF = (tagF === k ? "" : k); buzz(6); render(); };
+window.goTag = (k)=>{ buzz(6); tagF=k; histF=false; recentF=false; singerF=""; favOnly=false; missF=false; tab="bhajans"; render(); window.scrollTo({top:0,behavior:"instant"}); };
+window.histHome = ()=>{ buzz(6); histF=true; recentF=false; tab="bhajans"; render(); window.scrollTo({top:0,behavior:"instant"}); };
+window.favHome  = ()=>{ buzz(6); favOnly=true; tab="bhajans"; render(); window.scrollTo({top:0,behavior:"instant"}); };
+window.newHome  = ()=>{ buzz(6); recentF=true; histF=false; tab="bhajans"; render(); window.scrollTo({top:0,behavior:"instant"}); };
+window.randomBhajan = ()=>{
+  const pool = bhajans.filter(b=>hasAnyLyrics(b));
+  const src = pool.length ? pool : bhajans;
+  if(!src.length) return;
+  buzz(10);
+  openLyrics(src[Math.floor(Math.random()*src.length)].id);
+};
+/* reader prev/next context */
+let _readerIds = [], _readerIdx = -1;
+window.readerStep = (d)=>{
+  const nid = _readerIds[_readerIdx + d];
+  if(!nid) return;
+  buzz(6); navBack();
+  setTimeout(()=>openLyrics(nid), 90);
+};
 window.toggleFav = (id)=>{
   buzz(8);
   favs.has(id) ? favs.delete(id) : favs.add(id);
@@ -1525,7 +1656,7 @@ if("serviceWorker" in navigator){
 
 /* ================= state ================= */
 let bhajans = [], sessions = [], ready = {b:false, s:false};
-let tab = "bhajans", search = "", scaleF = "", singerF = "", editingId = null;
+let tab = "home", search = "", scaleF = "", singerF = "", editingId = null;
 let sortBy = localStorage.getItem("bhajan-sort") || "az";
 let bulkRows = [];
 let formFiles = [];        // new files chosen in the form
@@ -2094,7 +2225,7 @@ async function loadEditFiles(){
 let _sdeb; window.onSearch = (v)=>{
   search=v;
   const c=$("sclear"); if(c) c.style.display = v ? "flex" : "none";
-  clearTimeout(_sdeb); _sdeb=setTimeout(renderListOnly, 160);
+  clearTimeout(_sdeb); _sdeb=setTimeout(renderListOnly, 110);
 };
 window.clearSearch = ()=>{
   search="";
@@ -2394,6 +2525,8 @@ async function renderPdfInto(holder, dataUrl){
 window.openLyrics = async (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
   countView(id);
+  _readerIds = (tab==="bhajans" ? filtered() : bhajans).map(x=>x.id);
+  _readerIdx = _readerIds.indexOf(id);
   const div = document.createElement("div");
   div.className = "overlay";
   keepAwake();
@@ -2407,6 +2540,8 @@ window.openLyrics = async (id)=>{
           <div class="rm2">${b.singer?`🎤 ${esc(b.singer)}`:""} ${b.scale?` · ${esc(b.scale)}`:""}</div>
         </div>
         <div style="display:flex;gap:7px;flex-shrink:0">
+          <button class="btn btn-ghost rnav" onclick="readerStep(-1)" ${_readerIdx>0?"":"disabled"} title="Previous bhajan">‹</button>
+          <button class="btn btn-ghost rnav" onclick="readerStep(1)" ${(_readerIdx>-1 && _readerIdx<_readerIds.length-1)?"":"disabled"} title="Next bhajan">›</button>
           <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
           <button class="btn btn-ghost" onclick="navBack()">✕</button>
         </div>
@@ -2489,10 +2624,38 @@ function topSingers(n=3){
   bhajans.forEach(b=>{ const s=(b.singer||"").trim(); if(s) counts[s]=(counts[s]||0)+1; });
   return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
 }
-/* ---- fuzzy search: forgives Hinglish spelling differences & typos ---- */
+/* ---- search engine v2: Hinglish + Devanagari, cached index, granular ranking ---- */
+const DEV_MAP = {
+  "क":"k","ख":"kh","ग":"g","घ":"gh","ङ":"n","च":"ch","छ":"chh","ज":"j","झ":"jh","ञ":"n",
+  "ट":"t","ठ":"th","ड":"d","ढ":"dh","ण":"n","त":"t","थ":"th","द":"d","ध":"dh","न":"n",
+  "प":"p","फ":"ph","ब":"b","भ":"bh","म":"m","य":"y","र":"r","ल":"l","व":"v","श":"sh",
+  "ष":"sh","स":"s","ह":"h","ळ":"l","क़":"k","ख़":"kh","ग़":"g","ज़":"j","ड़":"r","ढ़":"rh","फ़":"f",
+  "अ":"a","आ":"aa","इ":"i","ई":"ee","उ":"u","ऊ":"oo","ऋ":"ri","ए":"e","ऐ":"ai","ओ":"o","औ":"au",
+  "ा":"a","ि":"i","ी":"i","ु":"u","ू":"u","ृ":"ri","े":"e","ै":"ai","ो":"o","ौ":"au",
+  "ं":"n","ँ":"n","ः":"","्":"","़":"","ॉ":"o","ऑ":"o","ॐ":"om","।":" "
+};
+const DEV_CONS = /[\u0915-\u0939\u0958-\u095F]/, DEV_MATRA = /[\u093E-\u094C\u0962\u0963]/;
+function translit(s){
+  let out = "", pend = false;   // pend = consonant awaiting inherent 'a'
+  for(const ch of s){
+    if(DEV_CONS.test(ch)){
+      if(pend) out += "a";                 // previous consonant gets its schwa
+      out += DEV_MAP[ch] || ""; pend = true;
+    }else if(DEV_MATRA.test(ch)){
+      out += DEV_MAP[ch] || ""; pend = false;
+    }else if(ch === "\u094D"){ pend = false; }          // virama joins cluster
+    else if(ch >= "\u0900" && ch <= "\u097F"){
+      out += DEV_MAP[ch] || ""; pend = false;            // vowels, anusvara etc.
+    }else{
+      pend = false; out += ch;                            // word end: schwa deleted (Hindi)
+    }
+  }
+  return out;
+}
 function normTxt(s){
   s = String(s||"").toLowerCase();
-  s = s.replace(/[^a-z0-9\u0900-\u097F ]+/g, " ");
+  s = translit(s);
+  s = s.replace(/[^a-z0-9 ]+/g, " ");
   // common transliteration equivalences
   s = s.replace(/aa/g,"a").replace(/ee/g,"i").replace(/oo/g,"u")
        .replace(/w/g,"v").replace(/ph/g,"f").replace(/z/g,"j")
@@ -2516,23 +2679,109 @@ function lev(a, b){
   }
   return prev[n];
 }
+/* token match quality: 1 exact word · .9 word-prefix · .7 substring · .5 typo · .45 prefix-typo · 0 none */
+function skel(w){ return (w[0]||"") + w.slice(1).replace(/[aeiou]/g,""); }   // consonant skeleton: siam→sm, caranon→crnn
+function tokQ(tk, words){
+  let best = 0;
+  const tol = tk.length>=7 ? 2 : tk.length>=4 ? 1 : 0;
+  const st = tk.length>=3 ? skel(tk) : "";
+  for(const w of words){
+    if(w === tk) return 1;
+    if(w.startsWith(tk)){ best = Math.max(best, .9); continue; }
+    if(w.includes(tk)){ best = Math.max(best, .7); continue; }
+    if(st.length >= 2){
+      const sw = skel(w);
+      if(sw === st) { best = Math.max(best, .6); continue; }          // sham ↔ shyam
+      if(sw.startsWith(st)) { best = Math.max(best, .55); continue; } // charno ↔ charanon
+    }
+    if(tol){
+      if(lev(w, tk) <= tol) best = Math.max(best, .5);
+      else if(w.length > tk.length && lev(w.slice(0, tk.length), tk) <= tol) best = Math.max(best, .45); // typo while still typing
+    }
+  }
+  return best;
+}
+/* continuous score 0–100 */
 function searchScore(hay, q){
   const H = normTxt(hay), Q = normTxt(q);
   if(!Q) return 1;
-  if(H.includes(Q)) return H.startsWith(Q) ? 5 : 4;          // exact phrase
+  if(!H) return 0;
+  if(H === Q) return 100;
+  if(H.startsWith(Q)) return 92;
+  const pos = H.indexOf(Q);
+  if(pos > -1) return 84 - Math.min(8, pos * 0.2);           // exact phrase, earlier = better
   const hw = H.split(" "), qw = Q.split(" ");
-  // every word typed is a prefix of some word in the name
-  if(qw.every(tk => hw.some(w => w.startsWith(tk)))) return 3;
-  // every word is a substring
-  if(qw.every(tk => hw.some(w => w.includes(tk)))) return 2;
-  // spelling-tolerant (typos / Hinglish variants)
-  const ok = qw.every(tk =>
-    hw.some(w => {
-      const tol = tk.length>=6 ? 2 : tk.length>=4 ? 1 : 0;
-      return tol>0 && lev(w, tk) <= tol;
-    })
-  );
-  return ok ? 1 : 0;
+  let sum = 0, hits = 0;
+  for(const tk of qw){ const s = tokQ(tk, hw); if(s > 0) hits++; sum += s; }
+  const avg = sum / qw.length;
+  if(hits === qw.length){
+    // in-order bonus: query words appearing in the same order in the name
+    let oi = 0;
+    for(const w of hw){ if(oi < qw.length && (w.startsWith(qw[oi]) || w === qw[oi])) oi++; }
+    const order = oi === qw.length ? 4 : 0;
+    const brevity = Math.max(0, 6 - Math.max(0, hw.length - qw.length)); // tighter names first
+    return 40 + avg * 30 + order + brevity;                  // 40–80
+  }
+  if(qw.length >= 3 && hits >= qw.length - 1) return 12 + avg * 10;  // forgive one wrong word
+  return 0;
+}
+/* highlight matched words in a display name */
+function hlName(name, q){
+  const qw = normTxt(q).split(" ").filter(Boolean);
+  if(!qw.length) return esc(name);
+  return String(name).split(/(\s+)/).map(part=>{
+    if(!part.trim()) return esc(part);
+    const nw = normTxt(part);
+    const hit = nw && qw.some(tk=>{
+      if(nw === tk || nw.startsWith(tk) || nw.includes(tk)) return true;
+      if(tk.length>=3){ const st=skel(tk), sw=skel(nw); if(st.length>=2 && (sw===st || sw.startsWith(st))) return true; }
+      const tol = tk.length>=7 ? 2 : tk.length>=4 ? 1 : 0;
+      return tol && (lev(nw, tk) <= tol || (nw.length > tk.length && lev(nw.slice(0, tk.length), tk) <= tol));
+    });
+    return hit ? `<mark>${esc(part)}</mark>` : esc(part);
+  }).join("");
+}
+/* per-bhajan normalized index — computed once, reused every keystroke */
+const _sIdx = new Map();
+function sIdx(b){
+  const key = (b.name||"") + "¦" + (b.singer||"");
+  let e = _sIdx.get(b.id);
+  if(!e || e.key !== key){
+    e = { key, name: normTxt(b.name), singer: normTxt(b.singer||"") };
+    e.words = e.name.split(" ").filter(Boolean);
+    _sIdx.set(b.id, e);
+  }
+  return e;
+}
+/* fast scorer against the cached index */
+function scoreIndexed(b, Q, qw){
+  const e = sIdx(b);
+  let s = 0;
+  const H = e.name;
+  if(H === Q) s = 100;
+  else if(H.startsWith(Q)) s = 92;
+  else{
+    const pos = H.indexOf(Q);
+    if(pos > -1) s = 84 - Math.min(8, pos * 0.2);
+    else{
+      let sum = 0, hits = 0;
+      for(const tk of qw){ const x = tokQ(tk, e.words); if(x > 0) hits++; sum += x; }
+      const avg = sum / qw.length;
+      if(hits === qw.length){
+        let oi = 0;
+        for(const w of e.words){ if(oi < qw.length && (w.startsWith(qw[oi]) || w === qw[oi])) oi++; }
+        s = 40 + avg * 30 + (oi === qw.length ? 4 : 0) + Math.max(0, 6 - Math.max(0, e.words.length - qw.length));
+      }else if(qw.length >= 3 && hits >= qw.length - 1){
+        s = 12 + avg * 10;
+      }
+    }
+  }
+  // singer match: strong if the whole query is the singer, mild if tokens match
+  if(e.singer){
+    if(e.singer === Q || e.singer.startsWith(Q)) s = Math.max(s, 60);
+    else if(e.singer.includes(Q)) s = Math.max(s, 50);
+  }
+  return s;
 }
 
 function filtered(){
@@ -2556,17 +2805,20 @@ function filtered(){
       .slice(0, 30);
   }
   if(!q) return list;
+  const Q = normTxt(q);
+  if(!Q) return list;
+  const qw = Q.split(" ").filter(Boolean);
   const scored = [];
   for(const b of list){
-    const sess = S[b.sessionId];
-    const s = Math.max(
-      searchScore(b.name, q),
-      searchScore(b.singer||"", q) - 1,
-      searchScore((b.notes||"") + " " + (sess?sess.title:""), q) - 2
-    );
-    if(s > 0) scored.push([s, b]);
+    let s = scoreIndexed(b, Q, qw);
+    if(s < 55){ // only fall back to notes/live-title when the name isn't a solid hit
+      const sess = S[b.sessionId];
+      const extra = (b.notes||"") + " " + (sess?sess.title:"");
+      if(extra.trim()) s = Math.max(s, searchScore(extra, q) * 0.4);
+    }
+    if(s > 8) scored.push([s, b]);
   }
-  scored.sort((a,b)=> b[0]-a[0] || a[1].name.localeCompare(b[1].name));
+  scored.sort((a,b)=> b[0]-a[0] || (b[1].views||0)-(a[1].views||0) || a[1].name.localeCompare(b[1].name));
   return scored.map(x=>x[1]);
 }
 
@@ -2584,7 +2836,7 @@ function bhajanRow(b){
   <div class="ri">
     <button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="★">${ICONS.star}</button>
     <div class="ri-main" data-bid="${b.id}" title="Tap: lyrics · Double-tap: lyrics or web search">
-      <div class="ri-name">${esc(b.name)}</div>
+      <div class="ri-name">${search.trim() ? hlName(b.name, search) : esc(b.name)}</div>
       ${subs?`<div class="ri-sub">${subs}</div>`:""}
     </div>
     <div class="ri-acts">
@@ -2630,13 +2882,72 @@ function render(){
     radio:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg>',
     music:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
     list:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0zM12 12H3M16 6H3M12 18H3"/></svg>',
+    home:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>',
   };
   body += `<div class="tabs">
+    <button class="tab ${tab==="home"?"active":""}" onclick="go('home')">${TICON.home}<span>${t("tabHome")}</span></button>
     <button class="tab ${tab==="bhajans"?"active":""}" id="tab-b" onclick="go('bhajans')">${TICON.book}<span>${t("tabBhajans")}</span><em>${bhajans.length}</em></button>
     <button class="tab ${tab==="lives"?"active":""}" id="tab-l" onclick="go('lives')">${TICON.radio}<span>${t("tabLives")}</span><em>${sessions.length}</em></button>
     <button class="tab ${tab==="mylist"?"active":""}" onclick="go('mylist')">${TICON.music}<span>${t("tabMyList")}</span><em>${getMyLists().length}</em></button>
     <button class="tab ${tab==="sets"?"active":""}" onclick="go('sets')">${TICON.list}<span>${t("tabSets")}</span><em>${getSets().length}</em></button>
   </div>`;
+
+  if(tab==="home"){
+    const contin = hist.map(id=>bhajans.find(b=>b.id===id)).filter(Boolean).slice(0,10);
+    const top = [...bhajans].sort((a,b)=>((b.views||0)-(a.views||0))).slice(0,5).filter(b=>(b.views||0)>0);
+    const fresh = [...bhajans].sort((a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0)).slice(0,5);
+    const tagCounts = {}; for(const b of bhajans) for(const k of bTags(b)) tagCounts[k]=(tagCounts[k]||0)+1;
+    const dt = new Date().toLocaleDateString(lang==="hi"?"hi-IN":"en-IN",{weekday:"long", day:"numeric", month:"long"});
+    body += `
+    <div class="hero">
+      <div class="hero-om">🪔</div>
+      <div class="hero-txt">
+        <div class="hero-hi">${lang==="hi"?"जय श्री श्याम":"Jai Shree Shyam"} 🙏</div>
+        <div class="hero-dt">${dt}</div>
+      </div>
+      <button class="btn btn-gold hero-r" onclick="randomBhajan()">🎲 ${t("homeRandom")}</button>
+    </div>
+    <div class="statgrid">
+      <button class="stat" onclick="go('bhajans')"><b>${bhajans.length}</b><span>🪕 ${t("stBhajans")}</span></button>
+      <button class="stat" onclick="go('lives')"><b>${sessions.length}</b><span>📺 ${t("stLives")}</span></button>
+      <button class="stat" onclick="favHome()"><b>${favs.size}</b><span>★ ${lang==="hi"?"पसंदीदा":"Favourites"}</span></button>
+      <button class="stat" onclick="histHome()"><b>${hist.length}</b><span>🕘 ${t("chipHistory")}</span></button>
+    </div>
+    ${contin.length?`
+    <div class="hrow"><h2>🕘 ${t("homeContinue")}</h2><button class="linkbtn" onclick="histHome()">${t("seeAll")}</button></div>
+    <div class="hscroll">${contin.map(b=>`
+      <button class="hcard" onclick="openLyrics('${b.id}')">
+        <div class="hc-name">${esc(b.name)}</div>
+        <div class="hc-sub">${b.singer?`🎤 ${esc(b.singer)}`:(b.scale?`🎹 ${esc(b.scale)}`:"🪕")}</div>
+      </button>`).join("")}</div>`:""}
+    <div class="hrow"><h2>🏷️ ${t("homeBrowse")}</h2></div>
+    <div class="taggrid">${TAGS.map(tg=>`
+      <button class="tgc t-${tg.k}" onclick="goTag('${tg.k}')">
+        <span class="tgc-e">${tg.e}</span><span class="tgc-n">${tagLabel(tg)}</span><span class="tgc-c">${tagCounts[tg.k]||0}</span>
+      </button>`).join("")}</div>
+    ${top.length?`
+    <div class="hrow"><h2>🔥 ${t("homeTop")}</h2></div>
+    <div class="listbox homebox">${top.map((b,i)=>`
+      <div class="ri mini" onclick="openLyrics('${b.id}')">
+        <span class="rank r${i+1}">${i+1}</span>
+        <div class="ri-main">
+          <div class="ri-name">${esc(b.name)}</div>
+          <div class="ri-sub">${b.singer?`<span class="pill">🎤 ${esc(b.singer)}</span>`:""}<span class="pill soft">👁 ${b.views||0}</span></div>
+        </div>
+        ${b.scale?scMini(b.scale):""}
+      </div>`).join("")}</div>`:""}
+    ${fresh.length?`
+    <div class="hrow"><h2>🆕 ${t("homeNew")}</h2><button class="linkbtn" onclick="newHome()">${t("seeAll")}</button></div>
+    <div class="listbox homebox">${fresh.map(b=>`
+      <div class="ri mini" onclick="openLyrics('${b.id}')">
+        <div class="ri-main">
+          <div class="ri-name">${esc(b.name)}</div>
+          ${b.singer?`<div class="ri-sub"><span class="pill">🎤 ${esc(b.singer)}</span></div>`:""}
+        </div>
+        ${b.scale?scMini(b.scale):""}
+      </div>`).join("")}</div>`:""}
+    `;
+  }
 
   if(tab==="bhajans"){
     const singers = allSingers();
