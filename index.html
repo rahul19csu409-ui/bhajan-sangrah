@@ -11,6 +11,10 @@
 <link rel="apple-touch-icon" href="icon-192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" />
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" />
 <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Marcellus&family=Mukta:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
 <style>
 :root{
@@ -909,6 +913,48 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
 /* perform mode: big breathing scale badge */
 .pf-scale .sc{animation:breathe 2.6s ease infinite}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* ===== v3: tags · history · polish ===== */
+.tagsrow{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:-2px;padding:2px 2px 6px}
+.tagsrow::-webkit-scrollbar{display:none}
+.tagchip{display:inline-flex;align-items:center;gap:5px}
+
+/* soft identity colors per tag (light) */
+.tagchip.t-shyam.on,.tagp.t-shyam{background:#f6e7ce;color:#8a5a06;border-color:#eBd7ae}
+.tagchip.t-shiv.on,.tagp.t-shiv{background:#e3edf7;color:#2c5b8a;border-color:#cdddef}
+.tagchip.t-radha.on,.tagp.t-radha{background:#e9f5e9;color:#2c7a3f;border-color:#d3ead3}
+.tagchip.t-gurudev.on,.tagp.t-gurudev{background:#f3eae0;color:#7a5230;border-color:#e7d8c6}
+.tagchip.t-hanuman.on,.tagp.t-hanuman{background:#fdeade;color:#a4520f;border-color:#f6d9c2}
+.tagchip.t-mata.on,.tagp.t-mata{background:#fbe7ee;color:#a3325f;border-color:#f3d2df}
+.tagchip.t-ganesh.on,.tagp.t-ganesh{background:#efeafa;color:#5b3fa3;border-color:#ded4f2}
+.tagchip.t-aarti.on,.tagp.t-aarti{background:#fff3d6;color:#8a6a06;border-color:#f3e3b4}
+.tagchip.t-fagun.on,.tagp.t-fagun{background:#ffe9f2;color:#b03a72;border-color:#f7d3e3}
+.tagchip.t-vinati.on,.tagp.t-vinati{background:#e6f4f1;color:#0d6f61;border-color:#cfe8e3}
+.tagchip.on{font-weight:700;box-shadow:0 3px 10px rgba(60,45,15,.14);transform:translateY(-1px)}
+.pill.tagp{border:1px solid transparent}
+
+/* dark theme: muted violet tags for readability */
+[data-theme="dark"] .pill.tagp,
+[data-theme="dark"] .tagchip.on{background:#2a2350 !important;color:#cdc2ef !important;border-color:#3a3163 !important}
+
+/* list rows: gentle entrance + refined hover */
+.listbox > .ri:nth-of-type(-n+18){animation:riIn .28s ease both}
+@keyframes riIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.ri:hover{background:var(--hover)}
+.listbox{border-radius:18px}
+
+/* header: warm gradient title */
+.brand h1{
+  background:linear-gradient(115deg,#6d2323 5%,#9a4a10 55%,var(--gold) 95%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+[data-theme="dark"] .brand h1{
+  background:linear-gradient(115deg,#f2ecd9 5%,#ffcf7d 60%,var(--gold) 95%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* toolbar breathing room */
+.filterline{margin-top:2px}
 </style>
 </head>
 <body>
@@ -1048,7 +1094,7 @@ const I18N = {
     ocrBtn: "📷 Scan lyrics from book", ocrHint: "Photograph a printed bhajan page — the app reads the Hindi text into the box below. Check, correct, save.",
     ocrLoading: "Loading Hindi reader (first time only, ~2 MB)…", ocrReading: "Reading page…",
     ocrDone: "Lyrics scanned ✓ — check and correct, then save", ocrFail: "Couldn't read that photo — try brighter light, page flat, text filling the frame.",
-    noLyricsChip: "Need lyrics", waAsk: "Ask on WhatsApp", chipRecent: "Recent", moreSingers: "More singers",
+    noLyricsChip: "Need lyrics", waAsk: "Ask on WhatsApp", chipRecent: "Recent", chipHistory: "History", tagsLabel: "Tags · category", emptyHist: "No history yet — bhajans you open will appear here.", moreSingers: "More singers",
     waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "Tap a bhajan → ▶ YouTube at that moment · Double-tap → 📖 lyrics (or web if none)",
     setDblHint: "Double-tap a bhajan name → lyrics / PDF opens (or Google search if none).",
@@ -1127,7 +1173,7 @@ const I18N = {
     ocrBtn: "📷 किताब से लिरिक्स स्कैन करें", ocrHint: "छपे भजन के पन्ने की फ़ोटो लें — ऐप हिंदी टेक्स्ट पढ़कर नीचे बॉक्स में डाल देगा। जाँचें, सुधारें, सहेजें।",
     ocrLoading: "हिंदी रीडर लोड हो रहा (सिर्फ़ पहली बार, ~2 MB)…", ocrReading: "पन्ना पढ़ रहे हैं…",
     ocrDone: "लिरिक्स स्कैन हो गए ✓ — जाँचकर सहेजें", ocrFail: "फ़ोटो पढ़ नहीं पाए — अच्छी रोशनी में, पन्ना सीधा रखकर, पास से फ़ोटो लें।",
-    noLyricsChip: "लिरिक्स बाकी", waAsk: "WhatsApp पर माँगें", chipRecent: "नए भजन", moreSingers: "और गायक",
+    noLyricsChip: "लिरिक्स बाकी", waAsk: "WhatsApp पर माँगें", chipRecent: "नए भजन", chipHistory: "इतिहास", tagsLabel: "टैग · श्रेणी", emptyHist: "अभी कोई इतिहास नहीं — जो भजन आप खोलेंगे वे यहाँ दिखेंगे।", moreSingers: "और गायक",
     waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "टैप → ▶ यूट्यूब उसी समय पर · डबल-टैप → 📖 लिरिक्स (न हों तो वेब)",
     setDblHint: "भजन के नाम पर डबल-टैप → लिरिक्स/PDF खुलेगी (न हो तो Google)।",
@@ -1209,7 +1255,49 @@ let favOnly = false;
 let missF = false;
 window.toggleMissF = ()=>{ missF = !missF; buzz(6); render(); };
 let recentF = false;
-window.toggleRecentF = ()=>{ recentF = !recentF; buzz(6); render(); };
+window.toggleRecentF = ()=>{ recentF = !recentF; if(recentF) histF = false; buzz(6); render(); };
+
+/* ================= history (recently opened) ================= */
+let hist = [];
+try{ hist = JSON.parse(localStorage.getItem("bhajan-history") || "[]"); }catch{}
+function touchHist(id){
+  hist = [id, ...hist.filter(x => x !== id)].slice(0, 40);
+  try{ localStorage.setItem("bhajan-history", JSON.stringify(hist)); }catch{}
+}
+let histF = false;
+window.toggleHistF = ()=>{ histF = !histF; if(histF) recentF = false; buzz(6); render(); };
+
+/* ================= tags / categories ================= */
+const TAGS = [
+  {k:"shyam",   e:"🪶", en:"Shyam",         hi:"श्याम",       re:/khatu|shyam|shaam|\bsham\b|sanwar|sanwal|saawar|sawariy|saanwariy|lakhdatar|sheesh|haare? k[ae] sahar|morvi|morchh?adi|leela|hariyane/i},
+  {k:"shiv",    e:"🔱", en:"Shiv",          hi:"शिव",         re:/shiv|bhole|bholenath|mahadev|mahakal|shankar|\bbam\b|kailash|damru|neelkanth|gaura/i},
+  {k:"radha",   e:"🦚", en:"Radha-Krishna", hi:"राधा-कृष्ण",  re:/radha|krishn|kanha|kanhaiya|girdhar|gopal|murli|mohan|banke|bihari|vrindavan|gokul|kishori|barsan|nandlal|govind/i},
+  {k:"gurudev", e:"🙏", en:"Gurudev",       hi:"गुरुदेव",     re:/guru/i},
+  {k:"hanuman", e:"💪", en:"Hanuman",       hi:"हनुमान",      re:/hanuman|bajrang|balaji|mehandipur|sankat ?mochan|pawan ?put/i},
+  {k:"mata",    e:"🌺", en:"Mata Rani",     hi:"माता रानी",   re:/\bmata\b|maiya|durga|sherawali|ambe|jagdambe|bhawani|\bdevi\b|vaishno|kali ?ma/i},
+  {k:"ganesh",  e:"🐘", en:"Ganesh",        hi:"गणेश",        re:/ganesh|ganpati|gajanan|vinayak|lambodar/i},
+  {k:"aarti",   e:"🪔", en:"Aarti",         hi:"आरती",        re:/\ba+a?rti\b/i},
+  {k:"fagun",   e:"🎨", en:"Fagun",         hi:"फागुन",       re:/fagun|faag|holi|gulal|dhamal|rang barse/i},
+  {k:"vinati",  e:"🛐", en:"Vinati",        hi:"विनती",       re:/vinati|vinti|\baraj\b|\barji\b|fariyad|ardaa?s|prarthna|pukar/i},
+];
+function tagLabel(tg){ return (lang==="hi" ? tg.hi : tg.en); }
+const _tagCache = new Map();
+function autoTags(name){
+  const n = " " + String(name||"").toLowerCase() + " ";
+  const out = TAGS.filter(t => t.k !== "shyam" && t.re.test(n)).map(t => t.k);
+  const shy = TAGS[0];
+  // Khatu Shyam community default: plain "Baba…" bhajans fall to Shyam when nothing else matches
+  if(shy.re.test(n) || (!out.some(k=>["shiv","radha","gurudev","hanuman","mata","ganesh"].includes(k)) && /\bbaba\b|\bdani\b/.test(n))) out.unshift("shyam");
+  return out;
+}
+function bTags(b){
+  if(Array.isArray(b.tags) && b.tags.length) return b.tags;
+  let c = _tagCache.get(b.name);
+  if(!c){ c = autoTags(b.name); _tagCache.set(b.name, c); }
+  return c;
+}
+let tagF = "";
+window.pickTag = (k)=>{ tagF = (tagF === k ? "" : k); buzz(6); render(); };
 window.toggleFav = (id)=>{
   buzz(8);
   favs.has(id) ? favs.delete(id) : favs.add(id);
@@ -1782,6 +1870,7 @@ window.mySmartOpen = (name)=>{
 /* ================= view counter ================= */
 const viewedThisSession = new Set();
 function countView(id){
+  touchHist(id);
   if(viewedThisSession.has(id)) return;
   viewedThisSession.add(id);
   updateDoc(doc(db,"bhajans",id), {views: increment(1)}).catch(()=>{});
@@ -2016,7 +2105,7 @@ window.clearSearch = ()=>{
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
 window.pickSinger = (s)=>{ singerF = (singerF===s ? "" : s); render(); };
-window.chipAll = ()=>{ singerF=""; favOnly=false; missF=false; recentF=false; render(); };
+window.chipAll = ()=>{ singerF=""; favOnly=false; missF=false; recentF=false; histF=false; tagF=""; render(); };
 /* ---- teleprompter: hands-free auto-scrolling lyrics ---- */
 let teleRaf = null, teleOn = false, teleSpeed = parseFloat(localStorage.getItem("bhajan-tele")||"1");
 window.teleToggle = ()=>{
@@ -2123,6 +2212,7 @@ window.saveBhajan = async ()=>{
       lyricsText: $("f-ltext").value.trim(),
       hasFiles: willHaveFiles,
       addedBy: myName() || "Anonymous",
+      tags: [...document.querySelectorAll("[data-tagpick].on")].map(el=>el.dataset.tagpick),
     };
     let id = editingId;
     if(editingId){
@@ -2453,8 +2543,13 @@ function filtered(){
     if(missF && hasAnyLyrics(b)) return false;
     if(scaleF && b.scale!==scaleF) return false;
     if(singerF && (b.singer||"").trim()!==singerF) return false;
+    if(tagF && !bTags(b).includes(tagF)) return false;
     return true;
   });
+  if(histF){
+    const pos = new Map(hist.map((id,i)=>[id,i]));
+    list = list.filter(b=>pos.has(b.id)).sort((a,b)=>pos.get(a.id)-pos.get(b.id));
+  }
   if(recentF){
     list = [...list]
       .sort((a,b)=>((b.createdAt&&b.createdAt.seconds)||0)-((a.createdAt&&a.createdAt.seconds)||0))
@@ -2479,6 +2574,7 @@ function bhajanRow(b){
   const sess = sessById()[b.sessionId];
   const fav = favs.has(b.id);
   const subs = [
+    ...bTags(b).slice(0,2).map(k=>{ const tg=TAGS.find(t=>t.k===k); return tg?`<span class="pill tagp t-${k}">${tg.e} ${tagLabel(tg)}</span>`:""; }),
     b.singer ? `<span class="pill">🎤 ${esc(b.singer)}</span>` : "",
     hasAnyLyrics(b) ? `<span class="pill pdf">${ICONS.doc} Lyrics</span>` : "",
     sess ? `<span class="pill soft">${esc(sess.title)}${b.seconds?` · ${fmtTime(b.seconds)}`:""}</span>` : "",
@@ -2558,7 +2654,8 @@ function render(){
       <button class="btn btn-gold addbtn" onclick="go('add')">＋ ${t("tabAdd")}</button>
     </div>
     <div class="chips">
-      <button class="chip ${!singerF && !favOnly && !missF && !recentF ? "on":""}" onclick="chipAll()">${t("chipAll")}</button>
+      <button class="chip ${!singerF && !favOnly && !missF && !recentF && !histF && !tagF ? "on":""}" onclick="chipAll()">${t("chipAll")}</button>
+      <button class="chip ${histF?"on":""}" onclick="toggleHistF()">🕘 ${t("chipHistory")}${hist.length?` · ${hist.length}`:""}</button>
       <button class="chip ${recentF?"on":""}" onclick="toggleRecentF()">🕐 ${t("chipRecent")}</button>
       <button class="chip ${favOnly?"on":""}" onclick="toggleFavOnly()">★ ${favs.size}</button>
       <button class="chip ${missF?"on":""}" onclick="toggleMissF()">📖 ${t("noLyricsChip")} · ${bhajans.filter(b=>!hasAnyLyrics(b)).length}</button>
@@ -2569,6 +2666,9 @@ function render(){
         <option value="">${t("moreSingers")} ▾</option>
         ${rest.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("")}
       </select>` : ""}
+    </div>
+    <div class="chips tagsrow">
+      ${TAGS.map(tg=>`<button class="chip tagchip t-${tg.k} ${tagF===tg.k?"on":""}" onclick="pickTag('${tg.k}')">${tg.e} ${tagLabel(tg)}</button>`).join("")}
     </div>
     <div class="filterline">
       <select onchange="onScaleF(this.value)"><option value="">${t("allScales")}</option>${SCALES.map(s=>`<option value="${s[0]}" ${scaleF===s[0]?"selected":""}>${s[0]} · ${s[1]}</option>`).join("")}</select>
@@ -2621,6 +2721,15 @@ function render(){
       <div class="row">
         <div><label>${t("scale")}</label><select id="f-scale">${scaleOptions(b?.scale||"")}</select></div>
         <div><label>${t("timestamp")}</label><input id="f-time" inputmode="numeric" placeholder="1:23:45" value="${b?.seconds?fmtTime(b.seconds):""}"><div class="hint">${t("tsHint")}</div></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label>${t("tagsLabel")}</label>
+        <div class="chips" style="margin:0;padding:0">
+          ${TAGS.map(tg=>{
+            const cur = b ? bTags(b) : [];
+            return `<button type="button" class="chip tagchip t-${tg.k} ${cur.includes(tg.k)?"on":""}" data-tagpick="${tg.k}" onclick="this.classList.toggle('on')">${tg.e} ${tagLabel(tg)}</button>`;
+          }).join("")}
+        </div>
       </div>
       ${sessionSelect("f","f-url","f-stitle","f-sdate")}
       <div class="lyrics-box">
@@ -3064,7 +3173,7 @@ function renderListOnly(){
   let list = filtered();
   if(!list.length){
     el.innerHTML = `<div class="empty"><span class="om">🪔</span>${
-      bhajans.length===0 ? t("emptyAll") : favOnly ? t("emptyFavs") : t("emptyFilter")
+      bhajans.length===0 ? t("emptyAll") : (histF && !search.trim()) ? t("emptyHist") : favOnly ? t("emptyFavs") : t("emptyFilter")
     }</div>`;
     const oldRail = document.getElementById("azrail"); if(oldRail) oldRail.remove();
     return;
@@ -3074,7 +3183,7 @@ function renderListOnly(){
   if(search.trim()){
     // ranked results: best matches first
     for(let i=0;i<list.length;i+=80) chunks.push(list.slice(i,i+80).map(bhajanRow).join(""));
-  }else if(recentF){
+  }else if(recentF || histF){
     for(let i=0;i<list.length;i+=80) chunks.push(list.slice(i,i+80).map(bhajanRow).join(""));
   }else if(sortBy === "recent" || sortBy === "views"){
     list = [...list].sort(sortBy==="recent"
