@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover" />
 <title>Shyam Bhajan Sangrah</title>
 <meta name="description" content="A community library of bhajans from live satsangs — scales, singers, lyrics, and one-tap YouTube timestamps." />
-<meta name="theme-color" content="#f8f3e7" />
+<meta name="theme-color" content="#FBF5E9" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icon-192.png" />
 <link rel="apple-touch-icon" href="icon-192.png" />
@@ -43,7 +43,7 @@
   --bg:#0f0c1d;
   --card:#1a1530;
   --field:#241d42;
-  --hover:#2f2431;
+  --hover:#221b3e;
   --line:#2c2550;
   --line2:#3a3163;
   --text:#f2ecd9;
@@ -516,48 +516,48 @@ footer .m{font-family:var(--fd);color:var(--gold);letter-spacing:.24em;font-size
    (override layer: keeps all functionality, changes only the look)
    ═══════════════════════════════════════════════════════════════ */
 :root{
-  --bg:#f8f3e7;
-  --card:#ffffff;
-  --field:#f4eddc;
-  --hover:#faf4e4;
-  --line:#e7dcc0;
-  --line2:#d8cba6;
-  --text:#33241c;
-  --dim:#8a7a66;
-  --dim2:#b0a28c;
-  --gold:#b0770f;
-  --gold-soft:#f3e7c9;
-  --gold-ink:#7c5406;
-  --teal:#0d8573;
-  --teal-soft:rgba(13,133,115,.09);
-  --red:#c04747;
+  --bg:#FBF5E9;
+  --card:#FFFDF6;
+  --field:#F6EDD9;
+  --hover:#FBF2DD;
+  --line:#EADCC2;
+  --line2:#DFC788;
+  --text:#3E1A12;
+  --dim:#7A5140;
+  --dim2:#A98D77;
+  --gold:#B98A1E;
+  --gold-soft:#F6E9C9;
+  --gold-ink:#8F6A12;
+  --teal:#5B7A3A;
+  --teal-soft:rgba(91,122,58,.10);
+  --red:#9E2F26;
   --kumkum:#8E2A22;
   --kumkum-deep:#6E1F19;
-  --title:#6d2323;
-  --shadow:0 1px 2px rgba(60,45,15,.06), 0 6px 24px rgba(60,45,15,.08);
-  --shadow-lg:0 14px 44px rgba(90,40,10,.20);
+  --title:#6E1F19;
+  --shadow:0 2px 10px rgba(110,60,20,.08), 0 10px 30px rgba(110,60,20,.06);
+  --shadow-lg:0 14px 44px rgba(90,40,10,.22);
   --r:16px;
   --fd:"Rozha One","Tiro Devanagari Hindi",serif;
 }
 [data-theme="dark"]{
-  --bg:#161018;
-  --card:#221a24;
-  --field:#2c222e;
-  --hover:#2f2431;
-  --line:#3a2d3c;
-  --line2:#4c3c4e;
-  --text:#f2e9d9;
-  --dim:#b3a191;
-  --dim2:#8a7a70;
-  --gold:#f0a838;
-  --gold-soft:#3a2c12;
-  --gold-ink:#ffc768;
-  --teal:#38bfa7;
-  --teal-soft:rgba(56,191,167,.1);
-  --red:#e26565;
+  --bg:#171009;
+  --card:#221710;
+  --field:#2B1D13;
+  --hover:#2F2014;
+  --line:#3B2A1B;
+  --line2:#57422B;
+  --text:#F4E8D3;
+  --dim:#C6AB8E;
+  --dim2:#93785F;
+  --gold:#DFA733;
+  --gold-soft:#3B2C12;
+  --gold-ink:#F2C25E;
+  --teal:#9CBE68;
+  --teal-soft:rgba(156,190,104,.12);
+  --red:#E0705F;
   --kumkum:#D96A55;
   --kumkum-deep:#B4402F;
-  --title:#f5c66a;
+  --title:#F4E0B8;
   --shadow:0 8px 28px rgba(0,0,0,.4);
   --shadow-lg:0 20px 60px rgba(0,0,0,.6);
 }
@@ -935,7 +935,7 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
 
 /* dark theme: muted violet tags for readability */
 [data-theme="dark"] .pill.tagp,
-[data-theme="dark"] .tagchip.on{background:#33272f !important;color:#e3cfa9 !important;border-color:#4c3c4e !important}
+[data-theme="dark"] .tagchip.on{background:#2a2350 !important;color:#cdc2ef !important;border-color:#3a3163 !important}
 
 /* list rows: gentle entrance + refined hover */
 .listbox > .ri:nth-of-type(-n+18){animation:riIn .28s ease both}
@@ -949,12 +949,9 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 [data-theme="dark"] .brand h1{
-  background:linear-gradient(115deg,#f2e9d9 5%,#ffc768 60%,var(--gold) 95%);
+  background:linear-gradient(115deg,#f2ecd9 5%,#ffcf7d 60%,var(--gold) 95%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
-
-.ri-name mark{background:linear-gradient(transparent 62%, var(--gold-soft) 62%);color:inherit;border-radius:3px;padding:0 1px}
-[data-theme="dark"] .ri-name mark{background:linear-gradient(transparent 60%, #3a2c12 60%)}
 
 /* toolbar breathing room */
 .filterline{margin-top:2px}
@@ -963,11 +960,11 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
 .hero{
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;
   background:linear-gradient(130deg,#fdf6e6 0%, #f7e8c8 45%, #f3ddb0 100%);
-  border:1px solid #ebdcb8;border-radius:20px;padding:18px 18px;margin:2px 0 14px;
+  border:1px solid #eBdcb8;border-radius:20px;padding:18px 18px;margin:2px 0 14px;
   box-shadow:var(--shadow);position:relative;overflow:hidden;
 }
 .hero::after{content:"ॐ";position:absolute;right:-8px;top:-22px;font-size:110px;opacity:.06;font-family:var(--fd);pointer-events:none}
-[data-theme="dark"] .hero{background:linear-gradient(130deg,#2b2030,#352631 60%,#3d2a24);border-color:#3a2d3c}
+[data-theme="dark"] .hero{background:linear-gradient(130deg,#1e1836,#2a2050 60%,#33244e);border-color:#3a3163}
 .hero-om{font-size:36px;filter:drop-shadow(0 3px 8px rgba(176,119,15,.4))}
 .hero-txt{flex:1;min-width:140px}
 .hero-hi{font-family:var(--fd);font-size:clamp(19px,4.6vw,24px);color:var(--gold-ink)}
@@ -1021,7 +1018,7 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
 .tgc.t-aarti{background:#fdf7e3;border-color:#f3e3b4}
 .tgc.t-fagun{background:#fdf0f6;border-color:#f7d3e3}
 .tgc.t-vinati{background:#eef7f5;border-color:#cfe8e3}
-[data-theme="dark"] .tgc{background:#2a2028 !important;border-color:#3a2d3c !important}
+[data-theme="dark"] .tgc{background:#221b3e !important;border-color:#3a3163 !important}
 
 .homebox{margin-bottom:18px}
 .ri.mini{cursor:pointer;padding:11px 14px}
@@ -1032,7 +1029,7 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
 .rank.r1{background:linear-gradient(135deg,#f6d365,#d99a1e);color:#5a3c00}
 .rank.r2{background:#e8e4d8;color:#6b6252}
 .rank.r3{background:#f0dcc3;color:#8a5a26}
-[data-theme="dark"] .rank{background:#33272f;color:#b3a191}
+[data-theme="dark"] .rank{background:#2a2350;color:#a89dc9}
 [data-theme="dark"] .rank.r1{color:#3a2800}
 
 .rnav{font-size:19px;line-height:1;padding:6px 12px !important}
@@ -2225,7 +2222,7 @@ async function loadEditFiles(){
 let _sdeb; window.onSearch = (v)=>{
   search=v;
   const c=$("sclear"); if(c) c.style.display = v ? "flex" : "none";
-  clearTimeout(_sdeb); _sdeb=setTimeout(renderListOnly, 110);
+  clearTimeout(_sdeb); _sdeb=setTimeout(renderListOnly, 160);
 };
 window.clearSearch = ()=>{
   search="";
@@ -2624,38 +2621,10 @@ function topSingers(n=3){
   bhajans.forEach(b=>{ const s=(b.singer||"").trim(); if(s) counts[s]=(counts[s]||0)+1; });
   return Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,n);
 }
-/* ---- search engine v2: Hinglish + Devanagari, cached index, granular ranking ---- */
-const DEV_MAP = {
-  "क":"k","ख":"kh","ग":"g","घ":"gh","ङ":"n","च":"ch","छ":"chh","ज":"j","झ":"jh","ञ":"n",
-  "ट":"t","ठ":"th","ड":"d","ढ":"dh","ण":"n","त":"t","थ":"th","द":"d","ध":"dh","न":"n",
-  "प":"p","फ":"ph","ब":"b","भ":"bh","म":"m","य":"y","र":"r","ल":"l","व":"v","श":"sh",
-  "ष":"sh","स":"s","ह":"h","ळ":"l","क़":"k","ख़":"kh","ग़":"g","ज़":"j","ड़":"r","ढ़":"rh","फ़":"f",
-  "अ":"a","आ":"aa","इ":"i","ई":"ee","उ":"u","ऊ":"oo","ऋ":"ri","ए":"e","ऐ":"ai","ओ":"o","औ":"au",
-  "ा":"a","ि":"i","ी":"i","ु":"u","ू":"u","ृ":"ri","े":"e","ै":"ai","ो":"o","ौ":"au",
-  "ं":"n","ँ":"n","ः":"","्":"","़":"","ॉ":"o","ऑ":"o","ॐ":"om","।":" "
-};
-const DEV_CONS = /[\u0915-\u0939\u0958-\u095F]/, DEV_MATRA = /[\u093E-\u094C\u0962\u0963]/;
-function translit(s){
-  let out = "", pend = false;   // pend = consonant awaiting inherent 'a'
-  for(const ch of s){
-    if(DEV_CONS.test(ch)){
-      if(pend) out += "a";                 // previous consonant gets its schwa
-      out += DEV_MAP[ch] || ""; pend = true;
-    }else if(DEV_MATRA.test(ch)){
-      out += DEV_MAP[ch] || ""; pend = false;
-    }else if(ch === "\u094D"){ pend = false; }          // virama joins cluster
-    else if(ch >= "\u0900" && ch <= "\u097F"){
-      out += DEV_MAP[ch] || ""; pend = false;            // vowels, anusvara etc.
-    }else{
-      pend = false; out += ch;                            // word end: schwa deleted (Hindi)
-    }
-  }
-  return out;
-}
+/* ---- fuzzy search: forgives Hinglish spelling differences & typos ---- */
 function normTxt(s){
   s = String(s||"").toLowerCase();
-  s = translit(s);
-  s = s.replace(/[^a-z0-9 ]+/g, " ");
+  s = s.replace(/[^a-z0-9\u0900-\u097F ]+/g, " ");
   // common transliteration equivalences
   s = s.replace(/aa/g,"a").replace(/ee/g,"i").replace(/oo/g,"u")
        .replace(/w/g,"v").replace(/ph/g,"f").replace(/z/g,"j")
@@ -2679,109 +2648,23 @@ function lev(a, b){
   }
   return prev[n];
 }
-/* token match quality: 1 exact word · .9 word-prefix · .7 substring · .5 typo · .45 prefix-typo · 0 none */
-function skel(w){ return (w[0]||"") + w.slice(1).replace(/[aeiou]/g,""); }   // consonant skeleton: siam→sm, caranon→crnn
-function tokQ(tk, words){
-  let best = 0;
-  const tol = tk.length>=7 ? 2 : tk.length>=4 ? 1 : 0;
-  const st = tk.length>=3 ? skel(tk) : "";
-  for(const w of words){
-    if(w === tk) return 1;
-    if(w.startsWith(tk)){ best = Math.max(best, .9); continue; }
-    if(w.includes(tk)){ best = Math.max(best, .7); continue; }
-    if(st.length >= 2){
-      const sw = skel(w);
-      if(sw === st) { best = Math.max(best, .6); continue; }          // sham ↔ shyam
-      if(sw.startsWith(st)) { best = Math.max(best, .55); continue; } // charno ↔ charanon
-    }
-    if(tol){
-      if(lev(w, tk) <= tol) best = Math.max(best, .5);
-      else if(w.length > tk.length && lev(w.slice(0, tk.length), tk) <= tol) best = Math.max(best, .45); // typo while still typing
-    }
-  }
-  return best;
-}
-/* continuous score 0–100 */
 function searchScore(hay, q){
   const H = normTxt(hay), Q = normTxt(q);
   if(!Q) return 1;
-  if(!H) return 0;
-  if(H === Q) return 100;
-  if(H.startsWith(Q)) return 92;
-  const pos = H.indexOf(Q);
-  if(pos > -1) return 84 - Math.min(8, pos * 0.2);           // exact phrase, earlier = better
+  if(H.includes(Q)) return H.startsWith(Q) ? 5 : 4;          // exact phrase
   const hw = H.split(" "), qw = Q.split(" ");
-  let sum = 0, hits = 0;
-  for(const tk of qw){ const s = tokQ(tk, hw); if(s > 0) hits++; sum += s; }
-  const avg = sum / qw.length;
-  if(hits === qw.length){
-    // in-order bonus: query words appearing in the same order in the name
-    let oi = 0;
-    for(const w of hw){ if(oi < qw.length && (w.startsWith(qw[oi]) || w === qw[oi])) oi++; }
-    const order = oi === qw.length ? 4 : 0;
-    const brevity = Math.max(0, 6 - Math.max(0, hw.length - qw.length)); // tighter names first
-    return 40 + avg * 30 + order + brevity;                  // 40–80
-  }
-  if(qw.length >= 3 && hits >= qw.length - 1) return 12 + avg * 10;  // forgive one wrong word
-  return 0;
-}
-/* highlight matched words in a display name */
-function hlName(name, q){
-  const qw = normTxt(q).split(" ").filter(Boolean);
-  if(!qw.length) return esc(name);
-  return String(name).split(/(\s+)/).map(part=>{
-    if(!part.trim()) return esc(part);
-    const nw = normTxt(part);
-    const hit = nw && qw.some(tk=>{
-      if(nw === tk || nw.startsWith(tk) || nw.includes(tk)) return true;
-      if(tk.length>=3){ const st=skel(tk), sw=skel(nw); if(st.length>=2 && (sw===st || sw.startsWith(st))) return true; }
-      const tol = tk.length>=7 ? 2 : tk.length>=4 ? 1 : 0;
-      return tol && (lev(nw, tk) <= tol || (nw.length > tk.length && lev(nw.slice(0, tk.length), tk) <= tol));
-    });
-    return hit ? `<mark>${esc(part)}</mark>` : esc(part);
-  }).join("");
-}
-/* per-bhajan normalized index — computed once, reused every keystroke */
-const _sIdx = new Map();
-function sIdx(b){
-  const key = (b.name||"") + "¦" + (b.singer||"");
-  let e = _sIdx.get(b.id);
-  if(!e || e.key !== key){
-    e = { key, name: normTxt(b.name), singer: normTxt(b.singer||"") };
-    e.words = e.name.split(" ").filter(Boolean);
-    _sIdx.set(b.id, e);
-  }
-  return e;
-}
-/* fast scorer against the cached index */
-function scoreIndexed(b, Q, qw){
-  const e = sIdx(b);
-  let s = 0;
-  const H = e.name;
-  if(H === Q) s = 100;
-  else if(H.startsWith(Q)) s = 92;
-  else{
-    const pos = H.indexOf(Q);
-    if(pos > -1) s = 84 - Math.min(8, pos * 0.2);
-    else{
-      let sum = 0, hits = 0;
-      for(const tk of qw){ const x = tokQ(tk, e.words); if(x > 0) hits++; sum += x; }
-      const avg = sum / qw.length;
-      if(hits === qw.length){
-        let oi = 0;
-        for(const w of e.words){ if(oi < qw.length && (w.startsWith(qw[oi]) || w === qw[oi])) oi++; }
-        s = 40 + avg * 30 + (oi === qw.length ? 4 : 0) + Math.max(0, 6 - Math.max(0, e.words.length - qw.length));
-      }else if(qw.length >= 3 && hits >= qw.length - 1){
-        s = 12 + avg * 10;
-      }
-    }
-  }
-  // singer match: strong if the whole query is the singer, mild if tokens match
-  if(e.singer){
-    if(e.singer === Q || e.singer.startsWith(Q)) s = Math.max(s, 60);
-    else if(e.singer.includes(Q)) s = Math.max(s, 50);
-  }
-  return s;
+  // every word typed is a prefix of some word in the name
+  if(qw.every(tk => hw.some(w => w.startsWith(tk)))) return 3;
+  // every word is a substring
+  if(qw.every(tk => hw.some(w => w.includes(tk)))) return 2;
+  // spelling-tolerant (typos / Hinglish variants)
+  const ok = qw.every(tk =>
+    hw.some(w => {
+      const tol = tk.length>=6 ? 2 : tk.length>=4 ? 1 : 0;
+      return tol>0 && lev(w, tk) <= tol;
+    })
+  );
+  return ok ? 1 : 0;
 }
 
 function filtered(){
@@ -2805,20 +2688,17 @@ function filtered(){
       .slice(0, 30);
   }
   if(!q) return list;
-  const Q = normTxt(q);
-  if(!Q) return list;
-  const qw = Q.split(" ").filter(Boolean);
   const scored = [];
   for(const b of list){
-    let s = scoreIndexed(b, Q, qw);
-    if(s < 55){ // only fall back to notes/live-title when the name isn't a solid hit
-      const sess = S[b.sessionId];
-      const extra = (b.notes||"") + " " + (sess?sess.title:"");
-      if(extra.trim()) s = Math.max(s, searchScore(extra, q) * 0.4);
-    }
-    if(s > 8) scored.push([s, b]);
+    const sess = S[b.sessionId];
+    const s = Math.max(
+      searchScore(b.name, q),
+      searchScore(b.singer||"", q) - 1,
+      searchScore((b.notes||"") + " " + (sess?sess.title:""), q) - 2
+    );
+    if(s > 0) scored.push([s, b]);
   }
-  scored.sort((a,b)=> b[0]-a[0] || (b[1].views||0)-(a[1].views||0) || a[1].name.localeCompare(b[1].name));
+  scored.sort((a,b)=> b[0]-a[0] || a[1].name.localeCompare(b[1].name));
   return scored.map(x=>x[1]);
 }
 
@@ -2836,7 +2716,7 @@ function bhajanRow(b){
   <div class="ri">
     <button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="★">${ICONS.star}</button>
     <div class="ri-main" data-bid="${b.id}" title="Tap: lyrics · Double-tap: lyrics or web search">
-      <div class="ri-name">${search.trim() ? hlName(b.name, search) : esc(b.name)}</div>
+      <div class="ri-name">${esc(b.name)}</div>
       ${subs?`<div class="ri-sub">${subs}</div>`:""}
     </div>
     <div class="ri-acts">
