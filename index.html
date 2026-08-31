@@ -2457,7 +2457,7 @@ window.voiceSearch = ()=>{
   r.onresult = (e)=>{
     let txt = "";
     for(const res of e.results) txt += res[0].transcript;
-    txt = txt.trim();
+    txt = dev2roman(txt.trim());   /* hi-IN returns Devanagari — show Hinglish instead */
     const q = $("q"); if(q) q.value = txt;
     onSearch(txt);
   };
@@ -2878,7 +2878,7 @@ function topSingers(n=3){
 }
 /* ---- fuzzy search: forgives Hinglish spelling differences & typos ---- */
 function normTxt(s){
-  s = String(s||"").toLowerCase();
+  s = dev2roman(String(s||"")).toLowerCase();   /* Devanagari ⇄ Hinglish match each other */
   s = s.replace(/[^a-z0-9\u0900-\u097F ]+/g, " ");
   // common transliteration equivalences
   s = s.replace(/aa/g,"a").replace(/ee/g,"i").replace(/oo/g,"u")
@@ -2886,6 +2886,7 @@ function normTxt(s){
        .replace(/chh/g,"ch").replace(/q/g,"k").replace(/x/g,"ks");
   s = s.replace(/h/g,"");            // shyam/sham/syam → sam; hai/he → ai/e
   s = s.replace(/y/g,"i");
+  s = s.replace(/a\b/g,"");          // silent final schwa: krishna/krishn → same
   s = s.replace(/(.)\1+/g,"$1");     // collapse doubles
   return s.replace(/\s+/g," ").trim();
 }
