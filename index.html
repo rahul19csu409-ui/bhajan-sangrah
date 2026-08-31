@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3, viewport-fit=cover, interactive-widget=resizes-content" />
 <title>Shyam Bhajan Sangrah</title>
 <meta name="description" content="A community library of bhajans from live satsangs — scales, singers, lyrics, and one-tap YouTube timestamps." />
 <meta name="theme-color" content="#FBF5E9" />
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" />
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" />
-<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Marcellus&family=Mukta:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Marcellus&family=Mukta:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
 :root{
   --bg:#f7f3ea;
@@ -38,6 +38,7 @@
   --r:14px;
   --fd:"Marcellus","Tiro Devanagari Hindi",serif;
   --fb:"Mukta",system-ui,sans-serif;
+  --fr:"Noto Sans Devanagari","Mukta",system-ui,sans-serif;
 }
 [data-theme="dark"]{
   --bg:#0f0c1d;
@@ -59,7 +60,7 @@
   --shadow-lg:0 20px 60px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;max-width:100vw;touch-action:manipulation}
+html,body{overflow-x:hidden;max-width:100vw;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   background:var(--bg);color:var(--text);font-family:var(--fb);
   min-height:100vh;-webkit-font-smoothing:antialiased;
@@ -70,7 +71,7 @@ a{color:inherit}
 button{font-family:var(--fb)}
 svg{flex-shrink:0}
 input,select,textarea{
-  font-family:var(--fb);width:100%;padding:11px 13px;font-size:15px;
+  font-family:var(--fb);width:100%;padding:11px 13px;font-size:16px;
   background:var(--field);color:var(--text);
   border:1px solid var(--line);border-radius:10px;outline:none;
   transition:border-color .15s;
@@ -411,9 +412,15 @@ textarea.mono{font-family:ui-monospace,monospace;font-size:13px}
 .reader-head .rm2{font-size:11.5px;color:var(--dim2);margin-top:1px}
 .reader-body{overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:16px;flex:1}
 .read-text{
-  white-space:pre-wrap;line-height:2.1;font-size:18px;font-family:var(--fd);
-  background:var(--card);border-radius:14px;padding:22px;border:1px solid var(--line);
+  white-space:pre-wrap;line-height:1.9;font-size:20px;font-family:var(--fr);
+  font-weight:500;letter-spacing:.005em;color:var(--text);
+  background:var(--card);border-radius:14px;padding:22px 20px;border:1px solid var(--line);
+  text-rendering:optimizeLegibility;
 }
+/* tappable lyric lines: tap → highlight + centre (highlight-follow) */
+.read-text .rl{cursor:pointer;border-radius:6px;padding:1px 5px;margin:-1px -5px;transition:background .15s,color .15s}
+.read-text .rl.cur{background:var(--gold-soft);color:var(--gold-ink);font-weight:600}
+.ab.on{background:var(--gold-soft);border-color:var(--gold);color:var(--gold-ink)}
 .read-img{width:100%;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;background:#fff}
 .read-img.zoom{cursor:zoom-out;border-radius:0}
 .read-pdf{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;background:#fff}
@@ -434,14 +441,28 @@ textarea.mono{font-family:ui-monospace,monospace;font-size:13px}
 /* ---------- search box (icon + clear) ---------- */
 .searchbox{position:relative;flex:1 1 100%;display:flex;align-items:center}
 .searchbox svg.si{position:absolute;left:13px;color:var(--gold);pointer-events:none}
-.searchbox input{flex:1;padding:11px 42px 11px 40px;border-radius:12px}
+.searchbox input{flex:1;padding:11px 80px 11px 40px;border-radius:12px}
 .searchbox input:focus{box-shadow:0 0 0 3px rgba(176,119,15,.13)}
 .sclear{
-  position:absolute;right:8px;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
+  position:absolute;right:44px;width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
   background:var(--field);color:var(--dim);display:none;align-items:center;justify-content:center;
   font-size:12px;line-height:1;transition:all .13s;border:1px solid var(--line);
 }
 .sclear:hover{background:var(--red);border-color:var(--red);color:#fff}
+.smic{
+  position:absolute;right:8px;width:30px;height:30px;border-radius:50%;cursor:pointer;
+  border:1px solid var(--line);background:var(--field);color:var(--gold-ink);
+  display:flex;align-items:center;justify-content:center;transition:all .13s;
+}
+.smic:hover{border-color:var(--gold);background:var(--gold-soft)}
+.smic.listening{
+  background:var(--red);border-color:var(--red);color:#fff;
+  animation:micPulse 1.1s ease infinite;
+}
+@keyframes micPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(192,71,71,.45)}
+  50%{box-shadow:0 0 0 8px rgba(192,71,71,0)}
+}
 select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(176,119,15,.1)}
 
 /* ---------- floating tanpura (usable anywhere) ---------- */
@@ -1064,6 +1085,50 @@ select.chipsel{appearance:none;-webkit-appearance:none;width:auto;max-width:150p
   .fab-tanpura{bottom:calc(162px + env(safe-area-inset-bottom))}
   footer{margin-bottom:8px}
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PROFESSIONAL POLISH LAYER
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1. Kill mobile auto-zoom completely: every field ≥16px on touch screens.
+      (Browsers zoom the page when a focused field is under 16px — this was
+      the "app gets stuck zoomed in" bug.) */
+@media (max-width:859px){
+  input,select,textarea{font-size:16px !important}
+}
+
+/* 2. Comfortable touch targets (Apple/Google recommend ≥44px) */
+@media (pointer:coarse){
+  .ab{width:40px;height:40px}
+  .iconbtn{width:42px;height:42px}
+  .rnav{padding:8px 14px !important}
+  .chip{padding:9px 16px}
+  .tab{padding:11px 12px}
+}
+
+/* 3. Reader: no scroll-chaining (page behind stays still), smooth momentum */
+.reader-body{
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+.overlay{overscroll-behavior:contain}
+
+/* 4. Lyrics: comfortable measure + gentle verse separation */
+.read-text{max-width:62ch;width:100%;margin:0 auto}
+@media (min-width:640px){.read-text{padding:28px 32px}}
+
+/* 5. Typography niceties */
+h1,h2,h3{text-wrap:balance}
+::selection{background:var(--gold-soft);color:var(--gold-ink)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.statline b,#fslbl,#telespeed{font-variant-numeric:tabular-nums}
+
+/* 6. Respect reduced-motion users */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .reader-body{scroll-behavior:auto}
+}
 </style>
 </head>
 <body>
@@ -1204,6 +1269,10 @@ const I18N = {
     ocrLoading: "Loading Hindi reader (first time only, ~2 MB)…", ocrReading: "Reading page…",
     ocrDone: "Lyrics scanned ✓ — check and correct, then save", ocrFail: "Couldn't read that photo — try brighter light, page flat, text filling the frame.",
     noLyricsChip: "Need lyrics", waAsk: "Ask on WhatsApp", chipRecent: "Recent", chipHistory: "History", tagsLabel: "Tags · category", emptyHist: "No history yet — bhajans you open will appear here.", moreSingers: "More singers",
+    micTitle: "Voice search — speak the bhajan name", micListening: "🎙 Listening… speak the bhajan name", micDenied: "Microphone permission needed", micNoSpeech: "Didn't catch that — try again", micNoSupport: "Voice search isn't supported in this browser",
+    shareImg: "Share lyrics as image", imgSaved: "Image downloaded ✓", imgFail: "Couldn't create the image",
+    trl: "अ⇄A — show lyrics in English letters",
+    dupConfirm: "This bhajan may already be in the sangrah:\n\n“%s”\n\nAdd it anyway?",
     waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "Tap a bhajan → ▶ YouTube at that moment · Double-tap → 📖 lyrics (or web if none)",
     setDblHint: "Double-tap a bhajan name → lyrics / PDF opens (or Google search if none).",
@@ -1283,6 +1352,10 @@ const I18N = {
     ocrLoading: "हिंदी रीडर लोड हो रहा (सिर्फ़ पहली बार, ~2 MB)…", ocrReading: "पन्ना पढ़ रहे हैं…",
     ocrDone: "लिरिक्स स्कैन हो गए ✓ — जाँचकर सहेजें", ocrFail: "फ़ोटो पढ़ नहीं पाए — अच्छी रोशनी में, पन्ना सीधा रखकर, पास से फ़ोटो लें।",
     noLyricsChip: "लिरिक्स बाकी", waAsk: "WhatsApp पर माँगें", chipRecent: "नए भजन", chipHistory: "इतिहास", tagsLabel: "टैग · श्रेणी", emptyHist: "अभी कोई इतिहास नहीं — जो भजन आप खोलेंगे वे यहाँ दिखेंगे।", moreSingers: "और गायक",
+    micTitle: "बोलकर खोजें — भजन का नाम बोलें", micListening: "🎙 सुन रहे हैं… भजन का नाम बोलें", micDenied: "माइक की अनुमति चाहिए", micNoSpeech: "सुनाई नहीं दिया — फिर बोलें", micNoSupport: "इस ब्राउज़र में वॉइस सर्च नहीं चलता",
+    shareImg: "लिरिक्स इमेज बनाकर भेजें", imgSaved: "इमेज डाउनलोड हो गई ✓", imgFail: "इमेज नहीं बन पाई",
+    trl: "अ⇄A — लिरिक्स अंग्रेज़ी अक्षरों में देखें",
+    dupConfirm: "यह भजन शायद पहले से संग्रह में है:\n\n“%s”\n\nफिर भी जोड़ें?",
     waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "टैप → ▶ यूट्यूब उसी समय पर · डबल-टैप → 📖 लिरिक्स (न हों तो वेब)",
     setDblHint: "भजन के नाम पर डबल-टैप → लिरिक्स/PDF खुलेगी (न हो तो Google)।",
@@ -1519,13 +1592,68 @@ function releaseAwake(){
 document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && _wlWant) keepAwake(); });
 
 /* lyrics font size (for singers who need bigger text) */
-let readerFs = parseInt(localStorage.getItem("bhajan-fs")||"18");
+let readerFs = parseInt(localStorage.getItem("bhajan-fs")||"20");
 window.fsAdj = (d)=>{
-  readerFs = Math.max(14, Math.min(34, readerFs + d*2));
+  readerFs = Math.max(16, Math.min(42, readerFs + d*2));
   localStorage.setItem("bhajan-fs", readerFs);
   document.querySelectorAll(".read-text").forEach(el=> el.style.fontSize = readerFs+"px");
   const lbl = document.getElementById("fslbl"); if(lbl) lbl.textContent = readerFs;
   buzz(6);
+};
+
+/* ---- Devanagari → Hinglish transliteration (for younger singers) ---- */
+const _DC={"क":"k","ख":"kh","ग":"g","घ":"gh","ङ":"n","च":"ch","छ":"chh","ज":"j","झ":"jh","ञ":"n","ट":"t","ठ":"th","ड":"d","ढ":"dh","ण":"n","त":"t","थ":"th","द":"d","ध":"dh","न":"n","प":"p","फ":"ph","ब":"b","भ":"bh","म":"m","य":"y","र":"r","ल":"l","व":"v","श":"sh","ष":"sh","स":"s","ह":"h","ळ":"l","क़":"q","ख़":"kh","ग़":"g","ज़":"z","ड़":"r","ढ़":"rh","फ़":"f"};
+const _DV={"अ":"a","आ":"aa","इ":"i","ई":"ee","उ":"u","ऊ":"oo","ऋ":"ri","ए":"e","ऐ":"ai","ओ":"o","औ":"au","ऍ":"e","ऑ":"o"};
+const _DM={"ा":"aa","ि":"i","ी":"ee","ु":"u","ू":"oo","ृ":"ri","े":"e","ै":"ai","ो":"o","ौ":"au","ॉ":"o","ॅ":"e"};
+const _DN={"०":"0","१":"1","२":"2","३":"3","४":"4","५":"5","६":"6","७":"7","८":"8","९":"9"};
+function dev2roman(str){
+  let out="", pend=null;
+  const flush=(schwa)=>{ if(pend!==null){ out+=pend+(schwa?"a":""); pend=null; } };
+  for(const ch of String(str)){
+    if(_DC[ch]!==undefined){ flush(true); pend=_DC[ch]; }
+    else if(_DM[ch]!==undefined){ if(pend!==null){ out+=pend+_DM[ch]; pend=null; } else out+=_DM[ch]; }
+    else if(ch==="्"){ flush(false); }
+    else if(_DV[ch]!==undefined){ flush(true); out+=_DV[ch]; }
+    else if(ch==="ं"||ch==="ँ"){ flush(true); out+="n"; }
+    else if(ch==="ः"){ flush(true); out+="h"; }
+    else if(ch==="़"){ /* nukta approximated by base letter */ }
+    else if(_DN[ch]!==undefined){ flush(false); out+=_DN[ch]; }
+    else if(ch==="।"||ch==="॥"){ flush(false); out+=" |"; }
+    else if(ch==="ॐ"){ flush(true); out+="Om"; }
+    else { flush(false); out+=ch; }   /* word boundary: final schwa dropped (राम → raam) */
+  }
+  flush(false);
+  return out;
+}
+
+/* ---- lyric lines as tappable spans (highlight-follow teleprompter) ---- */
+let _rlOrig = [];
+function lyricSpans(txt){
+  _rlOrig = String(txt).replace(/\r/g,"").split("\n");
+  const on = localStorage.getItem("bhajan-translit")==="1";
+  return _rlOrig.map((ln,i)=>
+    ln.trim() ? `<span class="rl" data-i="${i}">${esc(on ? dev2roman(ln) : ln)}</span>` : ""
+  ).join("\n");
+}
+window.lineTap = (e)=>{
+  const sp = e.target.closest(".rl"); if(!sp) return;
+  const was = sp.classList.contains("cur");
+  document.querySelectorAll(".read-text .rl.cur").forEach(x=>x.classList.remove("cur"));
+  if(!was){
+    sp.classList.add("cur");
+    sp.scrollIntoView({behavior:"smooth", block:"center"});
+    buzz(6);
+  }
+};
+window.translitToggle = ()=>{
+  const on = localStorage.getItem("bhajan-translit")!=="1";
+  localStorage.setItem("bhajan-translit", on?"1":"0");
+  document.querySelectorAll(".read-text .rl").forEach(sp=>{
+    const ln = _rlOrig[+sp.dataset.i] || "";
+    sp.textContent = on ? dev2roman(ln) : ln;
+  });
+  const b = document.getElementById("trlbtn"); if(b) b.classList.toggle("on", on);
+  buzz(8);
 };
 
 /* install-to-home-screen */
@@ -2050,6 +2178,86 @@ window.shareBhajan = async (id)=>{
     else{ await navigator.clipboard.writeText(text+"\n"+url); toast("Link copied ✓"); }
   }catch{}
 };
+
+/* ---- share lyrics as a clean PNG card (for WhatsApp etc.) ---- */
+window.shareLyricsImage = async (id)=>{
+  const b = bhajans.find(x=>x.id===id); if(!b) return;
+  if(!b.lyricsText){ toast(t("noLyrics"), true); return; }
+  const FL = '"Noto Sans Devanagari","Mukta",sans-serif';
+  /* make sure Devanagari glyphs are loaded before drawing */
+  try{
+    await Promise.all([
+      document.fonts.load(`500 46px ${FL}`, b.lyricsText.slice(0,120)),
+      document.fonts.load(`600 58px ${FL}`, b.name)
+    ]);
+  }catch{}
+
+  const W = 1080, pad = 72, maxW = W - pad*2, lh = 84;
+  const c = document.createElement("canvas");
+  const x = c.getContext("2d");
+
+  /* word-wrap each lyric line to the card width */
+  x.font = `500 46px ${FL}`;
+  const wrap = (line)=>{
+    if(!line.trim()) return [""];
+    const words = line.split(/\s+/), out = []; let cur = "";
+    for(const w of words){
+      const test = cur ? cur+" "+w : w;
+      if(x.measureText(test).width > maxW && cur){ out.push(cur); cur = w; }
+      else cur = test;
+    }
+    if(cur) out.push(cur);
+    return out;
+  };
+  let lines = [];
+  for(const raw of b.lyricsText.replace(/\r/g,"").split("\n")) lines.push(...wrap(raw));
+  if(lines.length > 110){ lines = lines.slice(0,110); lines.push("…"); }
+
+  const headH = 214, footH = 140;
+  c.width = W; c.height = headH + lines.length*lh + footH;
+
+  /* card: warm cream, gold band, title, meta, divider, lyrics, footer */
+  x.fillStyle = "#fbf6ea"; x.fillRect(0, 0, c.width, c.height);
+  x.fillStyle = "#b0770f"; x.fillRect(0, 0, W, 10);
+
+  x.fillStyle = "#241d3d";
+  let tfs = 58;
+  x.font = `600 ${tfs}px ${FL}`;
+  while(x.measureText(b.name).width > maxW && tfs > 32){ tfs -= 2; x.font = `600 ${tfs}px ${FL}`; }
+  x.fillText(b.name, pad, 110);
+
+  const meta = [b.singer?`🎤 ${b.singer}`:"", b.scale?`Scale · ${b.scale}`:""].filter(Boolean).join("    ");
+  if(meta){ x.font = `400 32px ${FL}`; x.fillStyle = "#7c5406"; x.fillText(meta, pad, 162); }
+
+  x.strokeStyle = "#e5dcc4"; x.lineWidth = 2;
+  x.beginPath(); x.moveTo(pad, 190); x.lineTo(W-pad, 190); x.stroke();
+
+  x.font = `500 46px ${FL}`; x.fillStyle = "#2b2340";
+  let y = headH + 52;
+  for(const ln of lines){ if(ln) x.fillText(ln, pad, y); y += lh; }
+
+  x.font = `500 27px ${FL}`; x.fillStyle = "#9a8a5a";
+  x.fillText("🪕 Shyam Bhajan Sangrah", pad, c.height - 54);
+  const link = (location.origin + location.pathname + "#b=" + id).replace(/^https?:\/\//,"");
+  x.textAlign = "right"; x.fillText(link, W - pad, c.height - 54); x.textAlign = "left";
+
+  const blob = await new Promise(res=>c.toBlob(res, "image/png"));
+  if(!blob){ toast(t("imgFail"), true); return; }
+  const fname = (b.name||"bhajan").replace(/[^\w\u0900-\u097F -]+/g,"").trim().slice(0,40) + ".png";
+  const file = new File([blob], fname, {type:"image/png"});
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:b.name});
+      buzz(15);
+      return;
+    }
+  }catch(e){ if(e && e.name === "AbortError") return; }
+  /* fallback: plain download (desktop browsers) */
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  toast(t("imgSaved"));
+};
 function tryDeepLink(){
   if(deepLinked || !ready.b) return;
   const m = location.hash.match(/#b=([A-Za-z0-9]+)/);
@@ -2230,6 +2438,39 @@ window.clearSearch = ()=>{
   const c=$("sclear"); if(c) c.style.display="none";
   renderListOnly();
 };
+
+/* ---- voice search: speak the bhajan name in Hindi (hi-IN) ---- */
+const SR_CTOR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let _rec = null;
+window.voiceSearch = ()=>{
+  if(!SR_CTOR){ toast(t("micNoSupport"), true); return; }
+  if(_rec){ try{ _rec.stop(); }catch{} return; }   // tap again to stop
+  const r = new SR_CTOR();
+  r.lang = "hi-IN";
+  r.interimResults = true;
+  r.maxAlternatives = 1;
+  r.continuous = false;
+  _rec = r;
+  const mic = $("smic"); if(mic) mic.classList.add("listening");
+  buzz(12);
+  toast(t("micListening"));
+  r.onresult = (e)=>{
+    let txt = "";
+    for(const res of e.results) txt += res[0].transcript;
+    txt = txt.trim();
+    const q = $("q"); if(q) q.value = txt;
+    onSearch(txt);
+  };
+  r.onerror = (e)=>{
+    if(e.error === "not-allowed" || e.error === "service-not-allowed") toast(t("micDenied"), true);
+    else if(e.error === "no-speech") toast(t("micNoSpeech"), true);
+  };
+  r.onend = ()=>{
+    _rec = null;
+    const m = $("smic"); if(m) m.classList.remove("listening");
+  };
+  try{ r.start(); }catch{ _rec = null; if(mic) mic.classList.remove("listening"); }
+};
 window.onScaleF = (v)=>{ scaleF=v; renderListOnly(); };
 window.onSingerF = (v)=>{ singerF=v; renderListOnly(); };
 window.pickSinger = (s)=>{ singerF = (singerF===s ? "" : s); render(); };
@@ -2319,6 +2560,18 @@ window.saveBhajan = async ()=>{
   if(saving) return;
   const name = $("f-name").value.trim();
   if(!name) return toast(t("tNameReq"), true);
+  /* duplicate check (new bhajans only): same normalised name or 1–2 edits away */
+  if(!editingId){
+    const nn = normTxt(name);
+    const dup = nn.length >= 3 && bhajans.find(b=>{
+      const bn = normTxt(b.name);
+      if(!bn) return false;
+      if(bn === nn) return true;
+      if(nn.length >= 6 && (bn.includes(nn) || nn.includes(bn))) return true;
+      return lev(bn, nn) <= (Math.min(bn.length, nn.length) > 8 ? 2 : 1);
+    });
+    if(dup && !confirm(t("dupConfirm").replace("%s", dup.name + (dup.singer ? " — " + dup.singer : "")))) return;
+  }
   saving = true; const btn=$("savebtn"); if(btn){btn.textContent=t("adding");btn.disabled=true;}
   try{
     let sessionId = $("f-session").value;
@@ -2539,6 +2792,7 @@ window.openLyrics = async (id)=>{
         <div style="display:flex;gap:7px;flex-shrink:0">
           <button class="btn btn-ghost rnav" onclick="readerStep(-1)" ${_readerIdx>0?"":"disabled"} title="Previous bhajan">‹</button>
           <button class="btn btn-ghost rnav" onclick="readerStep(1)" ${(_readerIdx>-1 && _readerIdx<_readerIds.length-1)?"":"disabled"} title="Next bhajan">›</button>
+          ${b.lyricsText ? `<button class="btn btn-ghost" onclick="shareLyricsImage('${b.id}')" title="${t("shareImg")}">🖼</button>` : ""}
           <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
           <button class="btn btn-ghost" onclick="navBack()">✕</button>
         </div>
@@ -2548,6 +2802,7 @@ window.openLyrics = async (id)=>{
         <button class="ab" onclick="fsAdj(-1)" title="Smaller text">A−</button>
         <span id="fslbl" style="min-width:22px;text-align:center;font-size:11px;font-weight:700;color:var(--dim2)">${readerFs}</span>
         <button class="ab" onclick="fsAdj(1)" title="Bigger text">A＋</button>
+        ${b.lyricsText ? `<button class="ab ${localStorage.getItem("bhajan-translit")==="1"?"on":""}" id="trlbtn" onclick="translitToggle()" title="${t("trl")}" style="font-size:12px;font-weight:800">अA</button>` : ""}
         <span style="width:1px;height:20px;background:var(--line)"></span>
         <span style="font-size:11px;color:var(--dim2);letter-spacing:.06em">AUTO-SCROLL</span>
         <button class="ab" id="telebtn" onclick="teleToggle()">▶</button>
@@ -2558,7 +2813,7 @@ window.openLyrics = async (id)=>{
       <div class="reader-body" id="rbody">
         <a class="btn btn-ghost" style="align-self:flex-start;font-size:12.5px;padding:8px 14px" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">🌐 Search lyrics on web</a>
         ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 ${t("openLyricsLink")}</a>` : ""}
-        ${b.lyricsText ? `<div class="read-text" style="font-size:${readerFs}px">${esc(b.lyricsText)}</div>` : ""}
+        ${b.lyricsText ? `<div class="read-text" style="font-size:${readerFs}px" onclick="lineTap(event)">${lyricSpans(b.lyricsText)}</div>` : ""}
         ${b.hasFiles ? `<div class="skel" id="rload"></div>` : ""}
         ${!b.lyricsLink && !b.lyricsText && !b.hasFiles ? `<div class="empty">${t("noLyrics")}</div>` : ""}
       </div>
@@ -2841,6 +3096,9 @@ function render(){
         <svg class="si" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <input id="q" type="search" enterkeyhint="search" placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)" autocomplete="off">
         <button class="sclear" id="sclear" style="display:${search?"flex":"none"}" onclick="clearSearch()" aria-label="Clear search" title="Clear">✕</button>
+        <button class="smic" id="smic" style="display:${SR_CTOR?"flex":"none"}" onclick="voiceSearch()" aria-label="${t("micTitle")}" title="${t("micTitle")}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>
+        </button>
       </div>
       <button class="btn btn-gold addbtn" onclick="go('add')">＋ ${t("tabAdd")}</button>
     </div>
