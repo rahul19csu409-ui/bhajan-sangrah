@@ -1482,6 +1482,20 @@ footer .m{font-family:var(--fd);font-weight:500;color:var(--gold)}
 .sitem .mv button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--dim);font-size:14px;font-family:var(--fb)}
 .sitem .mv button:disabled{opacity:.3}
 .sheet-item.danger{color:var(--red)} .sheet-item.danger .si-ic{color:var(--red)}
+
+/* ---- record dock (bottom of the reader) ---- */
+.reader{position:relative}
+.recdock{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:center;pointer-events:none;padding:0 14px;z-index:5}
+.recdock>*{pointer-events:auto}
+.recdock-btn{
+  display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border-radius:999px;border:1px solid var(--line2);
+  background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--text);
+  font-family:var(--fb);font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+.recdock-btn .rd-dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(255,107,107,.25)}
+.recdock-btn svg{width:16px;height:16px;color:var(--dim)}
+.recdock.live .reclive{width:100%;max-width:520px;box-shadow:0 14px 40px rgba(0,0,0,.3);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:8px 8px 8px 16px}
+.recstopbtn{height:36px;padding:0 14px;border-radius:999px;border:none;background:var(--red);color:#fff;font-family:var(--fb);font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1562,7 +1576,7 @@ const I18N = {
     menuLyrics: "Open lyrics", menuYt: "Play on YouTube", menuEdit: "Edit bhajan", menuShare: "Share", menuFind: "Find in sangrah", menuRemove: "Remove from sangrah",
     noLyrTitle: "Lyrics not added yet", noLyrBody: "Be the first — type them in, snap a photo of the bhajan book, or attach a PDF. Everyone in the satsang will see them.", noLyrAdd: "Add lyrics", noLyrWeb: "Search the web",
     refreshed: "Up to date", updateReady: "A new version is ready — tap to update",
-    recBtn: "Record your singing", recTitle: "My recordings", recStart: "Record", recStop: "Stop", recSaving: "Saving…", recSaved: "Recording saved", recDel: "Delete recording?", recEmpty: "Sing along with the lyrics and tap the mic to record. Recordings stay on this phone only.", recNoMic: "Microphone not available — check the browser permission.", recRename: "Name this recording", recShare: "Share", recDownload: "Download", recAll: "All recordings", recTab: "Recordings", recHome: "Your recordings",
+    recBtn: "Record your singing", recTitle: "My recordings", recStart: "Record", recStop: "Stop", recSaving: "Saving…", recSaved: "Recording saved", recDel: "Delete recording?", recEmpty: "Sing along with the lyrics and tap the mic to record. Recordings stay on this phone only.", recNoMic: "No microphone found on this device.", recDenied: "Microphone blocked — allow it in the browser/app settings for this site, then try again.", recBusy: "Microphone is in use by another app.", recNoSupport: "This browser can't record audio — try Chrome or Safari.", recHttps: "Recording needs the https:// version of the app.", recRename: "Name this recording", recShare: "Share", recDownload: "Download", recAll: "All recordings", recTab: "Recordings", recHome: "Your recordings",
     contribAs: "Contributing as", changeName: "change", anon: "Anonymous",
     madeBy: "Made with 🧡 by the satsang community",
     tabBhajans: "Bhajans", tabLives: "Lives", tabAdd: "Add", tabBulk: "Bulk add", tabHome: "Home", homeContinue: "Continue singing", homeBrowse: "Browse by category", homeTop: "Most viewed", homeNew: "Recently added", homeRandom: "Surprise me", seeAll: "See all",
@@ -1655,7 +1669,7 @@ const I18N = {
     menuLyrics: "लिरिक्स खोलें", menuYt: "YouTube पर सुनें", menuEdit: "भजन एडिट करें", menuShare: "शेयर", menuFind: "संग्रह में खोजें", menuRemove: "संग्रह से हटाएँ",
     noLyrTitle: "लिरिक्स अभी नहीं जुड़े", noLyrBody: "आप पहले बनें — टाइप करें, भजन पुस्तक की फ़ोटो लें, या PDF जोड़ें। पूरे सत्संग को दिखेगा।", noLyrAdd: "लिरिक्स जोड़ें", noLyrWeb: "वेब पर खोजें",
     refreshed: "अपडेटेड", updateReady: "नया वर्ज़न तैयार है — अपडेट के लिए टैप करें",
-    recBtn: "अपना गायन रिकॉर्ड करें", recTitle: "मेरी रिकॉर्डिंग", recStart: "रिकॉर्ड", recStop: "रोकें", recSaving: "सेव हो रहा है…", recSaved: "रिकॉर्डिंग सेव हुई", recDel: "रिकॉर्डिंग हटाएँ?", recEmpty: "लिरिक्स देखते हुए गाएँ और माइक दबाकर रिकॉर्ड करें। रिकॉर्डिंग सिर्फ़ इसी फ़ोन पर रहती है।", recNoMic: "माइक्रोफ़ोन उपलब्ध नहीं — ब्राउज़र की अनुमति जाँचें।", recRename: "रिकॉर्डिंग का नाम", recShare: "शेयर", recDownload: "डाउनलोड", recAll: "सभी रिकॉर्डिंग", recTab: "रिकॉर्डिंग", recHome: "आपकी रिकॉर्डिंग",
+    recBtn: "अपना गायन रिकॉर्ड करें", recTitle: "मेरी रिकॉर्डिंग", recStart: "रिकॉर्ड", recStop: "रोकें", recSaving: "सेव हो रहा है…", recSaved: "रिकॉर्डिंग सेव हुई", recDel: "रिकॉर्डिंग हटाएँ?", recEmpty: "लिरिक्स देखते हुए गाएँ और माइक दबाकर रिकॉर्ड करें। रिकॉर्डिंग सिर्फ़ इसी फ़ोन पर रहती है।", recNoMic: "इस डिवाइस पर माइक्रोफ़ोन नहीं मिला।", recDenied: "माइक्रोफ़ोन ब्लॉक है — ब्राउज़र/ऐप सेटिंग में इस साइट के लिए अनुमति दें, फिर दोबारा कोशिश करें।", recBusy: "माइक्रोफ़ोन कोई और ऐप इस्तेमाल कर रहा है।", recNoSupport: "यह ब्राउज़र ऑडियो रिकॉर्ड नहीं कर सकता — Chrome या Safari आज़माएँ।", recHttps: "रिकॉर्डिंग के लिए ऐप का https:// वर्ज़न चाहिए।", recRename: "रिकॉर्डिंग का नाम", recShare: "शेयर", recDownload: "डाउनलोड", recAll: "सभी रिकॉर्डिंग", recTab: "रिकॉर्डिंग", recHome: "आपकी रिकॉर्डिंग",
     contribAs: "योगदानकर्ता:", changeName: "बदलें", anon: "अनाम",
     madeBy: "सत्संग परिवार द्वारा 🧡 से",
     tabBhajans: "भजन", tabLives: "लाइव", tabAdd: "जोड़ें", tabBulk: "एक साथ", tabHome: "होम", homeContinue: "जहाँ छोड़ा था", homeBrowse: "श्रेणी से देखें", homeTop: "सबसे ज़्यादा देखे गए", homeNew: "नए जुड़े भजन", homeRandom: "कोई भी भजन", seeAll: "सभी देखें",
@@ -2608,34 +2622,40 @@ const recExt  = (m)=> m.includes("mp4") ? "m4a" : m.includes("ogg") ? "ogg" : "w
 
 window.recToggle = async (bid)=>{
   if(_ar){ if(_ar.bid===bid) recStop(); else toast(t("recStop"), true); return; }
-  if(!navigator.mediaDevices || !window.MediaRecorder){ toast(t("recNoMic"), true); return; }
+  if(!window.isSecureContext){ toast(t("recHttps"), true); return; }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){ toast(t("recNoSupport"), true); return; }
   let stream;
-  try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); }
-  catch{ toast(t("recNoMic"), true); return; }
+  try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(err){
+    console.error("getUserMedia:", err);
+    const k = (err && err.name)||"";
+    toast(k==="NotAllowedError"||k==="SecurityError" ? t("recDenied") : k==="NotFoundError" ? t("recNoMic") : k==="NotReadableError" ? t("recBusy") : t("recNoMic"), true);
+    return;
+  }
   const mime = recMime();
-  const mr = new MediaRecorder(stream, mime ? {mimeType:mime, audioBitsPerSecond:128000} : undefined);
+  let mr;
+  try{ mr = new MediaRecorder(stream, mime ? {mimeType:mime} : undefined); }
+  catch(err){ try{ mr = new MediaRecorder(stream); }catch(e2){ console.error(e2); stream.getTracks().forEach(tr=>tr.stop()); toast(t("recNoSupport"), true); return; } }
+  mr.onerror = (e)=>{ console.error("MediaRecorder:", e); toast("Recording error: "+((e.error&&e.error.name)||""), true); };
   _ar = {bid, mr, stream, chunks:[], t0:Date.now(), mime: mr.mimeType || mime || "audio/webm"};
   mr.ondataavailable = (e)=>{ if(e.data && e.data.size) _ar.chunks.push(e.data); };
   mr.onstop = recFinish;
-  mr.start(1000);
+  try{ mr.start(1000); }catch{ mr.start(); }
   keepAwake(); buzz(20);
-  /* live level meter */
+  /* live level meter (own context: mic sample-rate can differ from the tanpura context) */
   try{
-    const ctx = actx(); const src = ctx.createMediaStreamSource(stream); const an = ctx.createAnalyser(); an.fftSize = 256; src.connect(an);
-    _ar.an = an; _ar.src = src;
-  }catch{}
+    const ctx = new (window.AudioContext||window.webkitAudioContext)(); const src = ctx.createMediaStreamSource(stream); const an = ctx.createAnalyser(); an.fftSize = 256; src.connect(an);
+    _ar.an = an; _ar.src = src; _ar.ctx = ctx;
+  }catch(e){ console.warn("meter:", e); }
   recPaintUi();
 };
 
 function recPaintUi(){
   const bid = _ar.bid;
-  const btn = $("recbtn-"+bid); if(btn){ btn.classList.add("live"); btn.innerHTML = ICONS.stop; }
-  const wrap = $("recwrap-"+bid); if(!wrap) return;
-  const bar = document.createElement("div");
-  bar.className = "reclive"; bar.id = "reclive";
-  bar.innerHTML = `<span class="rec-dot"></span><b id="rectime">0:00</b><canvas id="recmeter" width="600" height="56"></canvas><button class="btn btn-gold recstopbtn" onclick="recStop()">${ICONS.stop} ${t("recStop")}</button>`;
-  wrap.prepend(bar);
-  const cv = bar.querySelector("canvas"), g = cv.getContext("2d");
+  const dock = $("recdock-"+bid); if(!dock) return;
+  dock.classList.add("live");
+  dock.innerHTML = `<div class="reclive" id="reclive"><span class="rec-dot"></span><b id="rectime">0:00</b><canvas id="recmeter" width="600" height="56"></canvas><button class="recstopbtn" onclick="recStop()">${ICONS.stop} ${t("recStop")}</button></div>`;
+  const cv = dock.querySelector("canvas"), g = cv.getContext("2d");
   const buf = _ar.an ? new Uint8Array(_ar.an.frequencyBinCount) : null;
   const bars = new Array(48).fill(0);
   const acc = getComputedStyle(document.documentElement).getPropertyValue("--gold").trim() || "#FFA43A";
@@ -2647,7 +2667,7 @@ function recPaintUi(){
     bars.shift(); bars.push(lvl);
     g.clearRect(0,0,cv.width,cv.height); g.fillStyle = acc;
     const w = cv.width/bars.length;
-    bars.forEach((v,i)=>{ const h = Math.max(3, v*cv.height); g.globalAlpha = .35 + .65*(i/bars.length); g.beginPath(); g.roundRect(i*w+2, (cv.height-h)/2, w-4, h, 3); g.fill(); });
+    bars.forEach((v,i)=>{ const h = Math.max(3, v*cv.height); g.globalAlpha = .35 + .65*(i/bars.length); g.fillRect(i*w+2, (cv.height-h)/2, w-4, h); });
     _ar.raf = requestAnimationFrame(draw);
   };
   draw();
@@ -2658,10 +2678,10 @@ window.recStop = ()=>{ if(!_ar) return; try{ _ar.mr.stop(); }catch{} };
 async function recFinish(){
   const r = _ar; _ar = null;
   cancelAnimationFrame(r.raf);
-  try{ r.stream.getTracks().forEach(tr=>tr.stop()); r.src && r.src.disconnect(); }catch{}
+  try{ r.stream.getTracks().forEach(tr=>tr.stop()); r.src && r.src.disconnect(); r.ctx && r.ctx.close(); }catch{}
   releaseAwake();
-  const btn = $("recbtn-"+r.bid); if(btn){ btn.classList.remove("live"); btn.innerHTML = ICONS.mic; }
-  const live = $("reclive"); if(live) live.remove();
+  const dock = $("recdock-"+r.bid);
+  if(dock){ dock.classList.remove("live"); dock.innerHTML = `<button class="recdock-btn" id="recbtn-${r.bid}" onclick="recToggle('${r.bid}')" title="${t("recBtn")}"><span class="rd-dot"></span>${ICONS.mic}<span class="rd-lbl">${t("recStart")}</span></button>`; }
   const dur = Math.round((Date.now()-r.t0)/1000);
   if(!r.chunks.length || dur < 1) return;
   const b = bhajans.find(x=>x.id===r.bid);
@@ -2695,9 +2715,8 @@ function recItemHtml(r, showSong){
 async function recRenderList(bid){
   const wrap = $("recwrap-"+bid); if(!wrap) return;
   const recs = await recAll(bid);
-  const live = $("reclive");
-  wrap.innerHTML = (live ? live.outerHTML : "") + (recs.length ? `<div class="rechead">${ICONS.mic} ${t("recTitle")} <em>${recs.length}</em></div>` + recs.map(r=>recItemHtml(r,false)).join("") : "");
-  wrap.classList.toggle("has", recs.length>0 || !!live);
+  wrap.innerHTML = recs.length ? `<div class="rechead">${ICONS.mic} ${t("recTitle")} <em>${recs.length}</em></div>` + recs.map(r=>recItemHtml(r,false)).join("") : "";
+  wrap.classList.toggle("has", recs.length>0);
 }
 window.recRenderAll = async (elId)=>{
   const el = $(elId); if(!el) return;
@@ -3457,7 +3476,7 @@ window.openLyrics = async (id)=>{
   const div = document.createElement("div");
   div.className = "overlay";
   keepAwake();
-  navPush(()=>{ teleStop(); releaseAwake(); div.remove(); });
+  navPush(()=>{ teleStop(); releaseAwake(); if(typeof recStop==="function") recStop(); div.remove(); });
   div.onclick = (e)=>{ if(e.target===div) navBack(); };
   div.innerHTML = `
     <div class="reader">
@@ -3470,7 +3489,6 @@ window.openLyrics = async (id)=>{
           <button class="btn btn-ghost rnav" onclick="readerStep(-1)" ${_readerIdx>0?"":"disabled"} title="Previous bhajan">‹</button>
           <button class="btn btn-ghost rnav" onclick="readerStep(1)" ${(_readerIdx>-1 && _readerIdx<_readerIds.length-1)?"":"disabled"} title="Next bhajan">›</button>
           ${b.lyricsText ? `<button class="btn btn-ghost" onclick="shareLyricsImage('${b.id}')" title="${t("shareImg")}">🖼</button>` : ""}
-          <button class="btn btn-ghost recbtn" id="recbtn-${b.id}" onclick="recToggle('${b.id}')" title="${t("recBtn")}">${ICONS.mic}</button>
           <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
           <button class="btn btn-ghost" onclick="navBack()">✕</button>
         </div>
@@ -3503,6 +3521,10 @@ window.openLyrics = async (id)=>{
           </div>
         </div>` : ""}
         <div class="recwrap" id="recwrap-${b.id}"></div>
+        <div style="height:64px;flex-shrink:0"></div>
+      </div>
+      <div class="recdock" id="recdock-${b.id}">
+        <button class="recdock-btn" id="recbtn-${b.id}" onclick="recToggle('${b.id}')" title="${t("recBtn")}"><span class="rd-dot"></span>${ICONS.mic}<span class="rd-lbl">${t("recStart")}</span></button>
       </div>
     </div>`;
   document.body.appendChild(div);
