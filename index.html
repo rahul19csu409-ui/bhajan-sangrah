@@ -3963,10 +3963,19 @@ async function tbLoad(){
   if(tbLoading) return tbLoading;
   tbLoading = (async ()=>{
     actx();
+    /* look in sounds/tabla/ first; fall back to the repo root (GitHub's uploader flattens folders) */
+    const dirs = [TB_DIR, ""];
+    let missing = [];
     await Promise.all(TB_SAMPLES.map(async k=>{
-      try{ TB[k] = await audioCtx.decodeAudioData(await (await fetch(TB_DIR+k+".wav")).arrayBuffer()); }
-      catch(e){ console.error("tabla sample", k, e); }
+      for(const d of dirs){
+        try{
+          const r = await fetch(d+k+".wav"); if(!r.ok) continue;
+          TB[k] = await audioCtx.decodeAudioData(await r.arrayBuffer()); return;
+        }catch(e){ /* try next location */ }
+      }
+      missing.push(k);
     }));
+    if(missing.length) console.error("tabla samples not found:", missing.join(", "));
   })();
   return tbLoading;
 }
@@ -4148,7 +4157,7 @@ window.sangatTablaToggle = async ()=>{
   buzz(10);
   const btn = $("sg-play"); if(btn) btn.innerHTML = `<span class="spin-dot"></span> ${t("loadingSnd")}`;
   await tbLoad();
-  if(!TB.na){ toast(t("tblMissing"), true); if(btn) btn.innerHTML = `${ICONS.play} ${t("play")}`; return; }
+  if(!TB.na){ tbLoading = null; toast(t("tblMissing"), true); if(btn) btn.innerHTML = `${ICONS.play} ${t("play")}`; return; }
   sangatBus().tabla.gain.value = SG.tablaVol;
   sgOn = true; sgMatra = 0; sgCycle = 0; sgQueue = [];
   sgNext = audioCtx.currentTime + .12;
