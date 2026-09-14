@@ -1536,6 +1536,65 @@ footer .m{font-family:var(--fd);font-weight:500;color:var(--gold)}
 .sgbtn-open{display:inline-flex;align-items:center;gap:6px}
 .sgbtn-open small{font-size:11px;font-weight:700;color:var(--gold-ink)}
 .sgbtn-open.has{border-color:var(--gold);background:var(--gold-soft)}
+
+.ri-hit{margin-top:5px;font-size:13px;color:var(--dim);font-family:var(--fr);line-height:1.4;padding:4px 8px;border-left:2px solid var(--gold);background:var(--gold-soft);border-radius:0 8px 8px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ri-hit b{color:var(--gold-ink);font-weight:700}
+
+/* ---- search pill (Bhajans tab) ---- */
+.spill{flex:1 1 100%;display:flex;align-items:center;height:48px;border-radius:16px;background:var(--card);border:1px solid var(--line);overflow:hidden;transition:border-color .15s, box-shadow .15s}
+.spill:hover{border-color:var(--line2)} .spill.has{border-color:var(--gold);background:var(--gold-soft)}
+.spill-main{flex:1;display:flex;align-items:center;gap:11px;padding:0 14px;height:100%;border:none;background:transparent;color:var(--dim2);font-family:var(--fb);font-size:14.5px;cursor:text;text-align:left;min-width:0}
+.spill.has .spill-main{color:var(--gold-ink);font-weight:600}
+.spill-main svg{flex-shrink:0;color:var(--dim2)} .spill.has .spill-main svg{color:var(--gold)}
+.spill-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spill-mic,.spill-x{width:44px;height:100%;border:none;background:transparent;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line)}
+.spill-mic svg{width:17px;height:17px} .spill-mic.off{display:none} .spill-x{color:var(--gold-ink);font-size:14px}
+.listmeta{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 8px;font-size:12px;color:var(--dim2);font-weight:600;letter-spacing:.02em}
+
+/* ---- full-screen search ---- */
+.srch-ov{align-items:flex-start !important;padding:0 !important;background:var(--bg) !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+.srch{width:100%;max-width:720px;margin:0 auto;height:100%;display:flex;flex-direction:column;animation:srchIn .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes srchIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.srch-bar{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;position:sticky;top:0;background:var(--bg);z-index:2}
+.srch-back{width:42px;height:48px;border:none;background:transparent;color:var(--text);font-size:30px;line-height:1;cursor:pointer;border-radius:12px;flex-shrink:0;padding-bottom:4px}
+.srch-field{flex:1;display:flex;align-items:center;height:50px;border-radius:16px;background:var(--card);border:1px solid var(--line2);padding-left:14px;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.12);transition:border-color .15s, box-shadow .15s}
+.srch-field:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft), 0 8px 30px rgba(0,0,0,.12)}
+.srch-field>svg{color:var(--dim2);flex-shrink:0}
+.srch-field input{flex:1;height:100%;border:none;background:transparent;font-size:16.5px;font-family:var(--fb);color:var(--text);padding:0;min-width:0;box-shadow:none;border-radius:0}
+.srch-field input:focus{box-shadow:none;border:none}
+.srch-field input::-webkit-search-cancel-button{display:none}
+.srch-x,.srch-mic{width:44px;height:100%;border:none;background:transparent;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.srch-x{font-size:13px;color:var(--dim2)} .srch-mic{border-left:1px solid var(--line);border-radius:0 16px 16px 0} .srch-mic svg{width:18px;height:18px} .srch-mic.off{display:none}
+.srch-mic.listening{color:var(--red);animation:recpulse 1.2s ease infinite}
+.srch-body{flex:1;overflow-y:auto;padding:4px 12px calc(30px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.sqsec{margin-top:18px}
+.sqhead{display:flex;align-items:center;justify-content:space-between;padding:0 4px 8px}
+.sqhead h4{font-family:var(--fd);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim2);margin:0}
+.sqlink{border:none;background:transparent;color:var(--gold);font-family:var(--fb);font-weight:600;font-size:12.5px;cursor:pointer;padding:4px 6px}
+.sqchips{display:flex;flex-wrap:wrap;gap:7px}
+.sqchip{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--text);font-family:var(--fb);font-size:13.5px;font-weight:500;cursor:pointer}
+.sqchip:hover{border-color:var(--line2);background:var(--hover)}
+.sqchip em{font-style:normal;font-size:11px;color:var(--dim2);background:var(--field);border-radius:7px;padding:1px 6px}
+.sqchip.sc-b{background:var(--bg2)} .sqchip b{font-family:var(--fd);color:var(--gold)}
+.sqcount{padding:14px 4px 8px;font-size:12.5px;color:var(--dim2);font-weight:600;display:flex;align-items:center;gap:2px}
+.sres{display:flex;align-items:center;gap:12px;padding:11px 10px 11px 8px;border-radius:14px;cursor:pointer;text-decoration:none;color:inherit;margin-bottom:2px}
+.sres:hover,.sres:active{background:var(--hover)}
+.sres-key{width:40px;height:40px;border-radius:12px;background:var(--field);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sres-key b{font-family:var(--fd);font-weight:600;font-size:14px;color:var(--gold)} .sres-key span{color:var(--dim2)}
+.sres-main{flex:1;min-width:0}
+.sres-name{font-weight:600;font-size:15.5px;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sres-name b{color:var(--gold-ink);font-weight:700}
+.sres-meta{font-size:12.5px;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sres-hit{font-size:13px;color:var(--dim);margin-top:3px;font-family:var(--fr);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sres-hit b{color:var(--gold-ink);font-weight:700}
+.sres-badges{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.sres-lyr{color:var(--teal);display:flex} .sres-lyr svg{width:14px;height:14px} .sres-fav{color:var(--gold);font-size:14px}
+.sres-chev{color:var(--dim2);font-size:16px}
+.slive img{width:64px;height:40px;object-fit:cover;border-radius:9px;flex-shrink:0;background:var(--field)}
+.sqmore{padding:12px 8px;text-align:center;font-size:12.5px;color:var(--dim2)}
+.sqempty{text-align:center;padding:44px 20px 20px;max-width:360px;margin:0 auto}
+.sqempty h4{font-family:var(--fd);font-weight:600;font-size:18px;color:var(--title);margin:0 0 6px}
+.sqempty p{color:var(--dim);font-size:14px;line-height:1.55;margin:0 0 18px}
 </style>
 </head>
 <body>
@@ -1552,6 +1611,7 @@ footer .m{font-family:var(--fd);font-weight:500;color:var(--gold)}
       </div>
     </div>
     <div class="ctrl">
+      <button class="iconbtn" onclick="openSearch()" title="Search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
       <button class="iconbtn" onclick="openTanpura()" title="Tanpura / Shruti">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       </button>
@@ -1620,6 +1680,8 @@ const I18N = {
     sangat: "Sangat — tanpura & tabla", sangatSub: "Pick the Sa, choose a taal, set the tempo", tanpura: "Tanpura", tabla: "Tabla", bhajanScale: "Bhajan's scale", pickScale: "Tap a key to start the drone",
     str_light: "Light", str_medium: "Medium", str_full: "Full", matras: "matras", khali: "khali", tap: "Tap tempo", play: "Play", stop: "Stop", loadingSnd: "Loading tabla…", tblMissing: "Tabla samples missing — upload the sounds/tabla folder.",
     fills: "Small fill every 4th cycle", sgSave: "Save for bhajan", sgSaveTitle: "Save this scale, taal and tempo to the bhajan for everyone", sgSaved: "Saved — one tap next time", sgCredit: "Tabla: real strokes (CC0, mmiron). Tanpura: per-key recordings, ragajunglism.org.",
+    searchPh2: "Search a name, singer, or a line you remember…",
+    sqRecent: "Recent searches", sqClear: "Clear", sqContinue: "Continue", sqSingers: "Singers", sqTags: "Browse by type", sqScales: "Browse by scale", sqResult: "result", sqResults: "results", sqInList: "Show in list", sqMore: "{n} more — refine your search", sqLives: "Lives", sqNone: "Nothing matches", sqNoneHint: "Try a different spelling, or a line from the bhajan.", sqAdd: "Add this bhajan",
     contribAs: "Contributing as", changeName: "change", anon: "Anonymous",
     madeBy: "Made with 🧡 by the satsang community",
     tabBhajans: "Bhajans", tabLives: "Lives", tabAdd: "Add", tabBulk: "Bulk add", tabHome: "Home", homeContinue: "Continue singing", homeBrowse: "Browse by category", homeTop: "Most viewed", homeNew: "Recently added", homeRandom: "Surprise me", seeAll: "See all",
@@ -1709,6 +1771,8 @@ const I18N = {
     setSaveFail: "Couldn't save setlist — check internet / Firestore rules for “setlists”.",
   },
   hi: {
+    sqRecent: "हाल की खोजें", sqClear: "साफ़ करें", sqContinue: "आगे बढ़ें", sqSingers: "गायक", sqTags: "प्रकार से देखें", sqScales: "स्केल से देखें", sqResult: "परिणाम", sqResults: "परिणाम", sqInList: "सूची में दिखाएँ", sqMore: "{n} और — खोज सटीक करें", sqLives: "लाइव", sqNone: "कुछ नहीं मिला", sqNoneHint: "दूसरी स्पेलिंग, या भजन की कोई पंक्ति लिखकर देखें।", sqAdd: "यह भजन जोड़ें",
+    searchPh2: "नाम, गायक, या कोई याद पंक्ति खोजें…",
     sangat: "संगत — तानपूरा और तबला", sangatSub: "सा चुनें, ताल चुनें, लय सेट करें", tanpura: "तानपूरा", tabla: "तबला", bhajanScale: "भजन का स्केल", pickScale: "ड्रोन शुरू करने के लिए स्वर दबाएँ",
     str_light: "हल्का", str_medium: "मध्यम", str_full: "पूरा", matras: "मात्रा", khali: "खाली", tap: "टैप टेम्पो", play: "बजाएँ", stop: "रोकें", loadingSnd: "तबला लोड हो रहा…", tblMissing: "तबला सैंपल नहीं मिले — sounds/tabla फ़ोल्डर अपलोड करें।",
     fills: "हर चौथी आवर्तन पर छोटा तिहाई/लग्गी", sgSave: "भजन में सेव", sgSaveTitle: "यह स्केल, ताल और लय सभी के लिए भजन में सेव करें", sgSaved: "सेव हुआ — अगली बार एक टैप", sgCredit: "तबला: असली बोल (CC0, mmiron)। तानपूरा: हर स्वर की रिकॉर्डिंग, ragajunglism.org।",
@@ -3001,12 +3065,7 @@ let _sdeb; window.onSearch = (v)=>{
   const c=$("sclear"); if(c) c.style.display = v ? "flex" : "none";
   clearTimeout(_sdeb); _sdeb=setTimeout(renderListOnly, 160);
 };
-window.clearSearch = ()=>{
-  search="";
-  const q=$("q"); if(q){ q.value=""; q.focus(); }
-  const c=$("sclear"); if(c) c.style.display="none";
-  renderListOnly();
-};
+window.clearSearch = ()=>{ search=""; render(); };
 
 /* ---- voice search: speak the bhajan name in Hindi (hi-IN) ---- */
 const SR_CTOR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -3491,6 +3550,16 @@ function normTxt(s){
   s = s.replace(/(.)\1+/g,"$1");     // collapse doubles
   return s.replace(/\s+/g," ").trim();
 }
+/* bold the typed words inside a matched lyric line (Roman or Devanagari, via the same normaliser) */
+function hiLite(line, q){
+  const words = line.split(/(\s+)/);
+  const qw = normTxt(q).split(" ").filter(Boolean);
+  return words.map(w=>{
+    if(!w.trim()) return w;
+    const n = normTxt(w);
+    return n && qw.some(tk => n.startsWith(tk) || (tk.length>=3 && n.includes(tk))) ? `<b>${esc(w)}</b>` : esc(w);
+  }).join("");
+}
 function lev(a, b){
   if(a===b) return 0;
   const m=a.length, n=b.length;
@@ -3524,8 +3593,40 @@ function searchScore(hay, q){
   return ok ? 1 : 0;
 }
 
+/* ---- lyric search index: normalised lines per bhajan, rebuilt only when the text changes ---- */
+const _lyrIdx = new Map();
+function lyricLines(b){
+  const txt = b.lyricsText || "";
+  if(!txt) return null;
+  const c = _lyrIdx.get(b.id);
+  if(c && c.txt===txt) return c.lines;
+  const lines = txt.replace(/\r/g,"").split("\n").map(l=>l.trim()).filter(l=>l && !/^[\[\(\{]/.test(l))
+    .slice(0, 80).map((raw,i)=>({raw, norm:normTxt(raw), i}));
+  _lyrIdx.set(b.id, {txt, lines});
+  return lines;
+}
+function lyricScore(b, q){
+  const lines = lyricLines(b); if(!lines) return [0,null];
+  const Q = normTxt(q); if(!Q) return [0,null];
+  let best = 0, hit = null;
+  for(const ln of lines){
+    let sc = 0;
+    if(ln.norm.includes(Q)) sc = ln.norm.startsWith(Q) ? 5 : 4;
+    else{
+      const hw = ln.norm.split(" "), qw = Q.split(" ");
+      if(qw.every(tk => hw.some(w => w.startsWith(tk)))) sc = 3;
+      else if(qw.length>1 && qw.every(tk => hw.some(w => w.includes(tk)))) sc = 2;
+    }
+    if(sc && ln.i < 3) sc += .5;                 /* people remember the opening line */
+    if(sc > best){ best = sc; hit = ln.raw; }
+  }
+  return [best, hit];
+}
+const searchHits = new Map();   /* bhajan id → matched lyric line (for the row) */
+
 function filtered(){
   const q = search.trim();
+  searchHits.clear();
   const S = sessById();
   let list = bhajans.filter(b=>{
     if(favOnly && !favs.has(b.id)) return false;
@@ -3548,12 +3649,14 @@ function filtered(){
   const scored = [];
   for(const b of list){
     const sess = S[b.sessionId];
-    const s = Math.max(
+    const nameS = Math.max(
       searchScore(b.name, q),
       searchScore(b.singer||"", q) - 1,
       searchScore((b.notes||"") + " " + (sess?sess.title:""), q) - 2
     );
-    if(s > 0) scored.push([s, b]);
+    const [lyrS, hit] = q.length >= 3 ? lyricScore(b, q) : [0,null];
+    const s = Math.max(nameS, lyrS - 1);
+    if(s > 0){ scored.push([s, b]); if(hit && lyrS - 1 > nameS) searchHits.set(b.id, hit); }
   }
   scored.sort((a,b)=> b[0]-a[0] || a[1].name.localeCompare(b[1].name));
   return scored.map(x=>x[1]);
@@ -3576,6 +3679,7 @@ function bhajanRow(b){
     <div class="ri-main" data-bid="${b.id}" title="Tap: lyrics · Hold: more">
       <div class="ri-name">${esc(b.name)}</div>
       ${subs||b.scale?`<div class="ri-meta2">${b.scale?scMini(b.scale):""}${subs}</div>`:""}
+      ${searchHits.has(b.id)?`<div class="ri-hit">♪ ${hiLite(searchHits.get(b.id), search)}</div>`:""}
     </div>
     <div class="ri-acts">
       ${sess
@@ -3692,16 +3796,16 @@ function render(){
     const rest = singers.filter(s=>!top5.includes(s)).sort((a,b)=>a.localeCompare(b));
     body += `
     <div class="toolbar" style="align-items:stretch">
-      <div class="searchbox">
-        <svg class="si" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <input id="q" type="search" enterkeyhint="search" placeholder="${t("search")}" value="${esc(search)}" oninput="onSearch(this.value)" autocomplete="off">
-        <button class="sclear" id="sclear" style="display:${search?"flex":"none"}" onclick="clearSearch()" aria-label="Clear search" title="Clear">✕</button>
-        <button class="smic" id="smic" style="display:${SR_CTOR?"flex":"none"}" onclick="voiceSearch()" aria-label="${t("micTitle")}" title="${t("micTitle")}">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>
+      <div class="spill ${search?"has":""}" role="search">
+        <button class="spill-main" onclick="openSearch()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="spill-txt">${search ? esc(search) : t("searchPh2")}</span>
         </button>
+        ${search ? `<button class="spill-x" onclick="clearSearch()" aria-label="Clear">✕</button>` : `<button class="spill-mic ${SR_CTOR?"":"off"}" onclick="openSearch(); setTimeout(voiceSearchSq, 250)" aria-label="${t("micTitle")}">${ICONS.mic}</button>`}
       </div>
       <button class="btn btn-gold addbtn" onclick="go('add')">＋ ${t("tabAdd")}</button>
     </div>
+    <div class="listmeta"><span id="listcount"></span></div>
     <div class="chips">
       <button class="chip ${!singerF && !favOnly && !missF && !recentF && !histF && !tagF ? "on":""}" onclick="chipAll()">${t("chipAll")}</button>
       <button class="chip ${histF?"on":""}" onclick="toggleHistF()">🕘 ${t("chipHistory")}${hist.length?` · ${hist.length}`:""}</button>
@@ -4344,6 +4448,122 @@ window.openSangat = (bid, scale)=>{
 window.tablaBpmGet = ()=> SG.bpm;
 window.__sn = ()=> shrutiNote;
 
+/* ═══════════════════════ full-screen search ═══════════════════════
+   Opens from the search pill on the Bhajans tab. Instant results as you type,
+   grouped into bhajans / singers / lives, with the matched line shown. */
+const RECENT_Q_KEY = "bhajan-recent-q";
+const recentQ = ()=>{ try{ return JSON.parse(localStorage.getItem(RECENT_Q_KEY)||"[]"); }catch{ return []; } };
+const pushRecentQ = (q)=>{ q = q.trim(); if(q.length<2) return; const a = [q, ...recentQ().filter(x=>x.toLowerCase()!==q.toLowerCase())].slice(0,8); localStorage.setItem(RECENT_Q_KEY, JSON.stringify(a)); };
+window.clearRecentQ = ()=>{ localStorage.removeItem(RECENT_Q_KEY); searchPaint(); };
+
+let _sq = "", _sqDeb = null, _sqEl = null;
+window.openSearch = (preset)=>{
+  const div = document.createElement("div");
+  div.className = "overlay srch-ov";
+  _sqEl = div; _sq = preset || search || "";
+  navPush(()=>{ _sqEl = null; div.remove(); });
+  div.innerHTML = `
+    <div class="srch">
+      <div class="srch-bar">
+        <button class="srch-back" onclick="navBack()" aria-label="Back">‹</button>
+        <div class="srch-field">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="sq" type="search" enterkeyhint="search" placeholder="${t("searchPh2")}" value="${esc(_sq)}" autocomplete="off" autocorrect="off" spellcheck="false"
+                 oninput="onSq(this.value)" onkeydown="if(event.key==='Enter'){ sqEnter(); }">
+          <button class="srch-x" id="sqx" style="display:${_sq?"flex":"none"}" onclick="onSq(''); document.getElementById('sq').value=''; document.getElementById('sq').focus()" aria-label="Clear">✕</button>
+          <button class="srch-mic ${SR_CTOR?"":"off"}" id="sqmic" onclick="voiceSearchSq()" aria-label="${t("micTitle")}">${ICONS.mic}</button>
+        </div>
+      </div>
+      <div class="srch-body" id="sqbody"></div>
+    </div>`;
+  document.body.appendChild(div);
+  searchPaint();
+  const inp = div.querySelector("#sq");
+  setTimeout(()=>{ try{ inp.focus({preventScroll:true}); }catch{} }, 60);
+};
+window.onSq = (v)=>{
+  _sq = v; const x = $("sqx"); if(x) x.style.display = v ? "flex" : "none";
+  clearTimeout(_sqDeb); _sqDeb = setTimeout(searchPaint, 90);
+};
+window.sqEnter = ()=>{
+  const first = document.querySelector("#sqbody .sres[data-bid]");
+  if(first) sqOpen(first.dataset.bid);
+};
+window.sqOpen = (id)=>{ if(_lpFired){ _lpFired=false; return; } pushRecentQ(_sq); buzz(6); openLyrics(id); };
+window.sqSinger = (s)=>{ pushRecentQ(_sq); singerF = s; tagF=""; favOnly=false; missF=false; histF=false; recentF=false; search=""; navBack(); setTimeout(()=>{ tab="bhajans"; render(); }, 0); };
+window.sqTag = (k)=>{ tagF = k; singerF=""; favOnly=false; missF=false; histF=false; recentF=false; search=""; navBack(); setTimeout(()=>{ tab="bhajans"; render(); }, 0); };
+window.sqScale = (n)=>{ scaleF = n; search=""; navBack(); setTimeout(()=>{ tab="bhajans"; render(); }, 0); };
+window.sqSetQ = (q)=>{ _sq = q; const i = $("sq"); if(i){ i.value = q; i.focus(); } const x = $("sqx"); if(x) x.style.display = q?"flex":"none"; searchPaint(); };
+window.sqShowInList = ()=>{ pushRecentQ(_sq); search = _sq; navBack(); setTimeout(()=>{ tab="bhajans"; render(); }, 0); };
+
+function nameHi(name, q){ return q ? hiLite(name, q) : esc(name); }
+
+function searchPaint(){
+  const body = $("sqbody"); if(!body) return;
+  const q = _sq.trim();
+  const S = sessById();
+  if(!q){
+    const rq = recentQ();
+    const _cnt = {}; for(const b of bhajans){ const s=(b.singer||"").trim(); if(s) _cnt[s]=(_cnt[s]||0)+1; }
+    const topS = Object.entries(_cnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const recent = hist.slice(0,6).map(id=>bhajans.find(b=>b.id===id)).filter(Boolean);
+    body.innerHTML = `
+      ${rq.length ? `<section class="sqsec"><div class="sqhead"><h4>${t("sqRecent")}</h4><button class="sqlink" onclick="clearRecentQ()">${t("sqClear")}</button></div>
+        <div class="sqchips">${rq.map(x=>`<button class="sqchip" onclick="sqSetQ('${esc(x).replace(/'/g,"\\'")}')">🕘 ${esc(x)}</button>`).join("")}</div></section>` : ""}
+      ${recent.length ? `<section class="sqsec"><div class="sqhead"><h4>${t("sqContinue")}</h4></div>
+        ${recent.map(b=>sresRow(b, "", S)).join("")}</section>` : ""}
+      <section class="sqsec"><div class="sqhead"><h4>${t("sqSingers")}</h4></div>
+        <div class="sqchips">${topS.map(([s,n])=>`<button class="sqchip" onclick="sqSinger('${esc(s).replace(/'/g,"\\'")}')">🎤 ${esc(s)} <em>${n}</em></button>`).join("")}</div></section>
+      <section class="sqsec"><div class="sqhead"><h4>${t("sqTags")}</h4></div>
+        <div class="sqchips">${TAGS.map(tg=>`<button class="sqchip" onclick="sqTag('${tg.k}')">${tg.e} ${tagLabel(tg)}</button>`).join("")}</div></section>
+      <section class="sqsec"><div class="sqhead"><h4>${t("sqScales")}</h4></div>
+        <div class="sqchips">${SCALES.map(s=>`<button class="sqchip sc-${s[2]?"b":"w"}" onclick="sqScale('${s[0]}')"><b>${s[0]}</b> ${s[1]}</button>`).join("")}</div></section>`;
+    return;
+  }
+  /* ---- results ---- */
+  const savedSearch = search; search = q;           /* reuse the same ranking as the list */
+  const savedF = [favOnly, missF, scaleF, singerF, tagF, histF, recentF];
+  favOnly=false; missF=false; scaleF=""; singerF=""; tagF=""; histF=false; recentF=false;
+  const list = filtered();
+  [favOnly, missF, scaleF, singerF, tagF, histF, recentF] = savedF; search = savedSearch;
+
+  const singers = allSingers().filter(s => searchScore(s, q) >= 2).slice(0,6);
+  const lives = sessions.filter(s => searchScore(s.title, q) >= 2).slice(0,4);
+  const n = list.length;
+  body.innerHTML = `
+    ${n ? `<div class="sqcount">${n} ${n===1?t("sqResult"):t("sqResults")} · <button class="sqlink" onclick="sqShowInList()">${t("sqInList")}</button></div>` : ""}
+    ${list.slice(0,40).map(b=>sresRow(b, q, S)).join("")}
+    ${n>40 ? `<div class="sqmore">${t("sqMore").replace("{n}", n-40)}</div>` : ""}
+    ${singers.length ? `<section class="sqsec"><div class="sqhead"><h4>${t("sqSingers")}</h4></div><div class="sqchips">${singers.map(s=>`<button class="sqchip" onclick="sqSinger('${esc(s).replace(/'/g,"\\'")}')">🎤 ${nameHi(s,q)}</button>`).join("")}</div></section>` : ""}
+    ${lives.length ? `<section class="sqsec"><div class="sqhead"><h4>${t("sqLives")}</h4></div>${lives.map(s=>`<a class="sres slive" href="${yt(s.videoId,0)}" target="_blank" rel="noreferrer"><img loading="lazy" alt="" src="https://img.youtube.com/vi/${esc(s.videoId)}/default.jpg"><div class="sres-main"><div class="sres-name">${nameHi(s.title,q)}</div><div class="sres-meta">${s.date?esc(s.date)+" · ":""}${bhajans.filter(b=>b.sessionId===s.id).length} ${t("stBhajans")}</div></div><span class="sres-chev">↗</span></a>`).join("")}</section>` : ""}
+    ${!n && !singers.length && !lives.length ? `<div class="sqempty"><div class="nolyr-ic">${ICONS.doc}</div><h4>${t("sqNone")}</h4><p>${t("sqNoneHint")}</p><button class="btn btn-gold" onclick="navBack(); setTimeout(()=>{ go('add'); const f=document.getElementById('f-name'); if(f){ f.value=${JSON.stringify(q)}; } },50)">＋ ${t("sqAdd")}</button></div>` : ""}`;
+}
+function sresRow(b, q, S){
+  const sess = S[b.sessionId];
+  const hit = q && searchHits.get(b.id);
+  const meta = [b.singer ? esc(b.singer) : "", sess ? esc(sess.title) : ""].filter(Boolean).join(" · ");
+  return `<div class="sres ri-main" data-bid="${b.id}" onclick="event.stopPropagation(); sqOpen('${b.id}')">
+    <div class="sres-key">${b.scale ? `<b>${esc(b.scale)}</b>` : `<span>♪</span>`}</div>
+    <div class="sres-main">
+      <div class="sres-name">${nameHi(b.name, q)}</div>
+      ${hit ? `<div class="sres-hit">♪ ${hiLite(hit, q)}</div>` : (meta ? `<div class="sres-meta">${meta}</div>` : "")}
+    </div>
+    <div class="sres-badges">${hasAnyLyrics(b) ? `<span class="sres-lyr" title="Lyrics">${ICONS.doc}</span>` : ""}${favs.has(b.id) ? `<span class="sres-fav">★</span>` : ""}</div>
+  </div>`;
+}
+/* voice search inside the search page */
+window.voiceSearchSq = ()=>{
+  if(!SR_CTOR){ toast(t("micNoSupport"), true); return; }
+  if(_rec){ try{ _rec.stop(); }catch{} return; }
+  const r = new SR_CTOR(); r.lang = "hi-IN"; r.interimResults = true; r.maxAlternatives = 1; r.continuous = false; _rec = r;
+  const mic = $("sqmic"); if(mic) mic.classList.add("listening");
+  buzz(12); toast(t("micListening"));
+  r.onresult = (e)=>{ let txt=""; for(const res of e.results) txt += res[0].transcript; sqSetQ(dev2roman(txt.trim())); };
+  r.onerror = (e)=>{ if(e.error==="not-allowed"||e.error==="service-not-allowed") toast(t("micDenied"), true); else if(e.error==="no-speech") toast(t("micNoSpeech"), true); };
+  r.onend = ()=>{ _rec = null; const m = $("sqmic"); if(m) m.classList.remove("listening"); };
+  try{ r.start(); }catch{ _rec = null; if(mic) mic.classList.remove("listening"); }
+};
+
 /* ================= setlist picker ================= */
 window.openPicker = (sid)=>{
   const sets = getSets(); const s = sets.find(x=>x.id===sid); if(!s) return;
@@ -4490,6 +4710,7 @@ function renderListOnly(){
   const el = $("bhajan-list");
   if(!el) return;
   let list = filtered();
+  const lc = $("listcount"); if(lc) lc.textContent = `${list.length} ${list.length===1?t("sqResult"):t("sqResults")}${search.trim()?` · "${search.trim()}"`:""}`;
   if(!list.length){
     el.innerHTML = `<div class="empty"><span class="om">🪔</span>${
       bhajans.length===0 ? t("emptyAll") : (histF && !search.trim()) ? t("emptyHist") : favOnly ? t("emptyFavs") : t("emptyFilter")

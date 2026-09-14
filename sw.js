@@ -1,7 +1,7 @@
 /* Shyam Bhajan Sangrah — service worker (v30)
    Goals: instant open (app shell served from cache), never fail to install
    because of a missing file, and no surprise reloads. */
-const VERSION = "v34";
+const VERSION = "v36";
 const SHELL = `bhajan-shell-${VERSION}`;
 const ASSETS = `bhajan-assets-${VERSION}`;
 
