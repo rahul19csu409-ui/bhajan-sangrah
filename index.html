@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3, viewport-fit=cover, interactive-widget=resizes-content" />
 <title>Shyam Bhajan Sangrah</title>
 <meta name="description" content="A community library of bhajans from live satsangs — scales, singers, lyrics, and one-tap YouTube timestamps." />
-<meta name="theme-color" content="#FBF5E9" />
+<meta name="theme-color" content="#0E1330" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="mobile-web-app-capable" content="yes" />
 <link rel="apple-touch-icon" href="icon-192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +18,8 @@
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" />
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js" />
-<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Marcellus&family=Mukta:wght@300;400;500;600;700&family=Tiro+Devanagari+Hindi&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Mukta:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Mukta:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet" /></noscript>
 <style>
 :root{
   --bg:#f7f3ea;
@@ -480,7 +484,7 @@ select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(176,119,15,.1)}
   55%{box-shadow:0 0 0 13px rgba(176,119,15,0)}
 }
 
-/* ---------- kill double-tap zoom on interactive rows ---------- */
+/* ---------- kill hold zoom on interactive rows ---------- */
 .setrow,.sitem,.ri-main,.pf-main,.setrow *,.sitem *{touch-action:manipulation}
 .setrow,.sitem .nm{user-select:none;-webkit-user-select:none}
 .setrow{cursor:pointer}
@@ -1167,6 +1171,317 @@ h1,h2,h3{text-wrap:balance}
   border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer;
   font-family:var(--fb);letter-spacing:.02em;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   AURA — design system v3
+   Deep-indigo night (Shyam) lit by saffron; light "dawn" theme on toggle.
+   One typeface pair: Outfit (display) + Mukta (UI, Latin & Devanagari).
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#F4F3FA; --bg2:#ECEBF5; --card:#FFFFFF; --glass:rgba(255,255,255,.78); --field:#EEEDF6; --hover:#F6F5FB;
+  --line:#E4E2EF; --line2:#CFCBE0;
+  --text:#171A38; --title:#12163A; --dim:#5B6084; --dim2:#8C90AE;
+  --gold:#E68A1E; --gold-ink:#9A5A0A; --gold-soft:#FBEBD5; --gold-glow:rgba(230,138,30,.28);
+  --teal:#0E8C9F; --teal-soft:rgba(14,140,159,.10);
+  --red:#D9453F; --kumkum:#E2553A; --kumkum-deep:#C5462E;
+  --shadow:0 1px 2px rgba(23,26,56,.04), 0 10px 30px rgba(23,26,56,.07);
+  --shadow-lg:0 24px 60px rgba(23,26,56,.18);
+  --r:18px; --r-sm:12px;
+  --fd:"Outfit","Tiro Devanagari Hindi","Mukta",system-ui,sans-serif;
+  --fb:"Mukta",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fr:"Mukta","Tiro Devanagari Hindi",system-ui,sans-serif;
+  --blur:saturate(160%) blur(18px);
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --bg:#0E1330; --bg2:#0A0E24; --card:#171D3F; --glass:rgba(24,30,66,.72); --field:#1E2550; --hover:#222A5A;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.17);
+  --text:#EEF0FA; --title:#FFFFFF; --dim:#A9AECF; --dim2:#7A80A8;
+  --gold:#FFA43A; --gold-ink:#FFC66B; --gold-soft:rgba(255,164,58,.14); --gold-glow:rgba(255,164,58,.38);
+  --teal:#5BD6E8; --teal-soft:rgba(91,214,232,.12);
+  --red:#FF6B6B; --kumkum:#FF7A59; --kumkum-deep:#E2553A;
+  --shadow:0 1px 2px rgba(0,0,0,.25), 0 12px 32px rgba(0,0,0,.35);
+  --shadow-lg:0 30px 80px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+/* ---- canvas: quiet gradient field, one saffron glow, one cyan glow ---- */
+body, [data-theme="dark"] body{
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(900px 520px at 8% -10%, var(--gold-glow), transparent 60%),
+    radial-gradient(700px 500px at 100% 100%, var(--teal-soft), transparent 60%);
+  background-attachment:fixed;background-repeat:no-repeat;
+}
+.keys{height:2px;background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--teal) 70%,transparent);opacity:.9}
+.wrap{max-width:780px}
+
+/* ---- header ---- */
+.hdr{padding:18px 2px 8px}
+.om-medal, [data-theme="dark"] .om-medal{
+  width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:22px;line-height:1;color:#fff;
+  background:radial-gradient(circle at 30% 25%, #FFC66B, #FFA43A 45%, #E2553A 100%);
+  box-shadow:0 8px 22px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,.5);border:none;
+}
+.brand h1, [data-theme="dark"] .brand h1{font-family:var(--fd);font-weight:600;letter-spacing:-.015em;color:var(--title);font-size:clamp(20px,4.6vw,25px)}
+.brand .sub{font-family:var(--fb);font-weight:500;letter-spacing:.02em;color:var(--gold);font-size:11.5px}
+.iconbtn{width:38px;height:38px;border-radius:12px;background:var(--glass);border:1px solid var(--line);color:var(--dim);box-shadow:none;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+.iconbtn:hover{color:var(--text);border-color:var(--line2);background:var(--hover)}
+.iconbtn.on{color:var(--gold-ink);border-color:var(--gold);background:var(--gold-soft)}
+.idbar{color:var(--dim2)}
+.idbar b{color:var(--teal)}
+.linkbtn{color:var(--gold);text-decoration:none;font-weight:600}
+
+/* ---- surfaces: one card language, hierarchy by radius/border, not by shadow ---- */
+.lcard,.listbox,.panel,.setcard,.homebox,.stat,.hcard,.tgc,.notechip,.subpanel,.preview,.lyrics-box,.filedrop{
+  background:var(--card);border:1px solid var(--line);box-shadow:none;
+}
+.lcard,.listbox,.panel,.setcard{border-radius:var(--r)}
+.stat,.hcard,.tgc{border-radius:var(--r-sm)}
+.tgc[class*="t-"], [data-theme="dark"] .tgc{background:var(--card) !important;border-color:var(--line) !important}
+.tgc-e{font-size:24px;filter:saturate(1.1)}
+.setcard:hover,.lcard:hover,.hcard:hover,.stat:hover,.tgc:hover{border-color:var(--line2)}
+.setcard::before{display:none}
+.reccard{width:100%;text-align:left;cursor:pointer;font-family:var(--fb);color:var(--text);margin-bottom:10px;align-items:center}
+.reccard h3{display:flex;align-items:center;gap:8px}
+.reccard .chev{font-size:22px;color:var(--dim2)}
+
+/* ---- hero ---- */
+.hero, [data-theme="dark"] .hero{
+  background:linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--card) 70%, var(--gold-soft)) 100%);
+  border:1px solid var(--line);border-radius:22px;box-shadow:none;padding:20px 20px;
+}
+.hero::before{content:"";position:absolute;inset:auto -30% -70% auto;width:70%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle, var(--gold-glow), transparent 65%);pointer-events:none}
+.hero::after{opacity:.05;font-size:130px;color:var(--gold-ink)}
+.hero-om{font-size:34px;filter:drop-shadow(0 6px 14px var(--gold-glow))}
+.hero-hi, [data-theme="dark"] .hero-hi{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;color:var(--title)}
+.hero-dt{color:var(--dim)}
+.hero-r{background:var(--gold-soft) !important;color:var(--gold-ink) !important;border:1px solid transparent !important}
+
+/* ---- stats + headings ---- */
+.stat b, [data-theme="dark"] .stat b{font-family:var(--fd);font-weight:600;font-size:24px;letter-spacing:-.02em;color:var(--title);font-variant-numeric:tabular-nums}
+.stat span{color:var(--dim);display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.stat span svg{width:11px;height:11px}
+.hrow h2{font-family:var(--fd);font-weight:600;font-size:15px;letter-spacing:.005em;color:var(--text)}
+.hc-name{font-family:var(--fb);font-weight:600;font-size:14.5px}
+.rank{border-radius:8px;font-family:var(--fd);font-weight:600}
+.rank.r1, [data-theme="dark"] .rank.r1{background:linear-gradient(135deg,#FFC66B,#FFA43A);color:#3B2200}
+.rank.r2{background:var(--field);color:var(--text)} .rank.r3{background:var(--field);color:var(--dim)}
+[data-theme="dark"] .rank{background:var(--field);color:var(--dim)}
+
+/* ---- navigation ---- */
+.tabs{background:var(--glass);border:1px solid var(--line);border-radius:16px;box-shadow:none;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);padding:5px}
+.tab{border-radius:12px;font-weight:600;font-size:13px;color:var(--dim);border:none}
+.tab.active, [data-theme="dark"] .tab.active{background:var(--gold-soft);color:var(--gold-ink)}
+.tab em, [data-theme="dark"] .tab em{background:var(--field);color:var(--dim2);border-radius:7px;font-style:normal;font-weight:700}
+.tab.active em, [data-theme="dark"] .tab.active em{background:var(--gold);color:#2A1700}
+@media (max-width:720px){
+  .tabs, [data-theme="dark"] .tabs{
+    background:var(--glass);border:none;border-top:1px solid var(--line);border-radius:0;
+    box-shadow:0 -12px 40px rgba(0,0,0,.08);padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  }
+  [data-theme="dark"] .tabs{box-shadow:0 -12px 40px rgba(0,0,0,.5)}
+  .tab{font-size:10.5px;font-weight:600;gap:4px;padding:6px 0;border-radius:12px}
+  .tab svg{width:22px;height:22px;stroke-width:1.9}
+  .tab.active, [data-theme="dark"] .tab.active{background:transparent;color:var(--gold)}
+  .tab.active svg{filter:drop-shadow(0 4px 12px var(--gold-glow))}
+  .tab.active::before{top:-9px;left:34%;right:34%;height:2px;background:var(--gold);border-radius:0 0 3px 3px;box-shadow:0 2px 12px var(--gold-glow)}
+}
+
+/* ---- search, chips, fields ---- */
+input,select,textarea{background:var(--field);border:1px solid var(--line);border-radius:12px;color:var(--text)}
+input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.searchbox input{background:var(--card);border-radius:14px;border:1px solid var(--line)}
+.searchbox input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+.searchbox svg.si{color:var(--dim2)}
+label{letter-spacing:.02em;text-transform:none;font-size:12px;font-weight:600;color:var(--dim)}
+.chip,.tchip,.favtoggle,.tagchip{background:var(--card);border:1px solid var(--line);color:var(--dim);border-radius:999px;font-weight:600}
+.chip.on,.favtoggle.on,.tagchip.on, [data-theme="dark"] .tagchip.on{background:var(--gold-soft);border-color:transparent;color:var(--gold-ink)}
+.chip:hover,.tchip:hover{border-color:var(--line2)}
+.notechip{border-radius:12px;color:var(--dim);font-size:12.5px}
+.notechip.teal{border-color:var(--teal-soft);color:var(--teal)}
+
+/* ---- rows ---- */
+.ri{border-top:1px solid var(--line);padding:13px 12px 13px 12px}
+.ri::before{display:none}
+.ri:hover{background:var(--hover)}
+.ri-name{font-weight:600;font-size:15.5px;letter-spacing:-.005em;color:var(--text)}
+.alpha{font-family:var(--fd);font-weight:600;color:var(--dim2);background:var(--bg);letter-spacing:.06em;font-size:12px}
+.alpha::after{display:none}
+.pill{background:var(--field);color:var(--dim);border:none;border-radius:8px;font-weight:600}
+.pill.pdf{background:var(--teal-soft);color:var(--teal)}
+.pill.soft{background:transparent;border:1px solid var(--line);color:var(--dim2)}
+.ri .star{color:var(--dim2)} .ri .star.on{color:var(--gold)}
+.setrow .n,.sitem .nm{font-weight:600}
+.setrow{border-top:1px solid var(--line)}
+.setrow:hover,.sitem:hover{background:var(--hover)}
+
+/* ---- action buttons ---- */
+.ab{border-radius:11px;background:var(--field);border:1px solid transparent;color:var(--dim)}
+.ab:hover{color:var(--text);background:var(--hover);border-color:var(--line2)}
+.ab.play, [data-theme="dark"] .ab.play{background:linear-gradient(135deg,#FFC66B,#FFA43A);color:#2A1700;border:none;box-shadow:0 4px 14px var(--gold-glow)}
+.ab.play:hover{filter:brightness(1.06)}
+.ab.doc{color:var(--teal);background:var(--teal-soft)}
+.ab.doc.dim{color:var(--dim2);background:var(--field)}
+.ab.danger{color:var(--red);background:transparent}
+.ab.on{background:var(--gold-soft);color:var(--gold-ink)}
+.btn{border-radius:13px;font-weight:600}
+.btn-gold, [data-theme="dark"] .btn-gold{background:linear-gradient(135deg,#FFC66B,#FFA43A 55%,#FF8F3A);color:#2A1700;border:none;box-shadow:0 6px 18px var(--gold-glow)}
+.btn-gold:hover{filter:brightness(1.05)}
+.btn-teal{background:var(--teal);color:#06202A;border:none}
+[data-theme="light"] .btn-teal, :root:not([data-theme="dark"]) .btn-teal{color:#fff}
+.btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--line2);background:var(--hover)}
+.addbtn{border-radius:14px}
+.seg{background:var(--field);border:1px solid var(--line);border-radius:12px}
+.seg button.on{background:var(--card);color:var(--text);border-radius:9px;box-shadow:var(--shadow)}
+
+/* ---- floating buttons ---- */
+.fab, [data-theme="dark"] .fab{
+  background:linear-gradient(135deg,#FFC66B,#FFA43A 55%,#FF8F3A);color:#2A1700;border:none;
+  box-shadow:0 10px 30px var(--gold-glow);font-weight:400;
+}
+.fab-tanpura, [data-theme="dark"] .fab-tanpura{
+  background:var(--glass);border:1px solid var(--line2);color:var(--teal);
+  box-shadow:0 10px 30px rgba(0,0,0,.18);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+}
+.fab-tanpura.live, [data-theme="dark"] .fab-tanpura.live{background:var(--teal);color:#06202A;border-color:transparent;animation:tanpulse 1.8s ease infinite}
+@keyframes tanpulse{0%,100%{box-shadow:0 0 0 0 var(--teal-soft)}55%{box-shadow:0 0 0 16px transparent}}
+#totop{background:var(--glass);border:1px solid var(--line);color:var(--text);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+#shrutibar,#tablabar{background:var(--glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-radius:999px}
+#shrutibar{border:1px solid var(--gold);color:var(--gold-ink)}
+#tablabar{border:1px solid var(--teal);color:var(--teal)}
+
+/* ---- toast ---- */
+#toast, [data-theme="dark"] #toast{background:#171D3F;color:#EEF0FA;border:1px solid rgba(255,255,255,.1);border-radius:14px;box-shadow:var(--shadow-lg);font-weight:500}
+#toast.error, [data-theme="dark"] #toast.error{background:#4A1A1A;color:#FFD9D9;border-color:rgba(255,107,107,.35)}
+#toast.update{background:linear-gradient(135deg,#FFC66B,#FFA43A);color:#2A1700;border:none;cursor:pointer;font-weight:700}
+
+/* ---- overlays: reader / sheets ---- */
+.overlay, [data-theme="dark"] .overlay{background:rgba(6,9,26,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+:root:not([data-theme="dark"]) .overlay{background:rgba(23,26,56,.35)}
+.reader,.picker,.perform,.tpsheet,.tabla-panel{background:var(--card);border:1px solid var(--line2);border-radius:24px;box-shadow:var(--shadow-lg)}
+.reader-head h3,.pf-main h2{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;color:var(--title)}
+.reader-head .rm2{color:var(--dim)}
+.telebar{background:var(--field);border:1px solid var(--line);border-radius:14px}
+.read-text{font-family:var(--fr);line-height:1.95;color:var(--text)}
+.read-text .rl.cur{background:var(--gold-soft);color:var(--gold-ink);border-radius:8px}
+.tp-open{border-radius:8px;background:var(--gold-soft);border:none;color:var(--gold-ink)}
+.tp-note .n{font-family:var(--fd);font-weight:600;color:var(--gold)}
+.tp-play{background:var(--teal);color:#06202A;border-radius:13px}
+.tp-keys .b{background:var(--bg2)}
+.tanp-key{border-radius:12px}
+.tanp-key.k-white, [data-theme="dark"] .tanp-key.k-white{background:var(--card);border:1px solid var(--line2);color:var(--text)}
+.tanp-key.k-black, [data-theme="dark"] .tanp-key.k-black{background:var(--bg2);border:1px solid var(--line2);color:var(--dim)}
+.tanp-key.playing{background:var(--gold) !important;color:#2A1700 !important;box-shadow:0 8px 24px var(--gold-glow)}
+.mt.on b,.mt.on span, [data-theme="dark"] .mt.on b, [data-theme="dark"] .mt.on span{color:var(--gold-ink)}
+.mt.on{background:var(--gold-soft)}
+.pf-nav button.main, [data-theme="dark"] .pf-nav button.main{background:linear-gradient(135deg,#FFC66B,#FFA43A);color:#2A1700;border:none}
+
+/* press-and-hold action sheet */
+.sheet-ov{align-items:flex-end !important;padding:0 !important}
+.sheet{
+  width:100%;max-width:520px;margin:0 auto;background:var(--card);border:1px solid var(--line2);border-bottom:none;
+  border-radius:24px 24px 0 0;padding:8px 12px calc(14px + env(safe-area-inset-bottom));box-shadow:var(--shadow-lg);
+  animation:sheetUp .22s cubic-bezier(.2,.8,.2,1);
+}
+@media (min-width:700px){ .sheet-ov{align-items:center !important} .sheet{border-radius:24px;border-bottom:1px solid var(--line2);width:min(92vw,420px)} .sheet-grip{display:none} }
+@keyframes sheetUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.sheet-grip{width:38px;height:4px;border-radius:2px;background:var(--line2);margin:4px auto 10px}
+.sheet-title{font-family:var(--fd);font-weight:600;font-size:16px;color:var(--title);padding:6px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-item{
+  width:100%;display:flex;align-items:center;gap:14px;padding:13px 12px;border:none;border-radius:12px;
+  background:transparent;color:var(--text);font-family:var(--fb);font-size:15px;font-weight:500;cursor:pointer;text-align:left;
+}
+.sheet-item:hover,.sheet-item:active{background:var(--hover)}
+.sheet-item .si-ic{width:34px;height:34px;border-radius:10px;background:var(--field);color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+
+/* no-lyrics state */
+.nolyr{text-align:center;padding:26px 16px 10px;max-width:420px;margin:0 auto;width:100%}
+.nolyr-ic{width:56px;height:56px;border-radius:18px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:var(--field);color:var(--dim2)}
+.nolyr-ic svg{width:24px;height:24px}
+.nolyr h4{font-family:var(--fd);font-weight:600;font-size:18px;color:var(--title);margin-bottom:6px}
+.nolyr p{color:var(--dim);font-size:14px;line-height:1.55;margin-bottom:18px}
+.nolyr-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.nolyr-acts .btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.empty{color:var(--dim)}
+.empty .om{background:var(--field);border:none;color:var(--dim2);border-radius:18px}
+.empty .om svg{width:24px;height:24px}
+
+/* recordings */
+.recwrap{width:100%;max-width:62ch;margin:0 auto;display:none;flex-direction:column;gap:8px}
+.recwrap.has{display:flex;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.rechead{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:600;font-size:14px;color:var(--text);margin-bottom:4px}
+.rechead em{font-style:normal;font-size:11px;background:var(--field);color:var(--dim2);border-radius:7px;padding:1px 7px}
+.recbtn.live{background:var(--red) !important;color:#fff !important;border-color:transparent !important;animation:recpulse 1.2s ease infinite}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.5)}60%{box-shadow:0 0 0 12px transparent}}
+.reclive{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--field);border:1px solid var(--line)}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1s steps(2) infinite;flex-shrink:0}
+@keyframes blink{to{opacity:.25}}
+.reclive b{font-variant-numeric:tabular-nums;font-family:var(--fd);font-size:15px;min-width:42px}
+.reclive canvas{flex:1;min-width:0;height:36px;width:100%}
+.recstopbtn{padding:8px 14px !important;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.reclist{width:100%;display:flex;flex-direction:column;gap:8px}
+.recitem{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 12px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.recitem.playing{border-color:var(--gold);background:color-mix(in srgb, var(--card) 85%, var(--gold-soft))}
+.recplay{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFC66B,#FFA43A);color:#2A1700;box-shadow:0 6px 16px var(--gold-glow)}
+.recinfo{flex:1;min-width:0}
+.recname{font-weight:600;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text}
+.recmeta{display:flex;gap:10px;font-size:11.5px;color:var(--dim2);margin-top:2px}
+.recmeta span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:50%}
+.recprog{height:3px;border-radius:2px;background:var(--field);margin-top:7px;overflow:hidden}
+.recprog i{display:block;height:100%;width:0;background:var(--gold);transition:width .25s linear}
+.recacts{display:flex;gap:4px;flex-shrink:0}
+
+/* skeletons */
+.skelpill,.skelbar,.skelline,.skel{background:linear-gradient(90deg,var(--field) 25%,var(--hover) 50%,var(--field) 75%);background-size:200% 100%;border-radius:10px}
+
+/* footer */
+footer{color:var(--dim2)}
+footer .m{font-family:var(--fd);font-weight:500;color:var(--gold)}
+
+/* focus + motion */
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:6px}
+::selection{background:var(--gold-soft);color:var(--gold-ink)}
+#app.pagein{animation:pagein .22s ease}
+
+
+/* ---- clean rows (bhajans + setlists) ---- */
+.ri{gap:8px;padding:12px 10px 12px 6px}
+.ri .star{padding:6px}
+.ri .star svg{width:16px;height:16px}
+.ri-name{font-size:15.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ri-meta2{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12.5px;color:var(--dim);min-width:0;overflow:hidden;white-space:nowrap}
+.ri-meta2>span{overflow:hidden;text-overflow:ellipsis;display:inline-flex;align-items:center;gap:4px;flex-shrink:1;min-width:0}
+.ri-meta2>span:first-of-type{flex-shrink:0}
+.ri-meta2 .m-lyr{color:var(--teal);flex-shrink:0}
+.ri-meta2 .m-lyr svg{width:11px;height:11px}
+.ri-meta2 .dot{width:3px;height:3px;border-radius:50%;background:var(--dim2);flex-shrink:0;opacity:.7}
+.ri-meta2 .sc{width:auto;min-width:22px;height:20px;font-size:11px;padding:0 6px;border-radius:6px;margin-right:2px}
+.ri-acts{gap:6px}
+.ri-acts .ab{width:38px;height:38px;border-radius:12px}
+.ri-acts .ab svg{width:15px;height:15px}
+@media (pointer:coarse){ .ri-acts .ab{width:40px;height:40px} }
+
+.sitem{display:flex;align-items:flex-start;gap:10px;padding:12px 12px 12px 12px}
+.sitem .num{font-family:var(--fd);font-weight:600;font-size:13px;color:var(--dim2);min-width:22px;height:22px;border-radius:7px;background:var(--field);display:flex;align-items:center;justify-content:center;text-align:center;margin-top:1px}
+.sitem .sbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.sitem .nm{display:block;white-space:normal;font-family:var(--fb);font-weight:600;font-size:15.5px;line-height:1.35;overflow:visible;text-overflow:clip}
+.sitem .srow{display:flex;align-items:center;gap:6px;min-width:0}
+.sitem .srow .grow{flex:1}
+.sitem .srow .sc{width:auto;min-width:26px;height:30px;font-size:12px;padding:0 8px;border-radius:9px}
+.scwrap{position:relative;display:inline-flex;align-items:center;height:30px;padding:0 24px 0 10px;border-radius:9px;background:var(--field);color:var(--text);font-size:12px;font-weight:600;margin:0;flex-shrink:1;min-width:0;overflow:hidden;text-transform:none;letter-spacing:0}
+.scwrap span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.scwrap::after{content:"";position:absolute;right:9px;top:50%;width:6px;height:6px;border-right:1.5px solid var(--dim2);border-bottom:1.5px solid var(--dim2);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.scwrap.unset{color:var(--dim2);background:transparent;border:1px dashed var(--line2)}
+.scwrap .scpick{position:absolute;inset:0;width:100%;height:100%;opacity:0;max-width:none;padding:0;font-size:16px}
+.ab.sm{width:30px;height:30px;border-radius:9px} .ab.sm svg{width:14px;height:14px}
+.sitem .mv{flex-direction:row;gap:4px}
+.sitem .mv button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--dim);font-size:14px;font-family:var(--fb)}
+.sitem .mv button:disabled{opacity:.3}
+.sheet-item.danger{color:var(--red)} .sheet-item.danger .si-ic{color:var(--red)}
 </style>
 </head>
 <body>
@@ -1244,6 +1559,10 @@ window.FIREBASE_CONFIG = {
 /* ================= i18n ================= */
 const I18N = {
   en: {
+    menuLyrics: "Open lyrics", menuYt: "Play on YouTube", menuEdit: "Edit bhajan", menuShare: "Share", menuFind: "Find in sangrah", menuRemove: "Remove from sangrah",
+    noLyrTitle: "Lyrics not added yet", noLyrBody: "Be the first — type them in, snap a photo of the bhajan book, or attach a PDF. Everyone in the satsang will see them.", noLyrAdd: "Add lyrics", noLyrWeb: "Search the web",
+    refreshed: "Up to date", updateReady: "A new version is ready — tap to update",
+    recBtn: "Record your singing", recTitle: "My recordings", recStart: "Record", recStop: "Stop", recSaving: "Saving…", recSaved: "Recording saved", recDel: "Delete recording?", recEmpty: "Sing along with the lyrics and tap the mic to record. Recordings stay on this phone only.", recNoMic: "Microphone not available — check the browser permission.", recRename: "Name this recording", recShare: "Share", recDownload: "Download", recAll: "All recordings", recTab: "Recordings", recHome: "Your recordings",
     contribAs: "Contributing as", changeName: "change", anon: "Anonymous",
     madeBy: "Made with 🧡 by the satsang community",
     tabBhajans: "Bhajans", tabLives: "Lives", tabAdd: "Add", tabBulk: "Bulk add", tabHome: "Home", homeContinue: "Continue singing", homeBrowse: "Browse by category", homeTop: "Most viewed", homeNew: "Recently added", homeRandom: "Surprise me", seeAll: "See all",
@@ -1318,8 +1637,8 @@ const I18N = {
     trl: "अ⇄A — show lyrics in English letters",
     dupConfirm: "This bhajan may already be in the sangrah:\n\n“%s”\n\nAdd it anyway?",
     waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
-    liveHint: "Tap a bhajan → ▶ YouTube at that moment · Double-tap → 📖 lyrics (or web if none)",
-    setDblHint: "Double-tap a bhajan name → lyrics / PDF opens (or Google search if none).",
+    liveHint: "Tap a bhajan → ▶ YouTube at that moment · Hold → 📖 lyrics (or web if none)",
+    setDblHint: "Tap a name for lyrics · hold for more.", setScale: "Set scale",
     setsSharedNote: "Setlists are shared — everyone in the satsang sees them, with scales.",
     myListNote: "Private to this device — just your own singing list. Nothing here is added to the main sangrah.",
     newMyList: "＋ New list", myListName: "List name (e.g. Friday live — my songs)",
@@ -1333,6 +1652,10 @@ const I18N = {
     setSaveFail: "Couldn't save setlist — check internet / Firestore rules for “setlists”.",
   },
   hi: {
+    menuLyrics: "लिरिक्स खोलें", menuYt: "YouTube पर सुनें", menuEdit: "भजन एडिट करें", menuShare: "शेयर", menuFind: "संग्रह में खोजें", menuRemove: "संग्रह से हटाएँ",
+    noLyrTitle: "लिरिक्स अभी नहीं जुड़े", noLyrBody: "आप पहले बनें — टाइप करें, भजन पुस्तक की फ़ोटो लें, या PDF जोड़ें। पूरे सत्संग को दिखेगा।", noLyrAdd: "लिरिक्स जोड़ें", noLyrWeb: "वेब पर खोजें",
+    refreshed: "अपडेटेड", updateReady: "नया वर्ज़न तैयार है — अपडेट के लिए टैप करें",
+    recBtn: "अपना गायन रिकॉर्ड करें", recTitle: "मेरी रिकॉर्डिंग", recStart: "रिकॉर्ड", recStop: "रोकें", recSaving: "सेव हो रहा है…", recSaved: "रिकॉर्डिंग सेव हुई", recDel: "रिकॉर्डिंग हटाएँ?", recEmpty: "लिरिक्स देखते हुए गाएँ और माइक दबाकर रिकॉर्ड करें। रिकॉर्डिंग सिर्फ़ इसी फ़ोन पर रहती है।", recNoMic: "माइक्रोफ़ोन उपलब्ध नहीं — ब्राउज़र की अनुमति जाँचें।", recRename: "रिकॉर्डिंग का नाम", recShare: "शेयर", recDownload: "डाउनलोड", recAll: "सभी रिकॉर्डिंग", recTab: "रिकॉर्डिंग", recHome: "आपकी रिकॉर्डिंग",
     contribAs: "योगदानकर्ता:", changeName: "बदलें", anon: "अनाम",
     madeBy: "सत्संग परिवार द्वारा 🧡 से",
     tabBhajans: "भजन", tabLives: "लाइव", tabAdd: "जोड़ें", tabBulk: "एक साथ", tabHome: "होम", homeContinue: "जहाँ छोड़ा था", homeBrowse: "श्रेणी से देखें", homeTop: "सबसे ज़्यादा देखे गए", homeNew: "नए जुड़े भजन", homeRandom: "कोई भी भजन", seeAll: "सभी देखें",
@@ -1408,7 +1731,7 @@ const I18N = {
     dupConfirm: "यह भजन शायद पहले से संग्रह में है:\n\n“%s”\n\nफिर भी जोड़ें?",
     waMsgHead: "इन भजनों के लिरिक्स चाहिए 🙏 जो आते हों, ऐप में पेस्ट कर दें", waMsgFoot: "भजन खोलें → ✏️ Edit → Paste lyrics",
     liveHint: "टैप → ▶ यूट्यूब उसी समय पर · डबल-टैप → 📖 लिरिक्स (न हों तो वेब)",
-    setDblHint: "भजन के नाम पर डबल-टैप → लिरिक्स/PDF खुलेगी (न हो तो Google)।",
+    setDblHint: "नाम पर टैप → लिरिक्स · दबाकर रखें → और विकल्प।", setScale: "स्केल चुनें",
     setsSharedNote: "सेटलिस्ट साझा हैं — सत्संग में सबको स्केल के साथ दिखती हैं।",
     myListNote: "सिर्फ़ इसी डिवाइस पर — आपकी अपनी गाने की लिस्ट। इसमें जोड़ा गया कुछ भी मुख्य संग्रह में नहीं जाता।",
     newMyList: "＋ नई लिस्ट", myListName: "लिस्ट का नाम (जैसे: शुक्रवार लाइव — मेरे भजन)",
@@ -1426,10 +1749,10 @@ let lang = localStorage.getItem("bhajan-lang") || "en";
 const t = (k) => (I18N[lang] && I18N[lang][k]) || I18N.en[k] || k;
 
 /* ================= theme ================= */
-let theme = localStorage.getItem("bhajan-theme") || "light";
+let theme = localStorage.getItem("bhajan-theme") || "dark";
 function applyTheme(){
   document.documentElement.dataset.theme = theme;
-  document.querySelector('meta[name="theme-color"]').content = theme==="light" ? "#FBF5E9" : "#171009";
+  document.querySelector('meta[name="theme-color"]').content = theme==="light" ? "#F4F3FA" : "#0E1330";
 }
 window.toggleTheme = ()=>{ theme = theme==="dark" ? "light" : "dark"; localStorage.setItem("bhajan-theme", theme); applyTheme(); };
 applyTheme();
@@ -1568,6 +1891,10 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&
 $("keystrip").innerHTML = Array.from({length:36},(_,i)=>`<div class="${[1,3,6,8,10].includes(i%12)?"b":"w"}"></div>`).join("");
 
 const ICONS = {
+  mic:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg>',
+  stop:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="3"/></svg>',
+  pause:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
+  dl:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/></svg>',
   play:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>',
   doc:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>',
   edit:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>',
@@ -1626,6 +1953,16 @@ function toast(msg, isErr){
   el._h = setTimeout(()=>el.className="", 3200);
 }
 /* ═══════════ champion UX layer ═══════════ */
+/* Open an external link from inside a user gesture. In an installed (home-screen)
+   app, openExternal() from a timer is silently blocked — a real anchor click is not. */
+window.openExternal = function(url){
+  try{
+    const a = document.createElement("a");
+    a.href = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.style.position = "fixed"; a.style.opacity = "0"; a.style.pointerEvents = "none";
+    document.body.appendChild(a); a.click(); setTimeout(()=>a.remove(), 0);
+  }catch{ try{ openExternal(url, "_blank", "noopener"); }catch{ location.href = url; } }
+};
 /* haptic tick (Android) */
 function buzz(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms||10); }catch{} }
 
@@ -1781,13 +2118,17 @@ document.addEventListener("touchmove", (e)=>{
     el.style.display = "flex";
     const p = Math.min(_ptrPull, 130);
     el.style.transform = `translateX(-50%) translateY(${p*0.55}px)`;
-    el.classList.toggle("ready", _ptrPull > 95);
+    el.classList.toggle("ready", _ptrPull > 130);
   }
 }, {passive:true});
 document.addEventListener("touchend", ()=>{
   const el = document.getElementById("ptr");
   if(el){
-    if(_ptrPull > 95){ el.querySelector("span").textContent = "⟳"; el.classList.add("spin"); buzz(12); setTimeout(()=>location.reload(), 250); return; }
+    if(_ptrPull > 130){
+      el.querySelector("span").textContent = "⟳"; el.classList.add("spin"); buzz(12);
+      setTimeout(()=>{ _lastSig=""; safeRender(true); checkForUpdate(); el.style.display="none"; el.classList.remove("spin","ready"); el.style.transform="translateX(-50%)"; el.querySelector("span").textContent="↓"; toast(t("refreshed")); }, 500);
+      _ptrY = null; _ptrPull = 0; return;
+    }
     el.style.display = "none"; el.style.transform = "translateX(-50%)"; el.classList.remove("ready");
   }
   _ptrY = null; _ptrPull = 0;
@@ -1825,8 +2166,23 @@ const sessionsCol = collection(db, "sessions");
 const filesCol = collection(db, "lyricsFiles");
 const setsCol = collection(db, "setlists");   // shared setlists — visible to everyone
 
+let _swReg = null;
+window.checkForUpdate = ()=>{ try{ _swReg && _swReg.update(); }catch{} };
 if("serviceWorker" in navigator){
-  window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
+  window.addEventListener("load", async ()=>{
+    try{
+      _swReg = await navigator.serviceWorker.register("sw.js");
+      const offer = (w)=>{ if(!navigator.serviceWorker.controller) return;   /* first install: nothing to swap */
+        const el = $("toast"); el.textContent = t("updateReady"); el.className = "show update";
+        el.onclick = ()=>{ el.onclick=null; w.postMessage({type:"SKIP_WAITING"}); navigator.serviceWorker.addEventListener("controllerchange", ()=>location.reload(), {once:true}); };
+        clearTimeout(el._t); el._t = setTimeout(()=>{ el.className=""; el.onclick=null; }, 12000);
+      };
+      if(_swReg.waiting) offer(_swReg.waiting);
+      _swReg.addEventListener("updatefound", ()=>{ const w=_swReg.installing; w && w.addEventListener("statechange", ()=>{ if(w.state==="installed") offer(w); }); });
+    }catch{}
+  });
+  /* coming back from YouTube / the background: make sure we're alive and current */
+  document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible"){ checkForUpdate(); if(typeof audioCtx!=="undefined" && audioCtx && audioCtx.state==="suspended" && (shrutiNote||tablaOn)) audioCtx.resume().catch(()=>{}); } });
 }
 
 /* ================= state ================= */
@@ -2217,8 +2573,196 @@ window.mySmartOpen = (name)=>{
   if(best && bs>=2){ toast(t("foundLib")); rowOpen(best.id); }
   else{
     toast(t("notFoundWeb"));
-    window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(name+" bhajan"), "_blank", "noopener");
+    openExternal("https://www.youtube.com/results?search_query="+encodeURIComponent(name+" bhajan"));
   }
+};
+
+/* ================= recordings (PRIVATE — stored on this device in IndexedDB) =================
+   Record yourself while the lyrics are on screen. Nothing is uploaded. */
+const REC_DB = "bhajan-rec", REC_STORE = "recs";
+function recDb(){
+  return new Promise((res, rej)=>{
+    const r = indexedDB.open(REC_DB, 1);
+    r.onupgradeneeded = ()=>{ const st = r.result.createObjectStore(REC_STORE, {keyPath:"id"}); st.createIndex("bid","bid"); st.createIndex("created","created"); };
+    r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error);
+  });
+}
+async function recAll(bid){
+  try{
+    const db = await recDb();
+    return await new Promise((res, rej)=>{
+      const st = db.transaction(REC_STORE).objectStore(REC_STORE);
+      const q = bid ? st.index("bid").getAll(bid) : st.getAll();
+      q.onsuccess = ()=>res((q.result||[]).sort((a,b)=>b.created-a.created)); q.onerror = ()=>rej(q.error);
+    });
+  }catch{ return []; }
+}
+async function recPut(r){ const db = await recDb(); return new Promise((res,rej)=>{ const tx=db.transaction(REC_STORE,"readwrite"); tx.objectStore(REC_STORE).put(r); tx.oncomplete=res; tx.onerror=()=>rej(tx.error); }); }
+async function recRemove(id){ const db = await recDb(); return new Promise((res,rej)=>{ const tx=db.transaction(REC_STORE,"readwrite"); tx.objectStore(REC_STORE).delete(id); tx.oncomplete=res; tx.onerror=()=>rej(tx.error); }); }
+window.recCount = 0;
+recAll().then(a=>{ window.recCount = a.length; });
+
+let _ar = null;   /* {bid, mr, stream, chunks, t0, timer, an, raf} */
+const recMime = ()=> ["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus"].find(m=>window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || "";
+const recExt  = (m)=> m.includes("mp4") ? "m4a" : m.includes("ogg") ? "ogg" : "webm";
+
+window.recToggle = async (bid)=>{
+  if(_ar){ if(_ar.bid===bid) recStop(); else toast(t("recStop"), true); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){ toast(t("recNoMic"), true); return; }
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); }
+  catch{ toast(t("recNoMic"), true); return; }
+  const mime = recMime();
+  const mr = new MediaRecorder(stream, mime ? {mimeType:mime, audioBitsPerSecond:128000} : undefined);
+  _ar = {bid, mr, stream, chunks:[], t0:Date.now(), mime: mr.mimeType || mime || "audio/webm"};
+  mr.ondataavailable = (e)=>{ if(e.data && e.data.size) _ar.chunks.push(e.data); };
+  mr.onstop = recFinish;
+  mr.start(1000);
+  keepAwake(); buzz(20);
+  /* live level meter */
+  try{
+    const ctx = actx(); const src = ctx.createMediaStreamSource(stream); const an = ctx.createAnalyser(); an.fftSize = 256; src.connect(an);
+    _ar.an = an; _ar.src = src;
+  }catch{}
+  recPaintUi();
+};
+
+function recPaintUi(){
+  const bid = _ar.bid;
+  const btn = $("recbtn-"+bid); if(btn){ btn.classList.add("live"); btn.innerHTML = ICONS.stop; }
+  const wrap = $("recwrap-"+bid); if(!wrap) return;
+  const bar = document.createElement("div");
+  bar.className = "reclive"; bar.id = "reclive";
+  bar.innerHTML = `<span class="rec-dot"></span><b id="rectime">0:00</b><canvas id="recmeter" width="600" height="56"></canvas><button class="btn btn-gold recstopbtn" onclick="recStop()">${ICONS.stop} ${t("recStop")}</button>`;
+  wrap.prepend(bar);
+  const cv = bar.querySelector("canvas"), g = cv.getContext("2d");
+  const buf = _ar.an ? new Uint8Array(_ar.an.frequencyBinCount) : null;
+  const bars = new Array(48).fill(0);
+  const acc = getComputedStyle(document.documentElement).getPropertyValue("--gold").trim() || "#FFA43A";
+  const draw = ()=>{
+    if(!_ar) return;
+    const sec = Math.floor((Date.now()-_ar.t0)/1000); const tt = $("rectime"); if(tt) tt.textContent = fmtTime(sec);
+    let lvl = 0.08;
+    if(buf){ _ar.an.getByteTimeDomainData(buf); let sum=0; for(let i=0;i<buf.length;i++){ const v=(buf[i]-128)/128; sum+=v*v; } lvl = Math.min(1, Math.sqrt(sum/buf.length)*3.2); }
+    bars.shift(); bars.push(lvl);
+    g.clearRect(0,0,cv.width,cv.height); g.fillStyle = acc;
+    const w = cv.width/bars.length;
+    bars.forEach((v,i)=>{ const h = Math.max(3, v*cv.height); g.globalAlpha = .35 + .65*(i/bars.length); g.beginPath(); g.roundRect(i*w+2, (cv.height-h)/2, w-4, h, 3); g.fill(); });
+    _ar.raf = requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+window.recStop = ()=>{ if(!_ar) return; try{ _ar.mr.stop(); }catch{} };
+
+async function recFinish(){
+  const r = _ar; _ar = null;
+  cancelAnimationFrame(r.raf);
+  try{ r.stream.getTracks().forEach(tr=>tr.stop()); r.src && r.src.disconnect(); }catch{}
+  releaseAwake();
+  const btn = $("recbtn-"+r.bid); if(btn){ btn.classList.remove("live"); btn.innerHTML = ICONS.mic; }
+  const live = $("reclive"); if(live) live.remove();
+  const dur = Math.round((Date.now()-r.t0)/1000);
+  if(!r.chunks.length || dur < 1) return;
+  const b = bhajans.find(x=>x.id===r.bid);
+  const blob = new Blob(r.chunks, {type:r.mime});
+  const rec = { id: "r"+Date.now().toString(36), bid: r.bid, bname: b ? b.name : "", name: "", dur, created: Date.now(), mime: r.mime, size: blob.size, blob };
+  try{ await recPut(rec); window.recCount++; toast(t("recSaved")); buzz(15); }
+  catch(e){ console.error(e); toast("Could not save recording", true); return; }
+  recRenderList(r.bid);
+}
+
+const recTitle = (r)=> r.name || `${r.bname||"Recording"} · ${new Date(r.created).toLocaleDateString(lang==="hi"?"hi-IN":"en-IN",{day:"numeric",month:"short"})} ${new Date(r.created).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}`;
+const recSize = (n)=> n > 1048576 ? (n/1048576).toFixed(1)+" MB" : Math.round(n/1024)+" KB";
+let _arUrls = {};
+function recUrl(r){ if(!_arUrls[r.id]) _arUrls[r.id] = URL.createObjectURL(r.blob); return _arUrls[r.id]; }
+
+function recItemHtml(r, showSong){
+  return `<div class="recitem" id="rec-${r.id}">
+    <button class="recplay" onclick="recPlay('${r.id}')" aria-label="Play">${ICONS.play}</button>
+    <div class="recinfo">
+      <div class="recname" onclick="recRename('${r.id}')">${esc(recTitle(r))}</div>
+      <div class="recmeta">${showSong && r.bname ? `<span>${esc(r.bname)}</span>` : ""}<span>${fmtTime(r.dur)}</span><span>${recSize(r.size)}</span></div>
+      <div class="recprog"><i></i></div>
+    </div>
+    <div class="recacts">
+      ${navigator.share ? `<button class="ab" onclick="recShare('${r.id}')" title="${t("recShare")}">⤴</button>` : ""}
+      <button class="ab" onclick="recDownload('${r.id}')" title="${t("recDownload")}">${ICONS.dl}</button>
+      <button class="ab danger" onclick="recDelete('${r.id}')" title="Delete">${ICONS.trash}</button>
+    </div>
+  </div>`;
+}
+async function recRenderList(bid){
+  const wrap = $("recwrap-"+bid); if(!wrap) return;
+  const recs = await recAll(bid);
+  const live = $("reclive");
+  wrap.innerHTML = (live ? live.outerHTML : "") + (recs.length ? `<div class="rechead">${ICONS.mic} ${t("recTitle")} <em>${recs.length}</em></div>` + recs.map(r=>recItemHtml(r,false)).join("") : "");
+  wrap.classList.toggle("has", recs.length>0 || !!live);
+}
+window.recRenderAll = async (elId)=>{
+  const el = $(elId); if(!el) return;
+  const recs = await recAll();
+  el.innerHTML = recs.length ? recs.map(r=>recItemHtml(r,true)).join("") : `<div class="empty"><span class="om">${ICONS.mic}</span>${t("recEmpty")}</div>`;
+};
+
+let _arAudio = null, _arPlayingId = null;
+window.recPlay = async (id)=>{
+  const recs = await recAll(); const r = recs.find(x=>x.id===id); if(!r) return;
+  if(_arAudio && _arPlayingId===id){ if(_arAudio.paused) _arAudio.play(); else _arAudio.pause(); recPaintPlay(); return; }
+  if(_arAudio){ _arAudio.pause(); _arAudio = null; recPaintPlay(); }
+  _arPlayingId = id;
+  const a = new Audio(recUrl(r)); _arAudio = a;
+  a.ontimeupdate = ()=>{ const el = document.querySelector(`#rec-${id} .recprog i`); if(el && a.duration) el.style.width = (a.currentTime/a.duration*100)+"%"; };
+  a.onended = ()=>{ _arPlayingId=null; _arAudio=null; recPaintPlay(); const el = document.querySelector(`#rec-${id} .recprog i`); if(el) el.style.width="0%"; };
+  a.onplay = recPaintPlay; a.onpause = recPaintPlay;
+  a.play().catch(()=>toast("Playback failed", true));
+};
+function recPaintPlay(){
+  document.querySelectorAll(".recitem").forEach(el=>{
+    const on = _arAudio && !_arAudio.paused && el.id==="rec-"+_arPlayingId;
+    el.classList.toggle("playing", !!on);
+    const b = el.querySelector(".recplay"); if(b) b.innerHTML = on ? ICONS.pause : ICONS.play;
+  });
+}
+window.recDelete = async (id)=>{
+  if(!confirm(t("recDel"))) return;
+  if(_arPlayingId===id && _arAudio){ _arAudio.pause(); _arAudio=null; _arPlayingId=null; }
+  await recRemove(id); window.recCount = Math.max(0, window.recCount-1);
+  const el = $("rec-"+id); if(el) el.remove();
+  document.querySelectorAll(".recwrap").forEach(w=>recRenderList(w.id.replace("recwrap-","")));
+  if($("recall")) recRenderAll("recall");
+  buzz(8);
+};
+window.recRename = async (id)=>{
+  const recs = await recAll(); const r = recs.find(x=>x.id===id); if(!r) return;
+  const n = prompt(t("recRename"), r.name || "");
+  if(n===null) return;
+  r.name = n.trim(); await recPut(r);
+  const el = document.querySelector(`#rec-${id} .recname`); if(el) el.textContent = recTitle(r);
+};
+window.recDownload = async (id)=>{
+  const recs = await recAll(); const r = recs.find(x=>x.id===id); if(!r) return;
+  const a = document.createElement("a"); a.href = recUrl(r); a.download = (recTitle(r).replace(/[\\/:*?"<>|]+/g,"-")) + "." + recExt(r.mime); document.body.appendChild(a); a.click(); a.remove();
+};
+window.recShare = async (id)=>{
+  const recs = await recAll(); const r = recs.find(x=>x.id===id); if(!r) return;
+  const file = new File([r.blob], recTitle(r).replace(/[\\/:*?"<>|]+/g,"-") + "." + recExt(r.mime), {type:r.mime});
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})) await navigator.share({files:[file], title: recTitle(r)});
+    else recDownload(id);
+  }catch{}
+};
+window.openRecordings = ()=>{
+  const div = document.createElement("div");
+  div.className = "overlay";
+  navPush(()=>{ if(_arAudio){ _arAudio.pause(); _arAudio=null; _arPlayingId=null; } div.remove(); });
+  div.onclick = (e)=>{ if(e.target===div) navBack(); };
+  div.innerHTML = `<div class="reader">
+    <div class="reader-head"><div><h3>${t("recTitle")}</h3><div class="rm2">${t("myListNote")}</div></div>
+      <div style="display:flex;gap:7px"><button class="btn btn-ghost" onclick="navBack()">✕</button></div></div>
+    <div class="reader-body"><div class="reclist" id="recall"></div></div></div>`;
+  document.body.appendChild(div);
+  recRenderAll("recall");
 };
 
 /* ================= view counter ================= */
@@ -2281,7 +2825,7 @@ window.shareBhajan = async (id)=>{
 window.shareLyricsImage = async (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
   if(!b.lyricsText){ toast(t("noLyrics"), true); return; }
-  const FL = '"Noto Sans Devanagari","Mukta",sans-serif';
+  const FL = '"Mukta","Tiro Devanagari Hindi",sans-serif';
   /* make sure Devanagari glyphs are loaded before drawing */
   try{
     await Promise.all([
@@ -2373,10 +2917,27 @@ applyStatics();
 
 /* IMPORTANT: never re-render while the user is filling a form —
    live updates from others would wipe their inputs. */
-function safeRender(){
-  if(tab==="add"){ updateTabCounts(); return; }
-  render();
+let _renderPending = false, _lastSig = "";
+function dataSig(){
+  /* everything that changes what's on screen — except view counters, which tick
+     constantly and used to make the whole page "refresh" under the user's finger */
+  return JSON.stringify(bhajans.map(b=>[b.id,b.name,b.singer,b.scale,b.sessionId,b.seconds,b.lyricsText?1:0,b.hasFiles?1:0,b.lyricsLink||"",b.tags||"",b.hidden||0]))
+       + "|" + JSON.stringify(sessions.map(x=>[x.id,x.title,x.date,x.videoId]))
+       + "|" + JSON.stringify((typeof sharedSets!=="undefined"?sharedSets:[]).map(x=>[x.id,x.name,(x.items||[]).length,JSON.stringify(x.items||[]),JSON.stringify(x.scales||{})]));
 }
+function safeRender(force){
+  if(tab==="add"){ updateTabCounts(); return; }
+  if(document.querySelector(".overlay")){ _renderPending = true; return; }   /* reader / tanpura open */
+  const sig = dataSig();
+  if(!force && sig===_lastSig && _lastSig){ updateTabCounts(); return; }
+  _lastSig = sig;
+  const y = window.scrollY;
+  render();
+  requestAnimationFrame(()=>window.scrollTo(0, y));
+}
+/* when an overlay closes, catch up on anything that arrived while it was open */
+new MutationObserver(()=>{ if(_renderPending && !document.querySelector(".overlay")){ _renderPending=false; safeRender(true); } })
+  .observe(document.body, {childList:true});
 function updateTabCounts(){
   const a=$("tab-b"), b=$("tab-l");
   if(a && a.querySelector("em")) a.querySelector("em").textContent = bhajans.length;
@@ -2602,55 +3163,73 @@ window.teleAdj = (d)=>{
   const s = document.getElementById("telespeed"); if(s) s.textContent = teleSpeed + "×";
 };
 
-/* ---- universal tap / double-tap router (iOS-safe; dblclick is unreliable there) ----
-   .ri-main  [data-bid]          → double-tap: lyrics-or-web        (Bhajans tab)
-   .setrow   [data-bid][data-yt] → tap: YouTube @time · double-tap: lyrics-or-web (Lives)
-   .setrow   [data-my]           → tap: YouTube search · double-tap: find in sangrah (My List)
-   .sitem .nm[data-bid]          → double-tap: lyrics/PDF-or-Google (Setlists)      */
-let _lastTap = {t:0, key:null}, _tapTimer = null;
+/* ---- tap router ----
+   One tap does the primary action *immediately* (inside the click gesture, so
+   external links always open — including from the home-screen app).
+   Press-and-hold on a row opens a small in-app menu with the other actions.
+   .ri-main  [data-bid]          → lyrics reader
+   .setrow   [data-bid][data-yt] → YouTube at the timestamp      (Lives)
+   .setrow   [data-my]           → best match in sangrah, else YouTube search (My List)
+   .sitem .nm[data-bid]          → lyrics reader                 (Setlists) */
+let _lpTimer = null, _lpFired = false, _lpStart = null;
+const ROW_SEL = ".setrow[data-bid], .setrow[data-my], .ri-main[data-bid], .sitem .nm[data-bid]";
+document.addEventListener("pointerdown", (e)=>{
+  const el = e.target.closest(ROW_SEL);
+  _lpFired = false; clearTimeout(_lpTimer);
+  if(!el || e.target.closest("button, a, select, .sc, .ab")) return;
+  _lpStart = {x:e.clientX, y:e.clientY};
+  _lpTimer = setTimeout(()=>{ _lpFired = true; buzz(14); rowMenu(el); }, 480);
+}, {passive:true});
+document.addEventListener("pointermove", (e)=>{
+  if(!_lpTimer || !_lpStart) return;
+  if(Math.abs(e.clientX-_lpStart.x) > 10 || Math.abs(e.clientY-_lpStart.y) > 10){ clearTimeout(_lpTimer); _lpTimer = null; }
+}, {passive:true});
+["pointerup","pointercancel","scroll"].forEach(ev=> document.addEventListener(ev, ()=>{ clearTimeout(_lpTimer); _lpTimer = null; }, {passive:true}));
+document.addEventListener("contextmenu", (e)=>{ if(e.target.closest(ROW_SEL)) e.preventDefault(); });
+
 document.addEventListener("click", (e)=>{
   if(e.target.closest(".sc") || e.target.closest(".ab") || e.target.closest("select") || e.target.closest("button")) return;
-  const el = e.target.closest(".setrow[data-bid], .setrow[data-my], .ri-main[data-bid], .sitem .nm[data-bid]");
+  const el = e.target.closest(ROW_SEL);
   if(!el) return;
   e.preventDefault();
-  const key = el.dataset.bid || ("my:"+el.dataset.my);
-  const now = Date.now();
-
-  if(_lastTap.key === key && (now - _lastTap.t) < 350){
-    /* ---------- DOUBLE TAP ---------- */
-    clearTimeout(_tapTimer); _tapTimer = null;
-    _lastTap = {t:0, key:null};
-    buzz(12);
-    if(el.dataset.my) mySmartOpen(el.dataset.my);
-    else rowOpen(el.dataset.bid);
-    return;
-  }
-
-  _lastTap = {t:now, key};
-  /* ---------- SINGLE TAP (delayed so a double can cancel it) ---------- */
-  if(el.classList.contains("ri-main")){
-    const bid = el.dataset.bid;
-    _tapTimer = setTimeout(()=>{
-      const b = bhajans.find(x=>x.id===bid);
-      if(b && (b.hasFiles || b.lyricsText || b.lyricsLink)) rowOpen(bid);
-    }, 300);
-  }else if(el.dataset.yt){
-    const url = el.dataset.yt, bid = el.dataset.bid;
-    _tapTimer = setTimeout(()=>{ countView(bid); window.open(url, "_blank", "noopener"); }, 330);
-  }else if(el.dataset.my){
-    const nm = el.dataset.my;
-    _tapTimer = setTimeout(()=>{ window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(nm+" bhajan"), "_blank", "noopener"); }, 330);
-  }
+  if(_lpFired){ _lpFired = false; return; }          /* the long-press menu handled it */
+  buzz(6);
+  if(el.dataset.my){ mySmartOpen(el.dataset.my); return; }
+  if(el.dataset.yt){ countView(el.dataset.bid); openExternal(el.dataset.yt); return; }
+  rowOpen(el.dataset.bid);
 });
+
+/* press-and-hold menu for a row */
+window.rowMenu = (el)=>{
+  const bid = el.dataset.bid, my = el.dataset.my;
+  const b = bid ? bhajans.find(x=>x.id===bid) : null;
+  const sess = b ? sessById()[b.sessionId] : null;
+  const title = b ? b.name : my;
+  const ytUrl = el.dataset.yt || (sess ? yt(sess.videoId, b.seconds) : "https://www.youtube.com/results?search_query="+encodeURIComponent((title||"")+" bhajan"));
+  const items = [];
+  if(b) items.push({ic:ICONS.doc, l:t("menuLyrics"), fn:()=>rowOpen(bid)});
+  items.push({ic:ICONS.play, l:t("menuYt"), fn:()=>{ if(bid) countView(bid); openExternal(ytUrl); }});
+  if(b) items.push({ic:ICONS.edit, l:t("menuEdit"), fn:()=>editBhajan(bid)});
+  if(b) items.push({ic:"⤴", l:t("menuShare"), fn:()=>shareBhajan(bid)});
+  if(b && admin) items.push({ic:ICONS.trash, l:t("menuRemove"), fn:()=>hideBhajan(bid), danger:true});
+  if(my) items.push({ic:"🔎", l:t("menuFind"), fn:()=>mySmartOpen(my)});
+  const div = document.createElement("div");
+  div.className = "overlay sheet-ov";
+  navPush(()=>div.remove());
+  div.onclick = (e)=>{ if(e.target===div) navBack(); };
+  div.innerHTML = `<div class="sheet">
+    <div class="sheet-grip"></div>
+    <div class="sheet-title">${esc(title||"")}</div>
+    ${items.map((it,i)=>`<button class="sheet-item ${it.danger?"danger":""}" data-i="${i}"><span class="si-ic">${it.ic}</span><span>${it.l}</span></button>`).join("")}
+  </div>`;
+  div.querySelectorAll(".sheet-item").forEach(btn=> btn.onclick = ()=>{ const fn = items[+btn.dataset.i].fn; navBack(); setTimeout(fn, 0); });
+  document.body.appendChild(div);
+};
 
 window.rowOpen = (id)=>{
   const b = bhajans.find(x=>x.id===id); if(!b) return;
-  if(b.hasFiles || b.lyricsText) openLyrics(id);
-  else if(b.lyricsLink){ countView(id); window.open(b.lyricsLink, "_blank", "noopener"); }
-  else{
-    toast(t("notFoundWeb"));
-    window.open("https://www.google.com/search?q=" + encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics"), "_blank", "noopener");
-  }
+  if(b.lyricsLink && !b.hasFiles && !b.lyricsText){ countView(id); openExternal(b.lyricsLink); return; }
+  openLyrics(id);   /* shows an in-app "no lyrics yet" state when nothing is saved */
 };
 window.editBhajan = (id)=>{ editingId=id; formFiles=[]; existingFiles=[]; tab="add"; render(); loadEditFiles(); };
 
@@ -2891,6 +3470,7 @@ window.openLyrics = async (id)=>{
           <button class="btn btn-ghost rnav" onclick="readerStep(-1)" ${_readerIdx>0?"":"disabled"} title="Previous bhajan">‹</button>
           <button class="btn btn-ghost rnav" onclick="readerStep(1)" ${(_readerIdx>-1 && _readerIdx<_readerIds.length-1)?"":"disabled"} title="Next bhajan">›</button>
           ${b.lyricsText ? `<button class="btn btn-ghost" onclick="shareLyricsImage('${b.id}')" title="${t("shareImg")}">🖼</button>` : ""}
+          <button class="btn btn-ghost recbtn" id="recbtn-${b.id}" onclick="recToggle('${b.id}')" title="${t("recBtn")}">${ICONS.mic}</button>
           <button class="btn btn-ghost" onclick="shareBhajan('${b.id}')" title="Share">⤴</button>
           <button class="btn btn-ghost" onclick="navBack()">✕</button>
         </div>
@@ -2909,14 +3489,24 @@ window.openLyrics = async (id)=>{
         <button class="ab" onclick="teleAdj(0.25)">＋</button>
       </div>` : ""}
       <div class="reader-body" id="rbody">
-        <a class="btn btn-ghost" style="align-self:flex-start;font-size:12.5px;padding:8px 14px" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">🌐 Search lyrics on web</a>
         ${b.lyricsLink ? `<a class="btn btn-teal" style="align-self:flex-start" href="${esc(b.lyricsLink)}" target="_blank" rel="noreferrer">🔗 ${t("openLyricsLink")}</a>` : ""}
         ${b.lyricsText ? `<div class="read-text" style="font-size:${readerFs}px" onclick="lineTap(event)">${lyricSpans(b.lyricsText)}</div>` : ""}
         ${b.hasFiles ? `<div class="skel" id="rload"></div>` : ""}
-        ${!b.lyricsLink && !b.lyricsText && !b.hasFiles ? `<div class="empty">${t("noLyrics")}</div>` : ""}
+        ${!b.lyricsLink && !b.lyricsText && !b.hasFiles ? `
+        <div class="nolyr">
+          <div class="nolyr-ic">${ICONS.doc}</div>
+          <h4>${t("noLyrTitle")}</h4>
+          <p>${t("noLyrBody")}</p>
+          <div class="nolyr-acts">
+            <button class="btn btn-gold" onclick="navBack(); editBhajan('${b.id}')">${ICONS.edit} ${t("noLyrAdd")}</button>
+            <a class="btn btn-ghost" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer">${ICONS.globe} ${t("noLyrWeb")}</a>
+          </div>
+        </div>` : ""}
+        <div class="recwrap" id="recwrap-${b.id}"></div>
       </div>
     </div>`;
   document.body.appendChild(div);
+  recRenderList(b.id);
   if(b.hasFiles){
     const files = await loadFilesFor(id);
     const load = div.querySelector("#rload");
@@ -3059,30 +3649,28 @@ function filtered(){
 function bhajanRow(b){
   const sess = sessById()[b.sessionId];
   const fav = favs.has(b.id);
+  const tg0 = bTags(b).slice(0,1).map(k=>TAGS.find(t=>t.k===k)).filter(Boolean)[0];
   const subs = [
-    ...bTags(b).slice(0,2).map(k=>{ const tg=TAGS.find(t=>t.k===k); return tg?`<span class="pill tagp t-${k}">${tg.e} ${tagLabel(tg)}</span>`:""; }),
-    b.singer ? `<span class="pill">🎤 ${esc(b.singer)}</span>` : "",
-    hasAnyLyrics(b) ? `<span class="pill pdf">${ICONS.doc} Lyrics</span>` : "",
-    sess ? `<span class="pill soft">${esc(sess.title)}${b.seconds?` · ${fmtTime(b.seconds)}`:""}</span>` : "",
-    sortBy==="views" && b.views ? `<span class="pill soft">👁 ${b.views}</span>` : "",
-  ].filter(Boolean).join("");
+    b.singer ? `<span>${esc(b.singer)}</span>` : "",
+    tg0 ? `<span>${tg0.e} ${tagLabel(tg0)}</span>` : "",
+    sess ? `<span>${esc(sess.title)}${b.seconds?` · ${fmtTime(b.seconds)}`:""}</span>` : "",
+    hasAnyLyrics(b) ? `<span class="m-lyr">${ICONS.doc} Lyrics</span>` : "",
+    sortBy==="views" && b.views ? `<span>👁 ${b.views}</span>` : "",
+  ].filter(Boolean).join(`<i class="dot"></i>`);
   return `
   <div class="ri">
     <button class="star ${fav?"on":""}" onclick="toggleFav('${b.id}')" title="★">${ICONS.star}</button>
-    <div class="ri-main" data-bid="${b.id}" title="Tap: lyrics · Double-tap: lyrics or web search">
+    <div class="ri-main" data-bid="${b.id}" title="Tap: lyrics · Hold: more">
       <div class="ri-name">${esc(b.name)}</div>
-      ${subs?`<div class="ri-sub">${subs}</div>`:""}
+      ${subs||b.scale?`<div class="ri-meta2">${b.scale?scMini(b.scale):""}${subs}</div>`:""}
     </div>
     <div class="ri-acts">
-      ${b.scale?scMini(b.scale):""}
       ${sess
         ? `<a class="ab play" href="${yt(sess.videoId,b.seconds)}" onclick="playAndCount('${b.id}')" target="_blank" rel="noreferrer" title="YouTube">${ICONS.play}</a>`
         : `<a class="ab play" href="https://www.youtube.com/results?search_query=${encodeURIComponent(b.name + " " + (b.singer||"") + " bhajan")}" onclick="playAndCount('${b.id}')" target="_blank" rel="noreferrer" title="Find on YouTube">${ICONS.ytsearch}</a>`}
       ${hasAnyLyrics(b)
         ? `<button class="ab doc" onclick="openLyrics('${b.id}')" title="Lyrics">${ICONS.doc}</button>`
-        : `<a class="ab doc" href="https://www.google.com/search?q=${encodeURIComponent(b.name + " " + (b.singer||"") + " lyrics")}" target="_blank" rel="noreferrer" title="Search lyrics on web">${ICONS.globe}</a>`}
-      <button class="ab" onclick="editBhajan('${b.id}')" title="Edit">${ICONS.edit}</button>
-      ${admin ? `<button class="ab danger" onclick="hideBhajan('${b.id}')" title="Remove">${ICONS.trash}</button>` : ""}
+        : `<button class="ab doc dim" onclick="openLyrics('${b.id}')" title="No lyrics yet">${ICONS.doc}</button>`}
     </div>
   </div>`;
 }
@@ -3145,7 +3733,7 @@ function render(){
       <button class="stat" onclick="go('bhajans')"><b>${bhajans.length}</b><span>🪕 ${t("stBhajans")}</span></button>
       <button class="stat" onclick="go('lives')"><b>${sessions.length}</b><span>📺 ${t("stLives")}</span></button>
       <button class="stat" onclick="favHome()"><b>${favs.size}</b><span>★ ${lang==="hi"?"पसंदीदा":"Favourites"}</span></button>
-      <button class="stat" onclick="histHome()"><b>${hist.length}</b><span>🕘 ${t("chipHistory")}</span></button>
+      <button class="stat" onclick="openRecordings()"><b>${window.recCount||0}</b><span>${ICONS.mic} ${t("recTab")}</span></button>
     </div>
     ${contin.length?`
     <div class="hrow"><h2>🕘 ${t("homeContinue")}</h2><button class="linkbtn" onclick="histHome()">${t("seeAll")}</button></div>
@@ -3251,7 +3839,7 @@ function render(){
               </div>
             </div>
             ${inS.length ? `<div class="setlist">` + inS.map(b=>`
-              <div class="setrow" data-bid="${b.id}" data-yt="${yt(s.videoId,b.seconds)}" title="Tap: YouTube · Double-tap: lyrics">
+              <div class="setrow" data-bid="${b.id}" data-yt="${yt(s.videoId,b.seconds)}" title="Tap: YouTube · Hold: lyrics">
                 <span class="left"><span class="t">${b.seconds?fmtTime(b.seconds):"—"}</span><span class="n">${esc(b.name)}</span></span>
                 <span style="display:flex;align-items:center;gap:8px">${b.scale?scMini(b.scale):""}${hasAnyLyrics(b)?`<span class="go" style="color:var(--teal)">${ICONS.doc}</span>`:`<span class="go">${ICONS.play}</span>`}</span>
               </div>`).join("") + `</div>` : ""}
@@ -3366,21 +3954,26 @@ function render(){
         </div>
       </div>
       <div class="statline"><span style="font-family:var(--fd);font-size:16px;color:var(--text)">🎼 ${esc(cur.name)}</span><span class="sep">·</span><span>${items.length} ${t("itemsWord")}</span>${cur.addedBy?`<span class="sep">·</span><span>${t("addedBy")} ${esc(cur.addedBy)}</span>`:""}</div>
-      <div class="hint" style="margin-bottom:10px">📖 ${t("setDblHint")} · 🎵 ${t("shrutiHint")}</div>`;
+      <div class="hint" style="margin-bottom:10px">${t("setDblHint")} ${t("shrutiHint")}</div>`;
       body += items.length===0
         ? `<div class="empty"><span class="om">🎼</span>${t("emptySet")}</div>`
         : `<div class="listbox">` + items.map((b,i)=>`
           <div class="sitem">
-            <span class="num">${i+1}.</span>
-            <span class="nm" data-bid="${b.id}" title="${t("setDblHint")}">${esc(b.name)}</span>
-            ${effScale(cur,b)?scMini(effScale(cur,b)):""}
-            <select class="scpick" onchange="setScale('${cur.id}','${b.id}',this.value)" title="${t("scale")}">${scaleOptions(effScale(cur,b))}</select>
-            ${hasAnyLyrics(b)?`<button class="ab doc" onclick="openLyrics('${b.id}')">${ICONS.doc}</button>`:""}
-            <div class="mv">
-              <button onclick="setMove('${cur.id}',${i},-1)" title="${t("moveUp")}">▲</button>
-              <button onclick="setMove('${cur.id}',${i},1)" title="${t("moveDown")}">▼</button>
+            <span class="num">${i+1}</span>
+            <div class="sbody">
+              <span class="nm" data-bid="${b.id}" title="${t("setDblHint")}">${esc(b.name)}</span>
+              <div class="srow">
+                ${effScale(cur,b)?scMini(effScale(cur,b)):""}
+                <label class="scwrap ${effScale(cur,b)?"":"unset"}"><span>${effScale(cur,b)?t("scale"):t("setScale")}</span><select class="scpick" onchange="setScale('${cur.id}','${b.id}',this.value)" title="${t("scale")}">${scaleOptions(effScale(cur,b))}</select></label>
+                ${hasAnyLyrics(b)?`<button class="ab doc sm" onclick="openLyrics('${b.id}')" title="Lyrics">${ICONS.doc}</button>`:""}
+                <span class="grow"></span>
+                <div class="mv">
+                  <button onclick="setMove('${cur.id}',${i},-1)" title="${t("moveUp")}" ${i===0?"disabled":""}>↑</button>
+                  <button onclick="setMove('${cur.id}',${i},1)" title="${t("moveDown")}" ${i===cur.items.length-1?"disabled":""}>↓</button>
+                </div>
+                <button class="ab danger sm" onclick="setRemove('${cur.id}',${i})" title="Remove">✕</button>
+              </div>
             </div>
-            <button class="ab danger" onclick="setRemove('${cur.id}',${i})">✕</button>
           </div>`).join("") + `</div>`;
     }
   }
@@ -3390,6 +3983,9 @@ function render(){
     const cur = openMyId ? lists.find(x=>x.id===openMyId) : null;
     if(!cur){
       body += `<div class="notechip">🔒 ${t("myListNote")}</div>`;
+      body += `<button class="setcard reccard" onclick="openRecordings()">
+        <div><h3>${ICONS.mic} ${t("recTitle")}</h3><div class="sm">${window.recCount||0} · ${t("recEmpty").split(".")[0]}</div></div>
+        <span class="chev">›</span></button>`;
       body += `<button class="btn btn-gold" style="margin-bottom:14px" onclick="newMyList()">${t("newMyList")}</button>`;
       body += lists.length===0
         ? `<div class="empty"><span class="om">📝</span>${t("emptyMyLists")}</div>`
@@ -3417,7 +4013,7 @@ function render(){
       body += cur.items.length===0
         ? `<div class="empty"><span class="om">📝</span>${t("emptyMyList")}</div>`
         : `<div class="listbox">` + cur.items.map((it,i)=>`
-          <div class="setrow" data-my="${esc(it.name)}" title="Tap: YouTube · Double-tap: find in sangrah">
+          <div class="setrow" data-my="${esc(it.name)}" title="Tap: open · Hold: more">
             <span class="left"><span class="t">${it.time?esc(it.time):""}</span><span class="n">${i+1}. ${esc(it.name)}</span></span>
             <span style="display:flex;align-items:center;gap:6px">
               <span class="go">${ICONS.ytsearch}</span>
@@ -3632,7 +4228,7 @@ window.waRequest = ()=>{
   let txt = `🙏 *${t("waMsgHead")}*\n\n`;
   list.forEach((b,i)=>{ txt += `${i+1}. ${b.name}${b.singer?` — ${b.singer}`:""}\n`; });
   txt += `\n📿 ${location.origin + location.pathname}\n(${t("waMsgFoot")})`;
-  window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+  openExternal("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
 };
 
 window.shareSetlist = (sid, ev)=>{
@@ -3646,7 +4242,7 @@ window.shareSetlist = (sid, ev)=>{
     txt += `${i+1}. ${b.name}${sc}\n`;
   });
   txt += `\n🪕 Shyam Bhajan Sangrah\n${location.origin + location.pathname}`;
-  window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+  openExternal("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
 };
 
 window.performSet = (sid)=>{
